@@ -25,7 +25,22 @@ pool.connect((error, client) => {
         res.send('Register Here!');
     });
 
+    app.post('/register', (req, res) => {
+        const {firstName, lastName, email, password} = req.body;
 
+        bcrypt.hash(password, 12, (hashError, hashedPassword) => {
+            if (hashError) return res.status(500).redirect('/register');
+
+            client.query('INSERT INTO users VALUES (DEFAULT, $1, $2, $3, $4, DEFAULT, DEFAULT) RETURNING *', [firstName, lastName, email, hashedPassword], (dbError, result) => {
+                if (dbError) return res.status(500).redirect('/register');
+
+                const user = result.rows[0];
+                res.send(user);
+                // res.redirect('/login');
+            })
+        }); 
+
+    });
 
     app.listen(port, () => {
     console.log(`Server is listening on http://localhost:${port}`);
