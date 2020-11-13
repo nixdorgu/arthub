@@ -1,6 +1,7 @@
-import express from 'express';
-import pg from 'pg';
-import dotenv from 'dotenv';
+const express = require('express');
+const pg = require('pg');
+const dotenv = require('dotenv');
+const bcrypt = require("bcrypt");
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ pool.connect((error, client) => {
     }
 
     app.get('/', (req, res) => {});
+
 
     app.listen(port, () => {
     console.log(`Server is listening on http://localhost:${port}`);
