@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const pg = require('pg');
 const dotenv = require('dotenv');
 const bcrypt = require("bcrypt");
@@ -10,7 +11,7 @@ const port = process.env.PORT ?? 3000;
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: false}))
 
 pool.connect((error, client) => {
     if (error){
@@ -19,6 +20,11 @@ pool.connect((error, client) => {
     }
 
     app.get('/', (req, res) => {});
+
+    app.get('/register', (req, res) => {
+        res.send('Register Here!');
+    });
+
 
 
     app.listen(port, () => {
