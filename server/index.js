@@ -5,8 +5,10 @@ const pg = require("pg");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
-
+const jwt = require("jsonwebtoken");
 const initPassport = require("./config/passport.config");
+const checkConfig = require("./config/envError");
+
 dotenv.config();
 
 const pool = new pg.Pool(JSON.parse(process.env.DATABASE_CONFIG));
@@ -24,11 +26,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 pool.connect((error, client) => {
-  if (error) {
-    console.log("Could not connect to database.");
-    process.exit(1);
-  }
-
+  checkConfig(error);
+  
   app.get("/", (req, res) => res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/home.html'));
   app.get("/login", (req, res) => res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/log.html'));
 
@@ -36,7 +35,7 @@ pool.connect((error, client) => {
       successRedirect: '/',
       failureRedirect: '/login'
   }));
-  
+
   app.get("/register", (req, res) => {
     res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/reg.html')
   });
