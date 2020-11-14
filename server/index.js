@@ -4,7 +4,9 @@ const bodyParser = require("body-parser");
 const pg = require("pg");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
+const passport = require("passport");
 
+const initPassport = require("./config/passport.config");
 dotenv.config();
 
 const pool = new pg.Pool(JSON.parse(process.env.DATABASE_CONFIG));
@@ -18,6 +20,8 @@ app.use(expressSession({
     saveUninitialized: false
 }))
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 pool.connect((error, client) => {
   if (error) {
