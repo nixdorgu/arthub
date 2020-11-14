@@ -30,7 +30,13 @@ pool.connect((error, client) => {
   }
 
   app.get("/", (req, res) => res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/home.html'));
+  app.get("/login", (req, res) => res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/log.html'));
 
+  app.post("/login", passport.authenticate('local', {
+      successRedirect: '/',
+      failureRedirect: '/login'
+  }));
+  
   app.get("/register", (req, res) => {
     res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/reg.html')
   });
