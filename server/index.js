@@ -53,6 +53,7 @@ pool.connect((error, client) => {
   });
 
   app.listen(port, () => {
+    initPassport(passport, client);
     console.log(`Server is listening on http://localhost:${port}`);
   });
 });
