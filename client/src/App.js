@@ -1,4 +1,6 @@
 import React from 'react';
+import Card from './components/Card';
+import data from './data';
 
 function App() {
     const imgSrc = "../../../../../Pictures/2x2.jpg";
@@ -16,24 +18,7 @@ function App() {
         </header>
         <main>
             <div className="row center">
-                <div className="card">
-                    <a href="#">
-                        <img className="medium" src={imgSrc} alt="artist"/>
-                    </a>
-                    <div className="card-body">
-                        <a href="">
-                            <h2>Anike Nicole Dorgu</h2>
-                        </a>
-                        <div className="rating">
-                            <span><i className="fa fa-star"></i></span>
-                            <span><i className="fa fa-star"></i></span>
-                            <span><i className="fa fa-star"></i></span>
-                            <span><i className="fa fa-star"></i></span>
-                            <span><i className="fa fa-star"></i></span>
-                        </div>
-                        <div className="location">Nigeria</div>
-                    </div>
-                </div>
+                {data.artists.map((artist) => <Card key={artist._id} props={artist}/>)}
             </div> 
         </main>
         <footer className="row center">
