@@ -50,7 +50,7 @@ const data = {
             location: "Nigeria"
         },
         {
-            _id: 7,
+            _id: 8,
             name: "Anike Dorgu",
             image: "images/jimmy-fermin-bqe0J0b26RQ-unsplash.jpg",
             rating: 4.5,
