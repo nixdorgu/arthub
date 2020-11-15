@@ -57,6 +57,10 @@ pool.connect((error, client) => {
     });
   });
 
+  app.get('/profile', (req, res) => {});
+
+  app.get('/artists/:id', (req, res) => {});
+  
   app.listen(port, () => {
     initPassport(passport, client);
     console.log(`Server is listening on http://localhost:${port}`);
