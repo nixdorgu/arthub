@@ -18,7 +18,7 @@ function App() {
         </header>
         <main>
             <div className="row center">
-                {data.artists.map((artist) => <Card key={artist._id} props={artist}/>)}
+                {data.artists.map((artist) => <Card key={artist._id} artist={artist}/>)}
             </div> 
         </main>
         <footer className="row center">
