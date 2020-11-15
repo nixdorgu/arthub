@@ -1,15 +1,15 @@
 import React from "react";
 
 function Card(artist) {
-  const { name, image, rating, location } = artist.props;
+  const { _id, name, image, rating, location } = artist.props;
 
   return (
     <div className="card">
-      <a href="#">
+      <a href={`artists/${_id}`}>
         <img className="medium" src={image} alt="artist" />
       </a>
       <div className="card-body">
-        <a href="">
+        <a href={`artists/${_id}`}>
           <h2>{name}</h2>
         </a>
         <div className="rating">
