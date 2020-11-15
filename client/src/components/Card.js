@@ -1,7 +1,7 @@
 import React from "react";
 
-function Card(props) {
-  const { name, image, rating, location } = props;
+function Card(artist) {
+  const { name, image, rating, location } = artist.props;
 
   return (
     <div className="card">
