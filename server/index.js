@@ -18,7 +18,6 @@ const app = express();
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
-app.use(passport.session());
 
 pool.connect((error, client) => {
   checkConfig(error);
@@ -26,7 +25,20 @@ pool.connect((error, client) => {
   app.get("/", (req, res) => res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/home.html'));
   app.get("/login", (req, res) => res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/log.html'));
 
+  app.post("/login", passport.authenticate('local', {session: false, failureRedirect: '/login'}), (req, res, next) => {
+    const user = req.user;
 
+    Reflect.deleteProperty(user, "password");
+    Reflect.deleteProperty(user, "member_since");
+    Reflect.deleteProperty(user, "status");
+    Object.assign(user, {iat: Date.now()})
+
+    return jwt.sign(user, process.env.JWT_SECRET, {expiresIn: '1d'}, (err, token) => {
+      if (err) return res.status(500).redirect('/login');
+
+      return res.json({success: true, user: user, token});
+    })
+  });
 
   app.get("/register", (req, res) => {
     res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/reg.html')
