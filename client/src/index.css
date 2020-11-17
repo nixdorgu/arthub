@@ -130,27 +130,49 @@ header a {
     border: 1px solid red;
 }
 
+button {
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    outline: none;
+}
+
+.user-type-selection {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: .5rem 0;
+    max-width: 500px;
+}
+
 .user-type-selection-btn-group {
     box-shadow: 1px 1px 2px 1px #ccc;
     margin: .5rem 0;
 }
 
-.user-type-selection-btn-group button.active{
+.user-type-selection-btn-group button.active, .user-type-selection #signup{
     background-color: #000055;
     color: #fff;
 }
 
 .user-type-selection-btn-group button {
     background-color: #fff;
-    border: none;
-    border-radius: 0px;
     color: #000;
-    cursor: pointer;
-    display: inline-block;
     padding: 1.25vh 6vw;
-    outline: none;
 }
 
 .user-type-selection-btn-group button#hire {
-    border-right: 1px solid #000;
+    border-right: 1px solid #ccc;
+}
+
+.user-type-selection #signup {
+    box-shadow: 1px 1px 2px 1px #ccc;
+    padding: 1.25vh 5vw;
+    margin-top: 5vh;
+    width: 100%;
+}
+
+.user-type-selection-btn-group.authentication {
+    width: 100%;
 }
