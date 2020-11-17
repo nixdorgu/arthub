@@ -118,6 +118,14 @@ header a {
     flex-direction: column;
 }
 
+.form-element {
+    padding-bottom: .8rem;
+}
+
 .form-element input{
     padding: .3rem 1rem;
+}
+
+.form-element input:invalid{
+    border: 1px solid red;
 }
