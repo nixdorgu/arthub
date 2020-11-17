@@ -105,3 +105,19 @@ header a {
 .location {
     font-size: 1.2rem;
 }
+
+/* FORMS */
+.form {
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+}
+
+.form, .form-element {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-element input{
+    padding: .3rem 1rem;
+}
