@@ -38,7 +38,7 @@ function Signup() {
   // TODO: refine regex patterns and add error message + custom styling
   return (
     <div className="form">
-      <form method="POST" className="signup-form" style={{width: "60%", maxWidth: "500px"}}>
+      <form method="POST" className="signup-form" onSubmit={signup}>
         <div className="form-element">
           <label>First Name</label>
           <input type="text" id="firstName" name="firstName" pattern="^\D+\s*" required />
@@ -66,15 +66,15 @@ function Signup() {
         <div  className="user-type-selection">
           <p className="user-selection-prompt">I want to: </p>
           <div className="row user-type-selection-btn-group">
-              <button id="hire" onClick={selectUserType}>Hire</button>
+              <button id="hire" className="active" onClick={selectUserType}>Hire</button>
               <button id="work" onClick={selectUserType}>Work</button>
           </div>
-          <button id="signup" type="submit" onClick={signup}>
+          <button id="signup" type="submit">
           Create an Account
         </button>
         <div className="row center user-type-selection-btn-group authentication">
-              <button id="facebook"><span>Continue with <i class="fa fa-facebook"/></span></button>
-              <button id="twitter"><span>Continue with <i class="fa fa-google"/></span></button>
+              <button type="submit" id="facebook"><span>Continue with <i class="fa fa-facebook"/></span></button>
+              <button type="submit" id="twitter"><span>Continue with <i class="fa fa-google"/></span></button>
           </div>
         </div>
       </form>
