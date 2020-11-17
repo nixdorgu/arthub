@@ -55,12 +55,22 @@ pool.connect((error, client) => {
     const { firstName, lastName, email, password, isArtist } = req.body;
 
     bcrypt.hash(password, 12, (hashError, hashedPassword) => {
-      if (hashError) return res.status(500).redirect("/register");
+      if (hashError) return res.status(500).json({success: "false", error: "Something went wrong."});
 
       client.query('SELECT email FROM users WHERE email = $1', [email], (error, duplicate) => {
         if (error || duplicate.rows.length != 0) {
           return res.status(409).json({success: "false", error: "Email already in use."})
         } else {
+          const userClassification = isArtist ? "artist": "customer";
+
+          const onError = (res, dbError, result) => {
+            if (dbError) return res.status(500).json({success: false, error: "Something went wrong."});
+
+            const user = result.rows[0];
+            const name = `${user.first_name} ${user.last_name}`;
+            return res.json({success: true, user: {name}});
+          }
+
           client.query(
             "INSERT INTO users VALUES (DEFAULT, $1, $2, $3, $4, DEFAULT, DEFAULT, $5) RETURNING *",
             [firstName, lastName, email, hashedPassword, userClassification],
@@ -68,7 +78,7 @@ pool.connect((error, client) => {
           );
         }
       });
-    });
+    })
   });
 
   app.get('/api/artists/:id', (req, res) => {});
