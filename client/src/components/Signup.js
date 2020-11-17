@@ -25,55 +25,59 @@ function Signup() {
     }
   }
 
-  const styles = {
-    backgroundColor: "#fff",
-    // border: "none",
-    cursor: "pointer",
-    display: "inline-block",
-    padding: "1.25vh 5vw",
-    outline: "none",
-  };
+  const signup = () => {
+    const firstName = document.querySelector('#firstName');
+    const lastName = document.querySelector('#lastName').value;
+    const email = document.querySelector('#email').value;
+    const password = document.querySelector('#password').value;
 
-  const signup = () => {};
+    console.log(firstName)
+    console.log(firstName.value, lastName, email, password)
+  };
 
   // TODO: refine regex patterns and add error message + custom styling
   return (
     <div className="form">
-      <div className="signup-form" style={{width: "60%", maxWidth: "500px"}}>
+      <form method="POST" className="signup-form" style={{width: "60%", maxWidth: "500px"}}>
         <div className="form-element">
           <label>First Name</label>
-          <input type="text" id="firstName" pattern="^\D+\s*" required />
+          <input type="text" id="firstName" name="firstName" pattern="^\D+\s*" required />
         </div>
         <div className="form-element">
           <label>Last Name</label>
-          <input type="text" id="lastName" pattern="^\D+\s*" required />
+          <input type="text" id="lastName" name="lastName" pattern="^\D+\s*" required />
         </div>
         <div className="form-element">
           <label>Email</label>
-          <input type="email" id="email" required />
+          <input type="email" id="email" name="email" required />
         </div>
         <div className="form-element">
           <label>Password</label>
           <input
             type="password"
             id="password"
+            name="password"
             minLength="8"
             maxLength="15"
             placeholder="Create a password"
             required
           />
         </div>
-      </div>
-      <div  className="user-type-selection" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "60%", maxWidth: "500px", paddingBottom: ".5rem"}}>
-        <p style={{ textAlign: "center" }}>I want to: </p>
-        <div className="row user-type-selection-btn-group">
-            <button id="hire" onClick={selectUserType}>Hire</button>
-            <button id="work" onClick={selectUserType}>Work</button>
-        </div>
-      </div>
-        <button style={styles} onClick={signup}>
+        <div  className="user-type-selection">
+          <p className="user-selection-prompt">I want to: </p>
+          <div className="row user-type-selection-btn-group">
+              <button id="hire" onClick={selectUserType}>Hire</button>
+              <button id="work" onClick={selectUserType}>Work</button>
+          </div>
+          <button id="signup" type="submit" onClick={signup}>
           Create an Account
         </button>
+        <div className="row center user-type-selection-btn-group authentication">
+              <button id="facebook"><span>Continue with <i class="fa fa-facebook"/></span></button>
+              <button id="twitter"><span>Continue with <i class="fa fa-google"/></span></button>
+          </div>
+        </div>
+      </form>
     </div>
   );
 }
