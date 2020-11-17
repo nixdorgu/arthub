@@ -37,9 +37,14 @@ function Signup() {
 
     xhr.onreadystatechange = () => {
       if (xhr.readyState === 4) {
-        // if (xhr.status === 200) {
+        if (xhr.status === 200) {
           alert(xhr.responseText)
-        // }
+          // Navigate to login
+        } else if (xhr.status === 409) {
+          // Email in use
+        } else {
+          // Something went wrong
+        }
       }
     }
 
