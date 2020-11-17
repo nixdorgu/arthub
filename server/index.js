@@ -25,7 +25,7 @@ pool.connect((error, client) => {
   app.get("/", (req, res) => res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/home.html'));
   app.get("/login", (req, res) => res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/log.html'));
 
-  app.post("/login", passport.authenticate('local', {session: false, failureRedirect: '/login'}), (req, res, next) => {
+  app.post("/api/login", passport.authenticate('local', {session: false, failureRedirect: '/api/login'}), (req, res, next) => {
     const user = req.user;
 
     Reflect.deleteProperty(user, "password");
@@ -33,43 +33,46 @@ pool.connect((error, client) => {
     Reflect.deleteProperty(user, "status");
     Object.assign(user, {iat: Date.now()})
 
-    return jwt.sign(user, process.env.JWT_SECRET, {expiresIn: '1d'}, (err, token) => {
-      if (err) return res.status(500).redirect('/login');
+    return req.login(user, {session: false}, (error) => {
+      if (error) {
+        return res.redirect(500, '/login');
+      } else {
+        jwt.sign(user, process.env.JWT_SECRET, {expiresIn: '1d'}, (err, token) => {
+          if (err) return res.status(500).redirect('/login');
+          return res.cookie('Authorization', `Bearer ${token}`, {expires: new Date(Date.now() + 86400) , httpOnly: true});
+        })
 
-      return res.json({success: true, user: user, token});
+        return res.status(200).json({success: true, user: user})
+      }
     })
   });
 
-  app.get("/register", (req, res) => {
+  app.get("/api/register", (req, res) => {
     res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/reg.html')
   });
 
-  app.post("/register", (req, res) => {
-    const { firstName, lastName, email, password } = req.body;
+  app.post("/api/register", (req, res) => {
+    const { firstName, lastName, email, password, isArtist } = req.body;
 
     bcrypt.hash(password, 12, (hashError, hashedPassword) => {
       if (hashError) return res.status(500).redirect("/register");
 
-      // check for duplicate email
       client.query('SELECT email FROM users WHERE email = $1', [email], (error, duplicate) => {
         if (error || duplicate.rows.length != 0) {
-          return res.status(500).redirect("/register");
+          return res.status(409).json({success: "false", error: "Email already in use."})
         } else {
           client.query(
-            "INSERT INTO users VALUES (DEFAULT, $1, $2, $3, $4, DEFAULT, DEFAULT) RETURNING *",
-            [firstName, lastName, email, hashedPassword],
-            (dbError, result) => {
-              if (dbError) return res.status(500).redirect("/register");
-              res.redirect('/login');
-            }
+            "INSERT INTO users VALUES (DEFAULT, $1, $2, $3, $4, DEFAULT, DEFAULT, $5) RETURNING *",
+            [firstName, lastName, email, hashedPassword, userClassification],
+            (dbError, result) => onError(res, dbError, result)
           );
         }
       });
     });
   });
 
-  app.get('/artists/:id', (req, res) => {});
-  
+  app.get('/api/artists/:id', (req, res) => {});
+
   app.listen(port, () => {
     initPassport(passport, client);
     console.log(`Server is listening on http://localhost:${port}`);
