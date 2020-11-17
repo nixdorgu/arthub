@@ -22,9 +22,13 @@ app.use(passport.initialize());
 pool.connect((error, client) => {
   checkConfig(error);
   
+  // protected - not logged in
   app.get("/", (req, res) => res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/home.html'));
+
+  // protected - not logged in
   app.get("/login", (req, res) => res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/log.html'));
 
+  // protected - not logged in
   app.post("/api/login", passport.authenticate('local', {session: false, failureRedirect: '/api/login'}), (req, res, next) => {
     const user = req.user;
 
@@ -47,10 +51,12 @@ pool.connect((error, client) => {
     })
   });
 
+  // protected - not logged in
   app.get("/api/register", (req, res) => {
     res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/reg.html')
   });
 
+  // protected - not logged in
   app.post("/api/register", (req, res) => {
     const { firstName, lastName, email, password, isArtist } = req.body;
 
