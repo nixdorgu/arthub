@@ -129,3 +129,28 @@ header a {
 .form-element input:invalid{
     border: 1px solid red;
 }
+
+.user-type-selection-btn-group {
+    box-shadow: 1px 1px 2px 1px #ccc;
+    margin: .5rem 0;
+}
+
+.user-type-selection-btn-group button.active{
+    background-color: #000055;
+    color: #fff;
+}
+
+.user-type-selection-btn-group button {
+    background-color: #fff;
+    border: none;
+    border-radius: 0px;
+    color: #000;
+    cursor: pointer;
+    display: inline-block;
+    padding: 1.25vh 6vw;
+    outline: none;
+}
+
+.user-type-selection-btn-group button#hire {
+    border-right: 1px solid #000;
+}
