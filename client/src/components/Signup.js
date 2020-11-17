@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-// import { Button, ButtonGroup } from "@material-ui/core";
-// import { Button, ButtonGroup } from "@material-ui/lab";
 
 function Signup() {
   const [artist, setArtist] = useState(false);
@@ -25,17 +23,34 @@ function Signup() {
     }
   }
 
-  const signup = () => {
-    const firstName = document.querySelector('#firstName');
+  const signup = (e) => {
+    e.preventDefault();
+
+    const firstName = document.querySelector('#firstName').value;
     const lastName = document.querySelector('#lastName').value;
     const email = document.querySelector('#email').value;
     const password = document.querySelector('#password').value;
+    const isArtist = artist;
 
-    console.log(firstName)
-    console.log(firstName.value, lastName, email, password)
+    const data = {firstName, lastName, email, password, isArtist}
+    const xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === 4) {
+        // if (xhr.status === 200) {
+          alert(xhr.responseText)
+        // }
+      }
+    }
+
+    xhr.open('POST', '/api/register');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify(data))
   };
 
   // TODO: refine regex patterns and add error message + custom styling
+  // TODO: email already in use error
+
   return (
     <div className="form">
       <form method="POST" className="signup-form" onSubmit={signup}>
