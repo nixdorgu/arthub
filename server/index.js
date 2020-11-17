@@ -81,7 +81,22 @@ pool.connect((error, client) => {
     })
   });
 
+  // protected
+  app.get('api/profile', (req, res) => {
+    res.send('Profile')
+  });
+
+  // protected
   app.get('/api/artists/:id', (req, res) => {});
+
+  // protected
+  app.get('/api/transactions', (req, res) => {});
+
+  // protected
+  app.get('/api/transactions/:id', (req, res) => {});
+  
+  // protected
+  app.post('/api/logout', (req, res) => {})
 
   app.listen(port, () => {
     initPassport(passport, client);
