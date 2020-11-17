@@ -74,7 +74,7 @@ pool.connect((error, client) => {
 
             const user = result.rows[0];
             const name = `${user.first_name} ${user.last_name}`;
-            return res.json({success: true, user: {name}});
+            return res.status(200).json({success: true, user: {name}});
           }
 
           client.query(
