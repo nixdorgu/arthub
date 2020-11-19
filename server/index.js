@@ -32,6 +32,8 @@ pool.connect((error, client) => {
   app.post("/api/login", passport.authenticate('local', {session: false, failureRedirect: '/api/login'}), (req, res, next) => {
     const user = req.user;
 
+    if (JSON.stringify(user) === JSON.stringify({})) return res.status(401).json({success: false, error: "Incorrect credentials."})
+
     Reflect.deleteProperty(user, "password");
     Reflect.deleteProperty(user, "member_since");
     Reflect.deleteProperty(user, "status");
@@ -39,10 +41,10 @@ pool.connect((error, client) => {
 
     return req.login(user, {session: false}, (error) => {
       if (error) {
-        return res.redirect(500, '/login');
+        return res.status(500).json({success: false, error: "Something went wrong"});
       } else {
         return jwt.sign(user, process.env.JWT_SECRET, {expiresIn: '1d'}, (err, token) => {
-          if (err) return res.status(500).redirect('/login');
+          if (err) return res.status(500).json({success: false, error: "Something went wrong"});
           return res.status(200).json({token});
         })
       }
