@@ -41,12 +41,10 @@ pool.connect((error, client) => {
       if (error) {
         return res.redirect(500, '/login');
       } else {
-        jwt.sign(user, process.env.JWT_SECRET, {expiresIn: '1d'}, (err, token) => {
+        return jwt.sign(user, process.env.JWT_SECRET, {expiresIn: '1d'}, (err, token) => {
           if (err) return res.status(500).redirect('/login');
-          return res.cookie('Authorization', `Bearer ${token}`, {expires: new Date(Date.now() + 86400) , httpOnly: true});
+          return res.status(200).json({token});
         })
-
-        return res.status(200).json({success: true, user: user})
       }
     })
   });
