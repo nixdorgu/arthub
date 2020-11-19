@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 
 const initPassport = require("./config/passport.config");
 const checkConfig = require("./config/envError");
+const { use } = require("passport");
 
 dotenv.config();
 
@@ -69,10 +70,26 @@ pool.connect((error, client) => {
         } else {
           const userClassification = isArtist ? "artist": "customer";
 
-          const createReferenceToArtist = (user) => {
-            const id = user.id;
+          const onSuccessfulRegistration = (res, user) => {
+            const name = user.first_name + ' ' + user.last_name;
+
+            Object.assign(user, {name});
+
+            Reflect.deleteProperty(user, "user_id");
+            Reflect.deleteProperty(user, "first_name");
+            Reflect.deleteProperty(user, "last_name");
+            Reflect.deleteProperty(user, "password");
+            Reflect.deleteProperty(user, "status");
+            Reflect.deleteProperty(user, "user_classification");
+            
+            return res.status(200).json({success: true, user});
+          }
+
+          const createReferenceToArtist = (res, user) => {
+            const id = user.user_id;
             return client.query('INSERT INTO artists (artist_id) VALUES ($1)', [id], (error, result) => {
-              if (error) return res.status(500).json({success: false}); 
+              if (error) return res.status(500).json({success: false});
+              return onSuccessfulRegistration(res, user);
             });
           }
 
@@ -80,11 +97,7 @@ pool.connect((error, client) => {
             if (dbError) return res.status(500).json({success: false, error: "Something went wrong."});
 
             const user = result.rows[0];
-            const name = `${user.first_name} ${user.last_name}`;
-
-            if (user.user_classification === 'artist') createReferenceToArtist(user);
-
-            return res.status(200).json({success: true, user: {name}});
+            return user.user_classification !== 'artist' ? onSuccessfulRegistration(res, user): createReferenceToArtist(res, user);
           }
 
           client.query(
