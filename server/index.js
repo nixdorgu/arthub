@@ -69,19 +69,22 @@ pool.connect((error, client) => {
         } else {
           const userClassification = isArtist ? "artist": "customer";
 
-          const onError = (res, dbError, result) => {
-            if (dbError) return res.status(500).json({success: false, error: "Something went wrong."});
-
-            const user = result.rows[0];
-            const name = `${user.first_name} ${user.last_name}`;
-            return res.status(200).json({success: true, user: {name}});
-          }
-
           const createReferenceToArtist = (user) => {
             const id = user.id;
             return client.query('INSERT INTO artists (artist_id) VALUES ($1)', [id], (error, result) => {
               if (error) return res.status(500).json({success: false}); 
             });
+          }
+
+          const onError = (res, dbError, result) => {
+            if (dbError) return res.status(500).json({success: false, error: "Something went wrong."});
+
+            const user = result.rows[0];
+            const name = `${user.first_name} ${user.last_name}`;
+
+            if (user.user_classification === 'artist') createReferenceToArtist(user);
+
+            return res.status(200).json({success: true, user: {name}});
           }
 
           client.query(
