@@ -77,6 +77,13 @@ pool.connect((error, client) => {
             return res.status(200).json({success: true, user: {name}});
           }
 
+          const createReferenceToArtist = (user) => {
+            const id = user.id;
+            return client.query('INSERT INTO artists (artist_id) VALUES ($1)', [id], (error, result) => {
+              if (error) return res.status(500).json({success: false}); 
+            });
+          }
+
           client.query(
             "INSERT INTO users VALUES (DEFAULT, $1, $2, $3, $4, DEFAULT, DEFAULT, $5) RETURNING *",
             [firstName, lastName, email, hashedPassword, userClassification],
