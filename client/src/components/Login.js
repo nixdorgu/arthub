@@ -4,6 +4,33 @@ import { setUserSession } from "../utils/Tokens";
 function Login() {
 
   const handleLogin = (e) => {
+    e.preventDefault();
+
+    const email = document.querySelector("#email").value;
+    const password = document.querySelector("#password").value;
+
+    const data = { email, password };
+    const xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === 4) {
+        const response = JSON.parse(xhr.responseText);
+
+        // alert(xhr.responseText)
+        if (xhr.status === 200) {
+          setUserSession(response.token);
+          // Navigate to home page
+        } else if (xhr.status === 401) {
+          // Incorrect credentials [snackbar]
+        } else {
+          // Something went wrong [snackbar]
+        }
+      }
+    };
+
+    xhr.open("POST", "/api/login");
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(data));
   };
 
   return (
