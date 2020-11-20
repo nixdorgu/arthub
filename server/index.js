@@ -126,6 +126,20 @@ pool.connect((error, client) => {
   // protected
   app.post('/api/logout', (req, res) => {})
 
+  app.post('/api/verify', (req, res) => {
+    const {token} = req.body;
+
+    jwt.verify(token, process.env.JWT_SECRET, {}, (error, authentic) => {
+      if (error) return res.json({success: false, message: "Invalid token."})
+
+      if (authentic.exp < Date.now()) {
+        // refresh token here
+      }
+
+      res.json({success: true, user: authentic});
+    });
+  })
+
   app.listen(port, () => {
     initPassport(passport, client);
     console.log(`Server is listening on http://localhost:${port}`);
