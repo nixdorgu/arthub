@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, Link} from "react-router-dom";
 import Facade from "../utils/Facade";
 import { setUserSession } from "../utils/Tokens";
 
@@ -34,6 +34,7 @@ function Login() {
         <div className="form-element">
           <label>Password</label>
           <input type="password" id="password" name="password" required />
+          <Link to="/register" className="form-link">Don't have an account?</Link>
         </div>
         <div className="user-type-selection">
           <button id="login" type="submit">
