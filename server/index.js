@@ -8,7 +8,6 @@ const jwt = require("jsonwebtoken");
 
 const initPassport = require("./config/passport.config");
 const checkConfig = require("./config/envError");
-const { use } = require("passport");
 
 dotenv.config();
 
