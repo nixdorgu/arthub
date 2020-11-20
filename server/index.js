@@ -30,10 +30,10 @@ pool.connect((error, client) => {
   app.get("/login", (req, res) => res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/log.html'));
 
   // protected - not logged in
-  app.post("/api/login", passport.authenticate('local', {session: false, failureRedirect: '/api/login'}), (req, res, next) => {
+  app.post("/api/login", passport.authenticate('local', {session: false}), (req, res, next) => {
     const user = req.user;
 
-    if (JSON.stringify(user) === JSON.stringify({})) return res.status(401).json({success: false, error: "Incorrect credentials."})
+    if (JSON.stringify(user) === JSON.stringify({})) return res.status(401).json({success: false, message: "Incorrect credentials."})
 
     Reflect.deleteProperty(user, "password");
     Reflect.deleteProperty(user, "member_since");
@@ -62,7 +62,7 @@ pool.connect((error, client) => {
     const { firstName, lastName, email, password, isArtist } = req.body;
 
     bcrypt.hash(password, 12, (hashError, hashedPassword) => {
-      if (hashError) return res.status(500).json({success: "false", error: "Something went wrong."});
+      if (hashError) return res.status(500).json({success: "false", message: "Something went wrong."});
 
       client.query('SELECT email FROM users WHERE email = $1', [email], (error, duplicate) => {
         if (error || duplicate.rows.length != 0) {
@@ -94,7 +94,7 @@ pool.connect((error, client) => {
           }
 
           const onError = (res, dbError, result) => {
-            if (dbError) return res.status(500).json({success: false, messge: "Something went wrong."});
+            if (dbError) return res.status(500).json({success: false, message: "Something went wrong."});
 
             const user = result.rows[0];
             return user.user_classification !== 'artist' ? onSuccessfulRegistration(res, user): createReferenceToArtist(res, user);
