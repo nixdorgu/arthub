@@ -151,7 +151,7 @@ button {
     margin: .5rem 0;
 }
 
-.user-type-selection-btn-group button.active, .user-type-selection #signup{
+.user-type-selection-btn-group button.active, .user-type-selection #signup, .user-type-selection #login {
     background-color: #000055;
     color: #fff;
 }
@@ -166,11 +166,15 @@ button {
     border-right: 1px solid #ccc;
 }
 
-.user-type-selection #signup {
+.user-type-selection #signup, .user-type-selection #login {
     box-shadow: 1px 1px 2px 1px #ccc;
     padding: 1.25vh 5vw;
     margin-top: 5vh;
     width: 100%;
+}
+
+.user-type-selection #login {
+    margin-top: 0;
 }
 
 .user-type-selection-btn-group.authentication {
