@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { setUserSession } from "../utils/Tokens";
 
-function Login(props) {
-  
+function Login() {
+
   const handleLogin = (e) => {
   };
 
