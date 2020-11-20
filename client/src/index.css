@@ -130,6 +130,10 @@ header a {
     border: 1px solid red;
 }
 
+.login-form > .form-element input {
+    border: 1px solid #000;
+}
+
 button {
     border: none;
     cursor: pointer;
