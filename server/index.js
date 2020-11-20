@@ -42,10 +42,10 @@ pool.connect((error, client) => {
 
     return req.login(user, {session: false}, (error) => {
       if (error) {
-        return res.status(500).json({success: false, error: "Something went wrong"});
+        return res.status(500).json({success: false, message: "Something went wrong"});
       } else {
         return jwt.sign(user, process.env.JWT_SECRET, {expiresIn: '1d'}, (err, token) => {
-          if (err) return res.status(500).json({success: false, error: "Something went wrong"});
+          if (err) return res.status(500).json({success: false, message: "Something went wrong"});
           return res.status(200).json({token});
         })
       }
@@ -66,7 +66,7 @@ pool.connect((error, client) => {
 
       client.query('SELECT email FROM users WHERE email = $1', [email], (error, duplicate) => {
         if (error || duplicate.rows.length != 0) {
-          return res.status(409).json({success: "false", error: "Email already in use."})
+          return res.status(409).json({success: "false", message: "Email already in use."})
         } else {
           const userClassification = isArtist ? "artist": "customer";
 
@@ -94,7 +94,7 @@ pool.connect((error, client) => {
           }
 
           const onError = (res, dbError, result) => {
-            if (dbError) return res.status(500).json({success: false, error: "Something went wrong."});
+            if (dbError) return res.status(500).json({success: false, messge: "Something went wrong."});
 
             const user = result.rows[0];
             return user.user_classification !== 'artist' ? onSuccessfulRegistration(res, user): createReferenceToArtist(res, user);
