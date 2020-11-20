@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Redirect, Link} from "react-router-dom";
 
 function Signup() {
   const [artist, setArtist] = useState(false);
@@ -89,6 +90,7 @@ function Signup() {
               <button id="hire" className="active" onClick={selectUserType}>Hire</button>
               <button id="work" onClick={selectUserType}>Work</button>
           </div>
+          <Link to="/login" className="form-link">Already have an account?</Link>
           <button id="signup" type="submit">
           Create an Account
         </button>
