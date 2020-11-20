@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Facade from "../utils/Facade";
 import { setUserSession } from "../utils/Tokens";
 
 function Login() {
@@ -10,27 +11,13 @@ function Login() {
     const password = document.querySelector("#password").value;
 
     const data = { email, password };
-    const xhr = new XMLHttpRequest();
 
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState === 4) {
-        const response = JSON.parse(xhr.responseText);
-
-        // alert(xhr.responseText)
-        if (xhr.status === 200) {
-          setUserSession(response.token);
-          // Navigate to home page
-        } else if (xhr.status === 401) {
-          // Incorrect credentials [snackbar]
-        } else {
-          // Something went wrong [snackbar]
-        }
-      }
-    };
-
-    xhr.open("POST", "/api/login");
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(JSON.stringify(data));
+    new Facade().post('/api/login', data, (success) => {
+      setUserSession(success.token);
+    }, (error) => {
+      alert(error.message)
+      // snackbar of response.message
+    });
   };
 
   return (
