@@ -134,6 +134,14 @@ header a {
     border: 1px solid #000;
 }
 
+.form-link {
+    align-self: flex-end;
+    color: #050505;
+    font-size: .8rem;
+    text-decoration: underline;
+    padding-top: .2rem;
+}
+
 button {
     border: none;
     cursor: pointer;
