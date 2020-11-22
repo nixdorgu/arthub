@@ -163,7 +163,7 @@ button {
     margin: .5rem 0;
 }
 
-.user-type-selection-btn-group button.active, .user-type-selection #signup, .user-type-selection #login {
+.user-type-selection-btn-group button.active, .user-type-selection #signup, .user-type-selection #login, button.search {
     background-color: #000055;
     color: #fff;
 }
@@ -191,4 +191,34 @@ button {
 
 .user-type-selection-btn-group.authentication {
     width: 100%;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100vw;
+    height: 100%;
+}
+
+.app-logo {
+    height: 40vmin;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .app-logo {
+      animation: app-logo-spin infinite 20s linear;
+    }
+}
+
+@keyframes app-logo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
 }
