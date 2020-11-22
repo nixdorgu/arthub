@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState} from 'react';
 import { Redirect } from 'react-router';
 import { AuthContext } from '../AuthContext';
+import LoadingIndicator from './LoadingIndicator';
 
 function Home() {
   const ctx = useContext(AuthContext);
@@ -31,8 +32,11 @@ function Home() {
   }, []); 
 
     return (
-        <div style={{display: "flex", flexDirection: "column", alignItems: "center", flexWrap: "wrap"}}>
-          {/* {ctx.authenticated ? null : <Redirect to="/login"/>} */}
+      <>
+        {ctx.authenticated ? null : <Redirect to="/login"/>}
+
+        {data.length > 0 ? (
+          <div style={{display: "flex", flexDirection: "column", alignItems: "center", flexWrap: "wrap"}}>
           <div style={{display: "flex"}}>
               <input type="text" placeholder="Search for artists, genres, etc"></input>
               
@@ -46,7 +50,12 @@ function Home() {
               </div>   
             })}
           </div>
-        </div>
+          </div>
+        ) : (
+          <LoadingIndicator/>
+        )}
+        
+        </>
     );
 }
 
