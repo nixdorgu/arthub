@@ -17,7 +17,19 @@ export default class Facade {
         xhr.send(JSON.stringify(data));
     }
 
-    get() {
+    get(url, success, error) {
+      const xhr = new XMLHttpRequest();
 
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          const response = JSON.parse(xhr.responseText);
+          
+          if (xhr.status === 200) return success(response);
+          else return error(response);
+        }
+      };
+  
+      xhr.open("GET", url);
+      xhr.send();
     }
 }
