@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { Redirect, Link} from "react-router-dom";
+import { AuthContext } from "../AuthContext";
 import Facade from "../utils/Facade";
 import { setUserSession } from "../utils/Tokens";
 
 function Login() {
-
-  const [loggedIn, setLoggedIn] = useState(false); // replace upon implementation of redux
+  const ctx = useContext(AuthContext);
   const handleLogin = (e) => {
     e.preventDefault();
 
@@ -15,7 +15,7 @@ function Login() {
     const data = { email, password };
 
     new Facade().post('/api/login', data, (success) => {
-      setLoggedIn(true);
+      ctx.setAuthenticated(true);
       setUserSession(success.token);
     }, (error) => {
       alert(error.message)
@@ -25,7 +25,7 @@ function Login() {
 
   return (
     <div className="form">
-        {loggedIn ? <Redirect to="/"/> : null}
+        {ctx.authenticated ? <Redirect to="/"/> : null}
       <form method="POST" className="login-form" onSubmit={handleLogin}>
         <div className="form-element">
           <label>Email</label>
