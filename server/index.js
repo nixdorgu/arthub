@@ -115,6 +115,14 @@ pool.connect((error, client) => {
   });
 
   // protected
+  app.get('/api/artists', (req, res) => {
+    client.query("SELECT user_id, CONCAT(first_name, ' ', last_name) AS name, email, biography FROM users INNER JOIN artists ON user_id = artist_id", (error, result) => {
+      if (error) return res.status(500).json({success: false, message: "Something went wrong."});
+
+      return res.status(200).json(result.rows);
+    })
+  });
+
   app.get('/api/artists/:id', (req, res) => {});
 
   // protected
@@ -133,6 +141,7 @@ pool.connect((error, client) => {
       if (error) return res.json({success: false, message: "Invalid token."})
 
       if (authentic.exp < Date.now()) {
+        // res.json({success: false, message: "Expired token."})
         // refresh token here
       }
 
