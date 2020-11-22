@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter as Router, Route} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -8,6 +8,7 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import Profile from './components/Profile';
 import { AuthProvider } from './context/AuthContext';
+import PageNotFound from './components/PageNotFound';
 
 function App() {
     return (
@@ -16,10 +17,13 @@ function App() {
                 <div className="grid-container">
                     <Header/>
                     <main>
-                        <Route exact path="/" component={Home}></Route>
-                        <Route exact path="/login" component={Login}></Route>
-                        <Route exact path="/register" component={Signup}></Route>
-                        <Route exact path="/profile" component={() => <Profile props={{name: "Kira"}}/>}></Route>
+                        <Switch>
+                            <Route exact path="/" component={Home}></Route>
+                            <Route exact path="/login" component={Login}></Route>
+                            <Route exact path="/register" component={Signup}></Route>
+                            <Route exact path="/profile" component={() => <Profile props={{name: "Kira"}}/>}/>
+                            <Route component={PageNotFound}/>
+                        </Switch>
                     </main>
                     <Footer/>
                 </div>
