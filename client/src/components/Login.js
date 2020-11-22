@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Redirect, Link} from "react-router-dom";
-import { AuthContext } from "../AuthContext";
+import { AuthContext } from "../context/AuthContext";
 import Facade from "../utils/Facade";
 import { setUserSession } from "../utils/Tokens";
 
@@ -43,12 +43,12 @@ function Login() {
           <div className="row center user-type-selection-btn-group authentication">
             <button type="submit" id="facebook">
               <span>
-                Login with <i class="fa fa-facebook" />
+                Login with <i className="fa fa-facebook" />
               </span>
             </button>
             <button type="submit" id="twitter">
               <span>
-                Login with <i class="fa fa-google" />
+                Login with <i className="fa fa-google" />
               </span>
             </button>
           </div>
