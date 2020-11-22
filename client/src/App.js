@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {BrowserRouter as Router, Route} from 'react-router-dom';
 
 import Header from './components/Header';
@@ -7,13 +7,12 @@ import Home from './components/Home';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Profile from './components/Profile';
-import { AuthContext } from './AuthContext';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
-    const [authenticated, setAuthenticated] = useState(false);
     return (
         <Router>
-            <AuthContext.Provider value={{authenticated, setAuthenticated}}>
+            <AuthProvider>
                 <div className="grid-container">
                     <Header/>
                     <main>
@@ -24,7 +23,7 @@ function App() {
                     </main>
                     <Footer/>
                 </div>
-            </AuthContext.Provider>
+            </AuthProvider>
         </Router>
     );
 }
