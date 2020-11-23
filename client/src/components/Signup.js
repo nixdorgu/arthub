@@ -55,6 +55,7 @@ function Signup() {
   return (
     <div className="form">
       {ctx.authenticated ? <Redirect to="/"/> : null}
+      {registered ? <Redirect to="/login"/> : null}
       <form method="POST" className="signup-form" onSubmit={signup}>
         <div className="form-element">
           <label>First Name</label>
