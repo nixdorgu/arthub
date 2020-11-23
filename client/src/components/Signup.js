@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Redirect, Link} from "react-router-dom";
+import {AuthContext} from '../context/AuthContext'
 
 function Signup() {
+  const ctx = useContext(AuthContext);
   const [artist, setArtist] = useState(false);
 
   const toggleButtonElement = (activeId, inactiveId) => {
@@ -59,6 +61,7 @@ function Signup() {
 
   return (
     <div className="form">
+      {ctx.authenticated ? <Redirect to="/"/> : null}
       <form method="POST" className="signup-form" onSubmit={signup}>
         <div className="form-element">
           <label>First Name</label>
