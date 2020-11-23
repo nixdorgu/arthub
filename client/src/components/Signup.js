@@ -1,10 +1,12 @@
 import React, { useState, useContext } from "react";
 import { Redirect, Link} from "react-router-dom";
 import {AuthContext} from '../context/AuthContext'
+import Facade from '../utils/Facade'
 
 function Signup() {
   const ctx = useContext(AuthContext);
   const [artist, setArtist] = useState(false);
+  const [registered, setRegistered] = useState(false);
 
   const toggleButtonElement = (activeId, inactiveId) => {
     document.querySelector(`#${activeId}`).classList.add('active');
@@ -36,24 +38,15 @@ function Signup() {
     const isArtist = artist;
 
     const data = {firstName, lastName, email, password, isArtist}
-    const xhr = new XMLHttpRequest();
 
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          alert(xhr.responseText)
-          // Navigate to login
-        } else if (xhr.status === 409) {
-          // Email in use
-        } else {
-          // Something went wrong
-        }
-      }
-    }
-
-    xhr.open('POST', '/api/register');
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(JSON.stringify(data))
+    new Facade().post('/api/register', data, (success) => {
+      setRegistered(true);
+    },
+    (error) => {
+      // 409 - email in use
+      // else something went wrong - snackbar/modal
+      alert(error.message)
+    });
   };
 
   // TODO: refine regex patterns and add error message + custom styling
