@@ -95,8 +95,8 @@ function Signup() {
           Create an Account
         </button>
         <div className="row center user-type-selection-btn-group authentication">
-              <button type="submit" id="facebook"><span>Continue with <i class="fa fa-facebook"/></span></button>
-              <button type="submit" id="twitter"><span>Continue with <i class="fa fa-google"/></span></button>
+              <button type="submit" id="facebook"><span>Continue with <i className="fa fa-facebook"/></span></button>
+              <button type="submit" id="twitter"><span>Continue with <i className="fa fa-google"/></span></button>
           </div>
         </div>
       </form>
