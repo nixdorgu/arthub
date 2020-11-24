@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState} from 'react';
 import { Redirect } from 'react-router';
-import { AuthContext } from '../AuthContext';
+import { AuthContext } from '../context/AuthContext';
 import LoadingIndicator from './LoadingIndicator';
 
 function Home() {
