@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 
 const initPassport = require("./config/passport.config");
 const checkConfig = require("./config/envError");
+const formatPayload = require('./src/formatPayload');
 
 dotenv.config();
 
@@ -24,14 +25,11 @@ pool.connect((error, client) => {
   
   // protected - not logged in
   app.post("/api/login", passport.authenticate('local', {session: false}), (req, res, next) => {
-    const user = req.user;
+    let user = req.user;
 
     if (JSON.stringify(user) === JSON.stringify({})) return res.status(401).json({success: false, message: "Incorrect credentials."})
 
-    Reflect.deleteProperty(user, "password");
-    Reflect.deleteProperty(user, "member_since");
-    Reflect.deleteProperty(user, "status");
-    Object.assign(user, {iat: Date.now()})
+    user = formatPayload(user);
 
     return req.login(user, {session: false}, (error) => {
       if (error) {
