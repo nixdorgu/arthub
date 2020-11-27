@@ -23,12 +23,6 @@ pool.connect((error, client) => {
   checkConfig(error);
   
   // protected - not logged in
-  app.get("/", (req, res) => res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/home.html'));
-
-  // protected - not logged in
-  app.get("/login", (req, res) => res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/log.html'));
-
-  // protected - not logged in
   app.post("/api/login", passport.authenticate('local', {session: false}), (req, res, next) => {
     const user = req.user;
 
@@ -49,11 +43,6 @@ pool.connect((error, client) => {
         })
       }
     })
-  });
-
-  // protected - not logged in
-  app.get("/api/register", (req, res) => {
-    res.sendFile('C:/Users/Acer/Documents/Code/arthub/server/pages/reg.html')
   });
 
   // protected - not logged in
@@ -138,14 +127,14 @@ pool.connect((error, client) => {
     const {token} = req.body;
 
     jwt.verify(token, process.env.JWT_SECRET, {}, (error, authentic) => {
-      if (error) return res.json({success: false, message: "Invalid token."})
+      if (error) return res.status(403).json({success: false, message: "Invalid token."})
 
       if (authentic.exp < Date.now()) {
         // res.json({success: false, message: "Expired token."})
         // refresh token here
       }
 
-      res.json({success: true, user: authentic});
+      res.status(200).json({success: true, user: authentic});
     });
   })
 
