@@ -2,6 +2,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import Message from "./Message";
 
 // wala footer dapat diri
+function scrollLastMessageIntoView() {
+  const list = document.querySelectorAll(".message");
+  const element = list[list.length - 1];
+  element.scrollIntoView({ smooth: true });
+}
+
 export default function Messages() {
   const [data, setData] = useState([
     {
@@ -45,7 +51,7 @@ export default function Messages() {
     },
   ]);
 
-  useEffect(() => {}, []);
+  useEffect(() => scrollLastMessageIntoView(), [data]);
 
   // TODO: make scroll down auto
   return (
