@@ -19,8 +19,8 @@ function Header() {
         </div>
       ) : (
         <div>
-          <Link to="/artists">Profile</Link>
-          <Link to="/login">Messages</Link>
+          <Link to="/profile">Profile</Link>
+          <Link to="/messages">Messages</Link>
           <Link to="/login">Random Link Here</Link>
         </div>
       )}
