@@ -50,6 +50,7 @@ export default function Messages() {
       timestamp: new Date(2020, 10, 20, 15, 55).toLocaleString(),
     },
   ]);
+  const [input, setInput] = useState('');
 
   useEffect(() => scrollLastMessageIntoView(), [data]);
 
@@ -62,7 +63,7 @@ export default function Messages() {
       ))}
       {/* </div> */}
       <div className="message-form">
-        <input className="message-input" />
+        <input className="message-input" value={input} onChange={(e) => setInput(e.target.value)}/>
         <button
           className="send-message"
           onClick={() => {
@@ -71,7 +72,7 @@ export default function Messages() {
               {
                 user_id: 7,
                 sender_id: 7,
-                content: document.querySelector(".message-input").value,
+                content: input,
                 timestamp: new Date().toLocaleString(),
               },
             ]);
