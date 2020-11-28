@@ -163,7 +163,7 @@ button {
     margin: .5rem 0;
 }
 
-.user-type-selection-btn-group button.active, .user-type-selection #signup, .user-type-selection #login, button.search {
+.user-type-selection-btn-group button.active, .user-type-selection #signup, .user-type-selection #login, button.search, .send-message {
     background-color: #000055;
     color: #fff;
 }
@@ -178,7 +178,7 @@ button {
     border-right: 1px solid #ccc;
 }
 
-.user-type-selection #signup, .user-type-selection #login {
+.user-type-selection #signup, .user-type-selection #login, .send-message {
     box-shadow: 1px 1px 2px 1px #ccc;
     padding: 1.25vh 5vw;
     margin-top: 5vh;
@@ -221,4 +221,59 @@ button {
     to {
       transform: rotate(360deg);
     }
+}
+
+/* Messages */
+
+/* .messages {
+    display: grid;
+    grid-template-columns: 30% 70%;
+} */
+
+.message {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 1em 0;
+}
+
+.left.message {
+    align-items: flex-start;
+}
+
+.right.message {
+    align-items: flex-end;
+    
+}
+
+.message-proper {
+    border-radius: 5px;
+    background-color: #dedee4;
+    padding: 1em;
+    margin-bottom: .2em;
+    max-width: 40vw;
+}
+
+.right > .message-proper {
+    background-color: #d6d6f5;
+}
+
+.message-timestamp {
+    font-size: small;
+}
+
+.message-form {
+    display: flex;
+}
+
+/* make like mssngr */
+.message-input {
+    padding: .2em;
+    width: 100%;
+    overflow: scroll;
+}
+
+.send-message {
+    margin: 0;
+    width: max-content;
 }
