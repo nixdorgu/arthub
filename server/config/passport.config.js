@@ -17,6 +17,8 @@ function initPassport (passport, client) {
                 return done(null, {}, {message: 'Incorrect credentials'});
             }
 
+            if (user.rows[0]['status'] !== 'active') return done(null, {}, {message: 'Account suspended'})
+
             return done(null, user.rows[0]);
         })
     }
