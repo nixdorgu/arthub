@@ -1,4 +1,5 @@
-import React, {useEffect, useState } from "react";
+import React, {useContext, useEffect, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
 import Message from "./Message";
 
 // wala footer dapat diri
@@ -51,6 +52,7 @@ export default function Messages() {
     },
   ]);
   const [input, setInput] = useState('');
+  const user = useContext(AuthContext).user;
 
   useEffect(() => scrollLastMessageIntoView(), [data]);
 
@@ -66,17 +68,7 @@ export default function Messages() {
         <input className="message-input" value={input} onChange={(e) => setInput(e.target.value)}/>
         <button
           className="send-message"
-          onClick={() => {
-            setData([
-              ...data,
-              {
-                user_id: 7,
-                sender_id: 7,
-                content: input,
-                timestamp: new Date().toLocaleString(),
-              },
-            ]);
-          }}
+          onClick={() => {}}
         >
           Send
         </button>
