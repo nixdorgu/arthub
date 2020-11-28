@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {useEffect, useState } from "react";
 import Message from "./Message";
 
 // wala footer dapat diri
@@ -53,7 +53,6 @@ export default function Messages() {
 
   useEffect(() => scrollLastMessageIntoView(), [data]);
 
-  // TODO: make scroll down auto
   return (
     <div className="messages">
       {/* <SidePanel /> */}
