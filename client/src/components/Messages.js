@@ -54,6 +54,18 @@ export default function Messages() {
   const [input, setInput] = useState('');
   const user = useContext(AuthContext).user;
 
+  
+  function sendMessage(user, content) {
+    const message = {
+      user_id: user['id'],
+      sender_id: user['id'],
+      content: content,
+      timestamp: new Date().toLocaleString()
+    }
+
+    setData([...data, message])
+  }
+
   useEffect(() => scrollLastMessageIntoView(), [data]);
 
   return (
