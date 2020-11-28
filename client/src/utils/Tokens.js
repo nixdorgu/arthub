@@ -1,12 +1,12 @@
 export const getToken = () => {
-  return localStorage.getItem("token") || null;
+  return localStorage.getItem("arthub_token") || null;
 };
 
 export const removeToken = () => {
-  localStorage.removeItem("token");
+  localStorage.removeItem("arthub_token");
   localStorage.removeItem("user");
 };
 
 export const setToken = (token) => {
-  localStorage.setItem("token", token);
+  localStorage.setItem("arthub_token", token);
 };
