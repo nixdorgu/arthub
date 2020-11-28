@@ -4,13 +4,14 @@ import {getToken} from '../utils/Tokens';
 
 export const AuthContext = createContext({
     authenticated: false,
+    user: {},
     setAuthenticated: null,
 });
 
 
 export function AuthProvider ({children}) {
     const [authenticated, setAuthenticated] = useState(false);
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState({});
 
     function getAuthState() {
         const token = getToken();
@@ -44,7 +45,7 @@ export function AuthProvider ({children}) {
     }, []);
     
     return (
-        <AuthContext.Provider value={{authenticated, setAuthenticated}}>
+        <AuthContext.Provider value={{authenticated, setAuthenticated, user}}>
             {children}
         </AuthContext.Provider>
     )
