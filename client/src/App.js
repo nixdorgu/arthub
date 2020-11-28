@@ -9,6 +9,7 @@ import Signup from './components/Signup';
 import Profile from './components/Profile';
 import { AuthProvider } from './context/AuthContext';
 import PageNotFound from './components/PageNotFound';
+import Messages from './components/Messages';
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                             <Route exact path="/login" component={Login}></Route>
                             <Route exact path="/register" component={Signup}></Route>
                             <Route exact path="/profile" component={() => <Profile props={{name: "Kira"}}/>}/>
+                            <Route exact path="/messages" component={Messages}/>
                             <Route component={PageNotFound}/>
                         </Switch>
                     </main>
