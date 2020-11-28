@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Redirect, Link} from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import Facade from "../utils/Facade";
-import { setUserSession } from "../utils/Tokens";
+import { setToken } from "../utils/Tokens";
 
 function Login() {
   const ctx = useContext(AuthContext);
@@ -16,7 +16,7 @@ function Login() {
 
     new Facade().post('/api/login', data, (success) => {
       ctx.setAuthenticated(true);
-      setUserSession(success.token);
+      setToken(success.token);
     }, (error) => {
       alert(error.message)
       // snackbar of response.message

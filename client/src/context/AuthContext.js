@@ -42,7 +42,7 @@ export function AuthProvider ({children}) {
 
     useEffect(() => {
         getAuthState();
-    }, []);
+    }, [authenticated]);
     
     return (
         <AuthContext.Provider value={{authenticated, setAuthenticated, user}}>
