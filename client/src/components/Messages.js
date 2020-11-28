@@ -80,7 +80,7 @@ export default function Messages() {
         <input className="message-input" value={input} onChange={(e) => setInput(e.target.value)}/>
         <button
           className="send-message"
-          onClick={() => {}}
+          onClick={() => sendMessage(user, input)}
         >
           Send
         </button>
