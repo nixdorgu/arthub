@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
+const http = require('http');
 
 const initPassport = require("./config/passport.config");
 const checkConfig = require("./config/envError");
@@ -15,6 +16,7 @@ dotenv.config();
 const pool = new pg.Pool(JSON.parse(process.env.DATABASE_CONFIG));
 const port = process.env.PORT ?? 3000;
 const app = express();
+const server = http.createServer(app);
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -25,6 +27,7 @@ pool.connect((error, client) => {
   
   // protected - not logged in
   app.post("/api/login", passport.authenticate('local', {session: false}), (req, res, next) => {
+    // try console req and see if error message shows up
     let user = req.user;
 
     if (JSON.stringify(user) === JSON.stringify({})) return res.status(401).json({success: false, message: "Incorrect credentials."})
@@ -136,7 +139,7 @@ pool.connect((error, client) => {
     });
   })
 
-  app.listen(port, () => {
+  server.listen(port, () => {
     initPassport(passport, client);
     console.log(`Server is listening on http://localhost:${port}`);
   });
