@@ -10,25 +10,28 @@ import Profile from './components/Profile';
 import { AuthProvider } from './context/AuthContext';
 import PageNotFound from './components/PageNotFound';
 import Messages from './components/Messages';
+import { SocketProvider } from './context/SocketProvider';
 
 function App() {
     return (
         <Router>
             <AuthProvider>
-                <div className="grid-container">
-                    <Header/>
-                    <main>
-                        <Switch>
-                            <Route exact path="/" component={Home}></Route>
-                            <Route exact path="/login" component={Login}></Route>
-                            <Route exact path="/register" component={Signup}></Route>
-                            <Route exact path="/profile" component={() => <Profile props={{name: "Kira"}}/>}/>
-                            <Route exact path="/messages" component={Messages}/>
-                            <Route component={PageNotFound}/>
-                        </Switch>
-                    </main>
-                    <Footer/>
-                </div>
+                <SocketProvider>
+                    <div className="grid-container">
+                        <Header/>
+                        <main>
+                            <Switch>
+                                <Route exact path="/" component={Home}></Route>
+                                <Route exact path="/login" component={Login}></Route>
+                                <Route exact path="/register" component={Signup}></Route>
+                                <Route exact path="/profile" component={() => <Profile props={{name: "Kira"}}/>}/>
+                                <Route exact path="/messages" component={Messages}/>
+                                <Route component={PageNotFound}/>
+                            </Switch>
+                        </main>
+                        <Footer/>
+                    </div>
+                </SocketProvider>
             </AuthProvider>
         </Router>
     );
