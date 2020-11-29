@@ -26,6 +26,7 @@ function App() {
                                 <Route exact path="/register" component={Signup}></Route>
                                 <Route exact path="/profile" component={() => <Profile props={{name: "Kira"}}/>}/>
                                 <Route exact path="/messages" component={Messages}/>
+                                <Route exact path="/messages/:room" component={Messages}/>
                                 <Route component={PageNotFound}/>
                             </Switch>
                         </main>
