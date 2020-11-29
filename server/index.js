@@ -201,7 +201,12 @@ pool.connect((error, client) => {
 
   // protected
   app.post("/api/messages", (req, res) => {
+    const {room_id, sender_id, content, timestamp} = req.body;
+    client.query(`INSERT INTO messages VALUES ($1, $2, $3, $4)`, [room_id, sender_id, content, timestamp], (error, result) => {
+      if (error) return res.status(500).json({message: "Something went wrong"});
 
+      return res.status(200).json({message: "Message successfully sent!"})
+    });
   });
 
   // protected
