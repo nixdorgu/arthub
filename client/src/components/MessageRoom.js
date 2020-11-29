@@ -77,6 +77,7 @@ const [loading, setLoading] = useState(true);
     new Facade().post('/api/messages', message, (response) => {}, (error) => {})
     // send to database
 
+    message.timestamp = message.timestamp.toLocaleString();
     setData([...data, message])
   }
 
