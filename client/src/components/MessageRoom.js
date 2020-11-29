@@ -10,9 +10,9 @@ import Message from "./Message";
 // wala footer dapat diri
 function scrollLastMessageIntoView() {
   const list = document.querySelectorAll(".message");
+  const element = list[list.length - 1];
 
-  if (list.length > 0) {
-    const element = list[list.length - 1];
+  if (element) {
     element.scrollIntoView({ smooth: true });
   }
 }
@@ -34,9 +34,14 @@ const [loading, setLoading] = useState(true);
       timestamp: new Date()
     }
 
-    new Facade().post('/api/messages', message, (response) => {}, (error) => {})
+    new Facade().post('/api/messages', message, (response) => {
+      console.log(response)
+    }, (error) => {
+      console.log(error)
+    })
     // send to database
 
+    scrollLastMessageIntoView()
     message.timestamp = message.timestamp.toLocaleString();
     setData([...data, message])
   }
@@ -50,7 +55,7 @@ const [loading, setLoading] = useState(true);
         setError(error);
       })
       scrollLastMessageIntoView()
-    }, [data, room]);
+    }, [room]);
 
   return (
     <div className="messages">
