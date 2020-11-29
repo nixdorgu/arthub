@@ -19,47 +19,7 @@ function scrollLastMessageIntoView() {
 
 export default function MessageRoom() {
   const {room} = useParams();
-  const [data, setData] = useState([
-    {
-      user_id: 7,
-      sender_id: 5,
-      content: "I am not okay with this",
-      timestamp: new Date(2020, 10, 20, 15, 30).toLocaleString(),
-    },
-    {
-      user_id: 7,
-      sender_id: 7,
-      content: "How come",
-      timestamp: new Date(2020, 10, 20, 15, 31).toLocaleString(),
-    },
-    {
-      user_id: 7,
-      sender_id: 5,
-      content: "Di ko sure",
-      timestamp: new Date(2020, 10, 20, 15, 55).toLocaleString(),
-    },
-    {
-      user_id: 7,
-      sender_id: 5,
-      content:
-        "Di ko sure kung gaano man gid ko sa kabuhi ko pro oks lang ina, okay?",
-      timestamp: new Date(2020, 10, 20, 15, 55).toLocaleString(),
-    },
-    {
-      user_id: 7,
-      sender_id: 7,
-      content:
-        "Di ko sure kung gaano man gid ko sa kabuhi ko pro oks lang ina, okay?",
-      timestamp: new Date(2020, 10, 20, 15, 55).toLocaleString(),
-    },
-    {
-      user_id: 7,
-      sender_id: 7,
-      content:
-        "Di ko sure kung gaano man gid ko sa kabuhi ko pro oks lang ina, okay?",
-      timestamp: new Date(2020, 10, 20, 15, 55).toLocaleString(),
-    },
-  ]);
+  const [data, setData] = useState([]);
   const [input, setInput] = useState('');
   const [error, setError] = useState(null);
 const [loading, setLoading] = useState(true);
@@ -94,10 +54,9 @@ const [loading, setLoading] = useState(true);
 
   return (
     <div className="messages">
-      {/* <SidePanel /> */}
       {/* <div> */}
       {loading ? <LoadingIndicator/> : null}
-      {error? <Redirect to="/messages"/> : null }
+      {error ? <Redirect to="/messages"/> : null }
       {data.map((data, index) => (
         <Message key={index} props={data} />
       ))}
