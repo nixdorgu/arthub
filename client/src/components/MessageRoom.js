@@ -85,6 +85,7 @@ const [loading, setLoading] = useState(true);
       new Facade().get(`/api/messages/room/${room}`, (response) => {
           setData(response);
       }, (error) => {
+        
       })
       scrollLastMessageIntoView()
     }, [data, room]);
@@ -93,6 +94,8 @@ const [loading, setLoading] = useState(true);
     <div className="messages">
       {/* <SidePanel /> */}
       {/* <div> */}
+      {loading ? <LoadingIndicator/> : null}
+      {error? <Redirect to="/messages"/> : null }
       {data.map((data, index) => (
         <Message key={index} props={data} />
       ))}
