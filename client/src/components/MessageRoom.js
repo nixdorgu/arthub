@@ -1,6 +1,7 @@
-import React, {useContext, useEffect, useState } from "react";
+import React, {useContext, useEffect, useMemo, useState } from "react";
 import {Redirect, useParams} from 'react-router-dom';
 import { AuthContext } from "../context/AuthContext";
+import { useSocket } from "../context/SocketProvider";
 import Facade from "../utils/Facade";
 import LoadingIndicator from "./LoadingIndicator";
 import Message from "./Message";
@@ -25,6 +26,20 @@ export default function MessageRoom() {
 const [loading, setLoading] = useState(true);
 
   const user = useContext(AuthContext).user;
+  const socket = useSocket();
+
+  function fetchMessages(room) {
+    return new Facade().get(`/api/messages/room/${room}`, (response) => {
+      setData(response);
+      setLoading(false);
+      setTimeout(() => fetchMessages(room), 3000); // end-to-end communication with less requests per min than adding dep
+      console.log(response)
+    }, (error) => {
+      // show message
+      console.log(error)
+      setError(error);
+    });
+  }
 
   function sendMessage(user, content) {
     const message = {
@@ -47,15 +62,9 @@ const [loading, setLoading] = useState(true);
   }
 
   useEffect(() => {
-      new Facade().get(`/api/messages/room/${room}`, (response) => {
-        setData(response);
-        setLoading(false);
-      }, (error) => {
-        // show message
-        setError(error);
-      })
+      fetchMessages(room);
       scrollLastMessageIntoView()
-    }, [room]);
+  }, [room]);
 
   return (
     <div className="messages">
