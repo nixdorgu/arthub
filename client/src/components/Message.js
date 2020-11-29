@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Message({props}) {
-  const { user_id, sender_id, content, timestamp } = props;
+  const user = useContext(AuthContext).user;
+  const {sender_id, content, timestamp } = props;
 
   return (
-    <div className={sender_id === user_id ? "right message" : "left message"}>
+    <div className={sender_id === user.id ? "right message" : "left message"}>
       <div className="message-proper">
         <div className="message-content">{content}</div>
       </div>
