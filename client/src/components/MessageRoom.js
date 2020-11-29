@@ -61,6 +61,9 @@ export default function MessageRoom() {
     },
   ]);
   const [input, setInput] = useState('');
+  const [error, setError] = useState(null);
+const [loading, setLoading] = useState(true);
+
   const user = useContext(AuthContext).user;
 
   function sendMessage(user, content) {
