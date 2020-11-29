@@ -7,7 +7,6 @@ const bcrypt = require("bcrypt");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const http = require("http");
-const io = require('socket.io');
 
 const initPassport = require("./config/passport.config");
 const checkConfig = require("./config/envError");
@@ -19,6 +18,7 @@ const pool = new pg.Pool(JSON.parse(process.env.DATABASE_CONFIG));
 const port = process.env.PORT ?? 3000;
 const app = express();
 const server = http.createServer(app);
+const io = require('socket.io')(server);
 
 app.use(express.json());
 app.use(cors());
@@ -188,7 +188,24 @@ pool.connect((error, client) => {
 
   server.listen(port, () => {
     initPassport(passport, client);
-    io().listen(server);
+    // io().listen(server);
     console.log(`Server is listening on http://localhost:${port}`);
   });
 });
+
+io.on('connection', socket => {
+  const id = socket.handshake.query.id; // pass query : {id} in client to get this
+  socket.join(id);
+
+  // research again about how websockets might be replaced and figure out if this is out of date or?
+  // structure in accordance to db so what you get back is ids and only 2 ppl ergo .filter only and not for each
+  socket.on('send-message', ({recipients, content}) => {
+    recipients.forEach(recipient => {
+      const newRecipients = recipients.filter(user => user !== recipient);
+      newRecipients.push(id); // person sending
+      socket.broadcast.to(recipient).emit('receive-message', {
+        recipients: newRecipients, sender: id, content
+      }); // send signal to receive message to person !== sender
+    });
+  })
+})
