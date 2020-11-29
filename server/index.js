@@ -183,20 +183,25 @@ pool.connect((error, client) => {
 
   // protected
   app.get("/api/messages/room/:room", (req, res) => {
-    const room = req.params.room;
-    client.query('SELECT * FROM messages WHERE $1 = room_id', [room], (err, result) => {
-      if (err) {
-        return res.status(500).json({message: 'Something wrong happened.'})
-      }
+    const room_id = req.params.room;
 
-      return res.status(200).json(result.rows)
+    // valid room
+    return client.query('SELECT * FROM message_rooms WHERE $1 = room_id', [room_id], (roomError, room) => {
+      if(roomError || room.rows.length === 0) return res.status(404).json({message: "Room not found."});
+
+      return client.query('SELECT * FROM messages WHERE $1 = room_id', [room_id], (err, result) => {
+        if (err) {
+          return res.status(500).json({message: 'Something wrong happened.'})
+        }
+  
+        return res.status(200).json(result.rows)
+      })
     })
   });
 
   // protected
   app.post("/api/messages", (req, res) => {
-    console.log(req.body);
-    // const [sender_id, content, timestamp] = req.body;
+
   });
 
   // protected
@@ -239,12 +244,12 @@ io.on('connection', socket => {
 
   // research again about how websockets might be replaced and figure out if this is out of date or?
   // structure in accordance to db so what you get back is ids and only 2 ppl ergo .filter only and not for each
-  socket.on('send-message', ({recipients, content}) => {
+  socket.on('send-message', ({recipients, content, timestamp}) => {
     recipients.forEach(recipient => {
       const newRecipients = recipients.filter(user => user !== recipient);
       newRecipients.push(id); // person sending
       socket.broadcast.to(recipient).emit('receive-message', {
-        recipients: newRecipients, sender: id, content
+        recipients: newRecipients, sender: id, content, timestamp
       }); // send signal to receive message to person !== sender
     });
   })
