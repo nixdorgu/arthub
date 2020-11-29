@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require('cors');
 const bodyParser = require("body-parser");
 const pg = require("pg");
 const dotenv = require("dotenv");
@@ -19,6 +20,7 @@ const app = express();
 const server = http.createServer(app);
 
 app.use(express.json());
+app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 
