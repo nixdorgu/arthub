@@ -1,6 +1,8 @@
 import React, {useContext, useEffect, useState } from "react";
+import {Redirect, useParams} from 'react-router-dom';
 import { AuthContext } from "../context/AuthContext";
 import Facade from "../utils/Facade";
+import LoadingIndicator from "./LoadingIndicator";
 import Message from "./Message";
 
 // sticky nav
@@ -8,11 +10,15 @@ import Message from "./Message";
 // wala footer dapat diri
 function scrollLastMessageIntoView() {
   const list = document.querySelectorAll(".message");
-  const element = list[list.length - 1];
-  element.scrollIntoView({ smooth: true });
+
+  if (list.length > 0) {
+    const element = list[list.length - 1];
+    element.scrollIntoView({ smooth: true });
+  }
 }
 
-export default function MessageRoom({room}) {
+export default function MessageRoom() {
+  const {room} = useParams();
   const [data, setData] = useState([
     {
       user_id: 7,
@@ -57,14 +63,12 @@ export default function MessageRoom({room}) {
   const [input, setInput] = useState('');
   const user = useContext(AuthContext).user;
 
-  
   function sendMessage(user, content) {
     const message = {
-      // need room id
-      user_id: user['id'],
+      room_id: room,
       sender_id: user['id'],
       content: content,
-      timestamp: new Date().toLocaleString()
+      timestamp: new Date()
     }
 
     new Facade().post('/api/messages', message, (response) => {}, (error) => {})
@@ -74,10 +78,9 @@ export default function MessageRoom({room}) {
   }
 
   useEffect(() => {
-      new Facade().get(`/api/messages/${room}`, (response) => {
-          alert(response)
+      new Facade().get(`/api/messages/room/${room}`, (response) => {
+          setData(response);
       }, (error) => {
-          alert(error)
       })
       scrollLastMessageIntoView()
     }, [data, room]);
