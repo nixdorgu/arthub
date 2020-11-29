@@ -10,7 +10,7 @@ export default function Message({props}) {
       <div className="message-proper">
         <div className="message-content">{content}</div>
       </div>
-      <p className="message-timestamp">{timestamp.toString()}</p>
+      <p className="message-timestamp">{new Date(timestamp).toLocaleString()}</p>
     </div>
   );
 }
