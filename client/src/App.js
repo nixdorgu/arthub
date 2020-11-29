@@ -11,13 +11,11 @@ import { AuthProvider } from './context/AuthContext';
 import PageNotFound from './components/PageNotFound';
 import Messages from './components/Messages';
 import MessageRoom from './components/MessageRoom';
-import { SocketProvider } from './context/SocketProvider';
 
 function App() {
     return (
         <Router>
             <AuthProvider>
-                <SocketProvider>
                     <div className="grid-container">
                         <Header/>
                         <main>
@@ -33,7 +31,6 @@ function App() {
                         </main>
                         <Footer/>
                     </div>
-                </SocketProvider>
             </AuthProvider>
         </Router>
     );

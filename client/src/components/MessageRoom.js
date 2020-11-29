@@ -1,7 +1,6 @@
-import React, {useContext, useEffect, useMemo, useState } from "react";
+import React, {useContext, useEffect, useState } from "react";
 import {Redirect, useParams} from 'react-router-dom';
 import { AuthContext } from "../context/AuthContext";
-import { useSocket } from "../context/SocketProvider";
 import Facade from "../utils/Facade";
 import LoadingIndicator from "./LoadingIndicator";
 import Message from "./Message";
@@ -26,7 +25,6 @@ export default function MessageRoom() {
 const [loading, setLoading] = useState(true);
 
   const user = useContext(AuthContext).user;
-  const socket = useSocket();
 
   function fetchMessages(room) {
     return new Facade().get(`/api/messages/room/${room}`, (response) => {
