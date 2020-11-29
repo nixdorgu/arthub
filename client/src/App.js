@@ -10,6 +10,7 @@ import Profile from './components/Profile';
 import { AuthProvider } from './context/AuthContext';
 import PageNotFound from './components/PageNotFound';
 import Messages from './components/Messages';
+import MessageRoom from './components/MessageRoom';
 import { SocketProvider } from './context/SocketProvider';
 
 function App() {
@@ -26,7 +27,7 @@ function App() {
                                 <Route exact path="/register" component={Signup}></Route>
                                 <Route exact path="/profile" component={() => <Profile props={{name: "Kira"}}/>}/>
                                 <Route exact path="/messages" component={Messages}/>
-                                <Route exact path="/messages/:room" component={Messages}/>
+                                <Route path="/messages/:room" component={MessageRoom}/>
                                 <Route component={PageNotFound}/>
                             </Switch>
                         </main>
