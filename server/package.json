@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "node index.js",
+    "devStart": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
