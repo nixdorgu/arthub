@@ -83,9 +83,11 @@ const [loading, setLoading] = useState(true);
 
   useEffect(() => {
       new Facade().get(`/api/messages/room/${room}`, (response) => {
-          setData(response);
+        setData(response);
+        setLoading(false);
       }, (error) => {
-        
+        // show message
+        setError(error);
       })
       scrollLastMessageIntoView()
     }, [data, room]);
