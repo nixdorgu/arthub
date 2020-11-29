@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const http = require("http");
+const io = require('socket.io');
 
 const initPassport = require("./config/passport.config");
 const checkConfig = require("./config/envError");
@@ -187,6 +188,7 @@ pool.connect((error, client) => {
 
   server.listen(port, () => {
     initPassport(passport, client);
+    io().listen(server);
     console.log(`Server is listening on http://localhost:${port}`);
   });
 });
