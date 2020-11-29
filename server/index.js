@@ -18,10 +18,17 @@ const pool = new pg.Pool(JSON.parse(process.env.DATABASE_CONFIG));
 const port = process.env.PORT ?? 3000;
 const app = express();
 const server = http.createServer(app);
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {
+  cors: {
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST']
+  }
+});
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:5000', ],
+}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 
@@ -158,6 +165,39 @@ pool.connect((error, client) => {
   });
 
   app.get("/api/artists/:id", (req, res) => {});
+
+  // protected
+  app.get("/api/messages/:id", (req, res) => {
+    const id = req.params.id;
+
+    client.query("SELECT room.room_id, room.user_id, CONCAT(users.first_name, ' ', users.last_name) AS user_name, room.artist_id, (SELECT CONCAT(first_name,' ', last_name) FROM users WHERE user_id = room.artist_id) AS artist_name FROM message_rooms AS room INNER JOIN users USING(user_id) WHERE $1 = room.user_id OR $1 = room.artist_id", [id], (err, result) => {
+      if (err) {
+        return res.status(500).json({message: 'Something wrong happened.'})
+      }
+
+      console.log(result.rows)
+      return res.status(200).json(result.rows)
+    })
+    // const [sender_id, content, timestamp] = req.body;
+  });
+
+  // protected
+  app.get("/api/messages/room/:room", (req, res) => {
+    const room = req.params.room;
+    client.query('SELECT * FROM messages WHERE $1 = room_id', [room], (err, result) => {
+      if (err) {
+        return res.status(500).json({message: 'Something wrong happened.'})
+      }
+
+      return res.status(200).json(result.rows)
+    })
+  });
+
+  // protected
+  app.post("/api/messages", (req, res) => {
+    console.log(req.body);
+    // const [sender_id, content, timestamp] = req.body;
+  });
 
   // protected
   app.get("/api/transactions", (req, res) => {});
