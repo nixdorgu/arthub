@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cd server/src && npm install && jest",
+    "test": "cd server/src && npm install && npm test",
     "commit": "cz"
   },
   "author": "Anike Dorgu",
