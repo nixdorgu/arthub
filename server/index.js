@@ -163,16 +163,16 @@ pool.connect((error, client) => {
   app.get("/api/messages/:id", (req, res) => {
     const id = req.params.id;
 
-    const fields = {
-      userName: `CONCAT(users.first_name, ' ', users.last_name) AS user_name`,
-      artistName: `(SELECT CONCAT(first_name,' ', last_name) FROM users WHERE user_id = room.artist_id) AS artist_name`,
-      lastMessage: `(SELECT content FROM messages WHERE room_id = room.room_id ORDER BY timestamp DESC LIMIT 1) AS last_message`,
-      sentAt: `(SELECT timestamp FROM messages WHERE room_id = room.room_id ORDER BY timestamp DESC LIMIT 1) AS sent_at`,
-      sentBy: `(SELECT sender_id FROM messages WHERE room_id = room.room_id ORDER BY timestamp DESC LIMIT 1) AS sent_by`
-    }
-
-    const query = `SELECT room.room_id, room.user_id, room.artist_id, ${fields.userName}, ${fields.artistName}, ${fields.lastMessage}, ${fields.sentBy}, ${fields.sentAt}
-    FROM message_rooms AS room INNER JOIN users USING(user_id) WHERE EXISTS ${fields.lastMessage} AND $1 = room.user_id OR $1 = room.artist_id 
+    const query = `SELECT room.room_id, room.user_id,
+    CONCAT(users.first_name, ' ', users.last_name) AS user_name,
+    room.artist_id,
+    (SELECT CONCAT(first_name,' ', last_name) FROM users WHERE user_id = room.artist_id) AS artist_name,
+    (SELECT content FROM messages WHERE room_id = room.room_id ORDER BY timestamp DESC LIMIT 1) AS last_message,
+    (SELECT sender_id FROM messages WHERE room_id = room.room_id ORDER BY timestamp DESC LIMIT 1) AS sent_by,
+    (SELECT timestamp FROM messages WHERE room_id = room.room_id ORDER BY timestamp DESC LIMIT 1) AS sent_at 
+    FROM message_rooms AS room INNER JOIN users USING(user_id)
+    WHERE EXISTS (SELECT content FROM messages WHERE room_id = room.room_id ORDER BY timestamp DESC LIMIT 1) 
+    AND $1 = room.user_id OR $1 = room.artist_id 
     ORDER BY sent_at DESC;`
 
     client.query(query, [id], (err, result) => {
@@ -180,10 +180,8 @@ pool.connect((error, client) => {
         return res.status(500).json({message: 'Something wrong happened.'})
       }
 
-      console.log(result.rows)
       return res.status(200).json(result.rows)
     })
-    // const [sender_id, content, timestamp] = req.body;
   });
 
   // protected
