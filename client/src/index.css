@@ -34,7 +34,7 @@ main {
     padding: 1rem;
 }
 
-.grid-container {
+/* .grid-container {
     display: grid;
     grid-template-areas: 
     'header header'
@@ -43,6 +43,15 @@ main {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: 5rem 1fr 3rem;
     height: 100%;
+} */
+.grid-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.grid-container > main {
+    min-height: calc(100vh - 5rem);
 }
 
 /* COMMON */
@@ -223,13 +232,84 @@ button {
     }
 }
 
-/* Messages */
+/* Message Component */
 
-/* .messages {
-    display: grid;
-    grid-template-columns: 30% 70%;
-} */
+.messages {
+    display: flex;
+    flex-direction: column;
+}
 
+.messages .room-link {
+    border-radius: 6px;
+    box-shadow: 1px 1px 1px 1px #c4c4c4;
+    margin: .5rem 0;
+    padding: .8rem;
+}
+.messages .room-link:hover{
+    box-shadow: 1px 1px 1px 1px #000055;
+}
+
+.messages .room {
+    color: #050505;
+    padding: 0;
+    margin: 0;
+}
+
+@keyframes on-load {
+    from {
+        opacity: 0%;
+    } to {
+        background-color: #fff;
+        opacity: 100%;
+    }
+}
+
+.messages .room-recipient {
+    background-color: #fff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    padding: .2rem 0;
+}
+
+.messages .room-content {
+    background-color: #fff;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+}
+
+.messages .room-content > .room-message {
+    flex: 60%;
+    font-size: medium;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    animation: on-load 2s;
+
+}
+
+.messages .room-content > .room-timestamp {
+    flex: 40%;
+    display: flex;
+    justify-content: flex-end;
+    font-size: x-small;
+    padding: 0;
+    margin: 0;
+    animation: on-load 2s;
+
+}
+
+@media screen and (min-width: 600px) {
+    /* .messages .room-content > .room-message {
+        flex: 70%;
+    }
+    
+    .messages .room-content > .room-timestamp {
+        flex: 30%;
+    } */
+}
+
+/* Message Component */
 .message {
     display: flex;
     flex-direction: column;
@@ -252,6 +332,8 @@ button {
     padding: 1em;
     margin-bottom: .2em;
     max-width: 40vw;
+    word-break: break-word;
+    line-break: auto;
 }
 
 .right > .message-proper {
