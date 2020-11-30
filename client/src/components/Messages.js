@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useState } from "react";
+import React, {useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import Facade from "../utils/Facade";
 import {Link} from "react-router-dom";
@@ -32,13 +32,13 @@ export default function Messages() {
       {
         rooms.length > 0 ? (
           rooms.map((data, index) => (
-            <Link to={`/messages/${data.room_id}`} key={index}>
+            <Link to={`/messages/${data.room_id}`} key={index} className="room-link">
               {/* MessageRoom */}
               <div className="room" key={index} style={{width: "100%",background: "#ccc"}}>
-                <p>{showRecipient(data, user.id)} <span>{user.id !== data.user_id ? data.user_id : data.artist_id}</span></p>
+                <p className="room-recipient">{showRecipient(data, user.id)}</p>
                 <div className="room-content">
-                  <p>{data.last_message}</p>
-                  <p>{data.sent_at}</p>
+                  <p className="room-message">{data.last_message}</p>
+                  <p className="room-timestamp">{new Date(data.sent_at).toLocaleString()}</p>
                 </div>
               </div>
             </Link>
