@@ -31,6 +31,10 @@ export default function Messages() {
               {/* MessageRoom */}
               <div className="room" key={index} style={{width: "100%",background: "#ccc"}}>
                 <p>{showRecipient(data, user.id)} <span>{user.id !== data.user_id ? data.user_id : data.artist_id}</span></p>
+                <div className="room-content">
+                  <p>{data.last_message}</p>
+                  <p>{data.sent_at}</p>
+                </div>
               </div>
             </Link>
           ))
