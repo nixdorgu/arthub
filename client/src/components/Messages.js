@@ -3,6 +3,7 @@ import { AuthContext } from "../context/AuthContext";
 import Facade from "../utils/Facade";
 import {Link} from "react-router-dom";
 import NoMessages from "./states/NoMessages";
+import showRecipient from "../tests/showRecipient";
 
 export default function Messages() {
   const [rooms, setRooms] = useState([]);
@@ -29,7 +30,7 @@ export default function Messages() {
             <Link to={`/messages/${data.room_id}`} key={index}>
               {/* MessageRoom */}
               <div className="room" key={index} style={{width: "100%",background: "#ccc"}}>
-                <p>{user.id !== data.user_id ? data.user_name : data.artist_name} <span>{user.id !== data.user_id ? data.user_id : data.artist_id}</span></p>
+                <p>{showRecipient(data, user.id)} <span>{user.id !== data.user_id ? data.user_id : data.artist_id}</span></p>
               </div>
             </Link>
           ))
