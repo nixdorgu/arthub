@@ -16,7 +16,7 @@ function Header() {
     const children = navlinks.firstChild.childNodes;
     children.forEach(child => child.classList.toggle('active'))
   }
-  
+
   // add artists specific navlinks [transactions?]
   return (
     <header className="row">
@@ -36,7 +36,7 @@ function Header() {
           <div>
             <Link to="/profile">Profile</Link>
             <Link to="/messages">Messages</Link>
-            <Link to="/login">Random Link Here</Link>
+            <Link to="/transactions">Trnasactions</Link>
           </div>
         )}
       </div>
