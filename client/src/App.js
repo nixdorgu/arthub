@@ -11,6 +11,7 @@ import { AuthProvider } from './context/AuthContext';
 import PageNotFound from './components/PageNotFound';
 import Messages from './components/Messages';
 import MessageRoom from './components/MessageRoom';
+import Transactions from './components/Transactions';
 
 function App() {
     return (
@@ -25,6 +26,7 @@ function App() {
                                 <Route exact path="/register" component={Signup}></Route>
                                 <Route exact path="/profile" component={() => <Profile props={{name: "Kira"}}/>}/>
                                 <Route exact path="/messages" component={Messages}/>
+                                <Route exact path="/transactions" component={Transactions}/>
                                 <Route path="/messages/:room" component={MessageRoom}/>
                                 <Route component={PageNotFound}/>
                             </Switch>
