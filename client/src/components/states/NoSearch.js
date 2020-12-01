@@ -1,13 +1,9 @@
 import React from 'react'
 
-export default function NoMessages() {
+export default function NoSearch() {
     return (
         <div style={{height: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
-            No messages yet!
+            No artists found!
         </div>
     )
 }
-
-
-
-
