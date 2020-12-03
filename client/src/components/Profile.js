@@ -2,12 +2,16 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {Redirect} from 'react-router-dom';
 import {AuthContext} from "../context/AuthContext";
 import Facade from '../utils/Facade';
+import CommissionModal from './CommissionModal';
 import LoadingIndicator from './LoadingIndicator';
+import Modal from './Modal';
 
 function Profile({match}) { 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isMe, setIsMe] = useState(null);
+    const [showHireModal, setShowHireModal] = useState(false);
+
     const user = useContext(AuthContext).user;
     const [profileData, setProfileData] = useState({});
 
@@ -69,7 +73,7 @@ function Profile({match}) {
             return (
                 <div style={{justifyContent: "center", background: "#ddd", display: "flex", width: "100%"}}>
                     <button style={{flex: "1", padding: ".3rem .5rem", border: "2px solid #ff5678", outline: "#ff5678", background: "#fff", color: "#ff5678"}}  onClick={() => {isMe ? viewMessages() : chatArtist()}}>{options.message}</button>
-                    <button style={{flex: "1", padding: ".3rem .5rem", background: "#ff5678", color: "#fff"}}>{options.profile}</button>
+                    <button onClick={() => isMe ? window.location = '/edit/profile' : setShowHireModal(true)}style={{flex: "1", padding: ".3rem .5rem", background: "#ff5678", color: "#fff"}}>{options.profile}</button>
                 </div>
             );
         } else {
@@ -95,7 +99,11 @@ function Profile({match}) {
                         <UserInteractions/>
                     </div>
                 </div>
+                {/* modal should close when clicked anywhere else same with hamburger */}
+                {!isMe && profileData['user_classification'] === 'artist' && (<CommissionModal show={showHireModal} handleClose={(e) => setShowHireModal(false)} header={'Commission Form'} handleSubmit={() => {console.log('submit form')}}/>)}
+                <div style={{lineBreak: "normal", wordBreak: "break-word"}}>
                 {JSON.stringify(profileData)}
+                </div>
             </div>
         )}
             {/* <div className="bottom-portion" style={{width:"100%", marginTop:"3vh"}}>
