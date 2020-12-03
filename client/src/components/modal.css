@@ -1,0 +1,91 @@
+.modal-body {
+    background: #fff;
+    box-shadow: 1px 1px 5px 2px #ccc;
+    left: 50%;
+    max-width: 600px;
+    position: fixed;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: ease-in;
+    width: 90%;
+    z-index: 5;
+}
+
+.modal-body.hide {
+    display: none;
+}
+
+.modal-body.show {
+    display: block;
+}
+
+.modal.main , .modal.main form{
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.modal.main {
+    background: #fff;
+    height: auto;
+    padding: 1rem;
+}
+
+.modal.main form {
+    width: 100%;
+}
+
+.modal.header {
+    color: #ff5678;
+    font-family: Helvetica, sans-serif;
+    padding: 1rem;
+}
+
+.modal input, textarea{
+    border: 1px solid #ff5678;
+    color: #050505;
+    display: inline-block;
+    font-family: 'Montserrat', sans-serif;
+    margin: 1vh 0;
+    padding: .5rem;
+    width: 80%;
+}
+
+.short-description {
+    height: 10vh;
+    width: 80%;
+    word-wrap: break-word;
+}
+
+.long-description {
+    height: 25vh;
+    width: 80%;
+    word-wrap: break-word;
+}
+
+.modal.button-group {
+    display: flex;
+    justify-content: center;
+    margin: 1vh 0;
+    width: 80%;
+}
+
+.modal.button-group > button {
+    align-self: center;
+    border: 2px solid #ff5678;
+    flex: 1;
+    padding: .5rem 2rem;
+    text-align: center;
+}
+
+.modal.button-group.cancel {
+    border: 2px solid #ff5678;
+    background: #fff;
+    color: #ff5678;
+}
+
+.modal.button-group.submit {
+    background-color: #ff5678;
+    color: #fff;
+}
