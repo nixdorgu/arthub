@@ -138,14 +138,50 @@ pool.connect((error, client) => {
   });
 
   // protected
-  app.get("api/profile", (req, res) => {
-    res.send("Profile");
+    app.get("/api/profile/:id", (req, res) => {
+      // console.log(req.headers)
+    return client.query(
+      `SELECT user_id, CONCAT(first_name, ' ', last_name) AS name, email, member_since, user_classification FROM users WHERE user_id = $1`, [req.params.id],
+      (error, result) => {
+        if (error)
+          return res
+            .status(500)
+            .json({ success: false, message: "Something went wrong." });
+
+        if (result.rows.length === 0) {
+          return res
+          .status(404)
+          .json({ success: false, message: "Profile not found." });
+        }
+
+        if (result.rows[0]['user_classification'] !== 'artist') {
+
+        }
+        return res.status(200).json(result.rows[0]);
+      }
+    );
   });
 
   // protected
+  app.get("/api/artists/", (req, res) => {
+    return client.query(
+      `SELECT user_id, CONCAT(first_name, ' ', last_name) AS name, email, biography FROM users INNER JOIN artists ON user_id = artist_id`,
+      (error, result) => {
+        if (error)
+          return res
+            .status(500)
+            .json({ success: false, message: "Something went wrong." });
+
+
+        return res.status(200).json(result.rows);
+      }
+    );
+  });
+
   app.get("/api/artists/:name", (req, res) => {
-    client.query(
-      `SELECT user_id, CONCAT(first_name, ' ', last_name) AS name, email, biography FROM users INNER JOIN artists ON user_id = artist_id INNER JOIN artist_focus USING (artist_id) INNER JOIN focus USING (focus_id) WHERE CONCAT(first_name, ' ', last_name) ILIKE '%${req.params.name}%'`,
+    return client.query(
+      // `SELECT user_id, CONCAT(first_name, ' ', last_name) AS name, email, biography FROM users INNER JOIN artists ON user_id = artist_id INNER JOIN artist_focus USING (artist_id) INNER JOIN focus USING (focus_id) WHERE CONCAT(first_name, ' ', last_name) ILIKE '%${req.params.name}%'`,
+      `SELECT user_id, CONCAT(first_name, ' ', last_name) AS name, email, biography FROM users INNER JOIN artists ON user_id = artist_id WHERE CONCAT(first_name, ' ', last_name) ILIKE '%${req.params.name}%'`,
       (error, result) => {
         if (error)
           return res
