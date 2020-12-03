@@ -10,7 +10,7 @@ function Profile({match}) {
     const [isMe, setIsMe] = useState(null);
     const user = useContext(AuthContext).user;
     const [profileData, setProfileData] = useState({});
-    
+
     function checkProfileUser() {
         return JSON.stringify(match.params) === JSON.stringify({}) ? setIsMe(true) : setIsMe(false);
     }
@@ -51,7 +51,7 @@ function Profile({match}) {
             window.location = '/404';
         }
         // fetch profile and 
-    }, [match]);
+    }, [match, error]);
 
     const UserInteractions = () => {
         const chatArtist = () => {
