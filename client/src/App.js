@@ -24,7 +24,8 @@ function App() {
                                 <Route exact path="/" component={Home}></Route>
                                 <Route exact path="/login" component={Login}></Route>
                                 <Route exact path="/register" component={Signup}></Route>
-                                <Route exact path="/profile" component={() => <Profile props={{name: "Kira"}}/>}/>
+                                <Route exact path="/profile" component={Profile}/>
+                                <Route exact path="/profile/:id" component={Profile}/>
                                 <Route exact path="/messages" component={Messages}/>
                                 <Route exact path="/transactions" component={Transactions}/>
                                 <Route path="/messages/:room" component={MessageRoom}/>
