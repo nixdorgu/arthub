@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {Redirect} from 'react-router-dom';
 import {AuthContext} from "../context/AuthContext";
 import Facade from '../utils/Facade';
@@ -11,11 +11,8 @@ function Profile({match}) {
     const user = useContext(AuthContext).user;
     const [profileData, setProfileData] = useState({});
 
-    function checkProfileUser() {
-        return JSON.stringify(match.params) === JSON.stringify({}) ? setIsMe(true) : setIsMe(false);
-    }
-
-    function fetchProfileData() {
+    const checkProfileUser = useCallback(() => JSON.stringify(match.params) === JSON.stringify({}) ? setIsMe(true) : setIsMe(false), [match.params]);
+    const fetchProfileData = useCallback(() => {
         if (!isMe && match.params.id !== undefined) {
             const id = match.params.id;
             new Facade().get(`/api/profile/${id}`,
@@ -30,7 +27,7 @@ function Profile({match}) {
             setProfileData(user);
             setIsMe(true);
         }
-    }
+    }, [match, isMe, user]);
 
     const imgStyle = {
         borderRadius: "10px",
@@ -51,7 +48,7 @@ function Profile({match}) {
             window.location = '/404';
         }
         // fetch profile and 
-    }, [match, error]);
+    }, [match, error, fetchProfileData, checkProfileUser]);
 
     const UserInteractions = () => {
         const chatArtist = () => {
