@@ -22,6 +22,7 @@ app.use(express.json());
 app.use(cors({
   origin: ['http://localhost:3000', 'http://localhost:5000', ],
 }));
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 
@@ -138,7 +139,7 @@ pool.connect((error, client) => {
   });
 
   // protected
-    app.get("/api/profile/:id", (req, res) => {
+    app.get("/api/profile/:id", isAuthenticated, (req, res) => {
       // console.log(req.headers)
     return client.query(
       `SELECT user_id, CONCAT(first_name, ' ', last_name) AS name, email, member_since, user_classification FROM users WHERE user_id = $1`, [req.params.id],
@@ -255,6 +256,7 @@ pool.connect((error, client) => {
   // protected
   app.post("/api/logout", (req, res) => {});
 
+  // TODO: delete
   app.post("/api/verify", (req, res) => {
     const { token } = req.body;
 
@@ -272,6 +274,25 @@ pool.connect((error, client) => {
       res.status(200).json({ success: true, user: authentic });
     });
   });
+
+  // middleware - TODO: move to separate folder
+  function isAuthenticated(req, res, next) {
+    const token  = req.headers['authentication'].slice(7);
+
+    jwt.verify(token, process.env.JWT_SECRET, {}, (error, authentic) => {
+      if (error)
+        return res
+          .status(403)
+          .json({ success: false, message: "Invalid token." });
+
+      if (authentic.exp < Date.now()) {
+        // return res.status(403).json({success: false, message: "Expired token."})
+        // refresh token here
+      }
+
+      next()
+    });
+  };
 
   app.listen(port, () => {
     initPassport(passport, client);
