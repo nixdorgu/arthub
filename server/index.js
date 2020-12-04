@@ -138,6 +138,7 @@ pool.connect((error, client) => {
     });
   });
 
+
   // protected
     app.get("/api/profile/:id", isAuthenticated, (req, res) => {
       // console.log(req.headers)
@@ -162,6 +163,7 @@ pool.connect((error, client) => {
       }
     );
   });
+
 
   // protected
   app.get("/api/artists/", (req, res) => {
@@ -194,7 +196,17 @@ pool.connect((error, client) => {
     );
   });
 
+
   // protected
+  app.post("/api/messages", (req, res) => {
+    const {room_id, sender_id, content, timestamp} = req.body;
+    client.query(`INSERT INTO messages VALUES ($1, $2, $3, $4)`, [room_id, sender_id, content, timestamp], (error, result) => {
+      if (error) return res.status(500).json({message: "Something went wrong"});
+
+      return res.status(200).json({message: "Message successfully sent!"})
+    });
+  });
+  
   app.get("/api/messages/:id", (req, res) => {
     const id = req.params.id;
 
@@ -237,21 +249,13 @@ pool.connect((error, client) => {
     })
   });
 
-  // protected
-  app.post("/api/messages", (req, res) => {
-    const {room_id, sender_id, content, timestamp} = req.body;
-    client.query(`INSERT INTO messages VALUES ($1, $2, $3, $4)`, [room_id, sender_id, content, timestamp], (error, result) => {
-      if (error) return res.status(500).json({message: "Something went wrong"});
-
-      return res.status(200).json({message: "Message successfully sent!"})
-    });
-  });
 
   // protected
   app.get("/api/transactions", (req, res) => {});
 
   // protected
   app.get("/api/transactions/:id", (req, res) => {});
+
 
   // protected
   app.post("/api/logout", (req, res) => {});
