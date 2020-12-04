@@ -232,6 +232,35 @@ pool.connect((error, client) => {
   });
 
   // protected
+  app.post("/api/messages/room/", (req, res) => {
+    const {user_id, user_classification, id, classification} = req.body;
+
+    let roles = {
+      artist: user_classification !== 'artist' && classification === 'artist' ? id : user_id,
+      customer: user_classification !== 'artist' && classification === 'artist' ? user_id: id
+    }
+
+    if (user_id && id) {
+      client.query('SELECT * FROM message_rooms WHERE (user_id = $1 OR artist_id = $1) AND (user_id = $2 OR artist_id = $2)', [user_id, id], (error, result) => {
+        if (error) {
+          return res.status(500).json({message: 'Uh-oh, server temporarily down.'})
+        }
+
+        if (result.rows.length === 0) {
+          client.query('INSERT INTO message_rooms VALUES (DEFAULT, $1, $2)', [roles.artist, roles.customer], (error, roomResult) => {
+            if (error) {
+              return res.status(500).json({message: 'Uh-oh, server temporarily down.'})
+            }
+
+            return res.status(200).json({room: roomResult.rows[0]})
+          })
+        } else {
+          return res.status(200).json({room: result.rows[0]});
+        }
+      });
+    }
+  });
+
   app.get("/api/messages/room/:room", (req, res) => {
     const room_id = req.params.room;
 
