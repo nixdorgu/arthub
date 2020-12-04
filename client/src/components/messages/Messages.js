@@ -1,9 +1,9 @@
 import React, {useContext, useEffect, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
-import Facade from "../utils/Facade";
+import { AuthContext } from "../../context/AuthContext";
+import Facade from "../../utils/Facade";
 import {Link} from "react-router-dom";
-import NoMessages from "./states/NoMessages";
-import showRecipient from "../tests/showRecipient";
+import NoMessages from "../states/NoMessages";
+import showRecipient from "../../tests/showRecipient";
 
 export default function Messages() {
   const [rooms, setRooms] = useState([]);

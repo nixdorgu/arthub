@@ -1,8 +1,8 @@
 import React, {useContext, useEffect, useState } from "react";
 import {Redirect, useParams} from 'react-router-dom';
-import { AuthContext } from "../context/AuthContext";
-import Facade from "../utils/Facade";
-import LoadingIndicator from "./LoadingIndicator";
+import { AuthContext } from "../../context/AuthContext";
+import Facade from "../../utils/Facade";
+import LoadingIndicator from "../LoadingIndicator";
 import Message from "./Message";
 
 // sticky nav

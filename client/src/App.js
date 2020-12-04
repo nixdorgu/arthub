@@ -9,8 +9,8 @@ import Signup from './components/Signup';
 import Profile from './components/Profile';
 import { AuthProvider } from './context/AuthContext';
 import PageNotFound from './components/PageNotFound';
-import Messages from './components/Messages';
-import MessageRoom from './components/MessageRoom';
+import Messages from './components/messages/Messages';
+import MessageRoom from './components/messages/MessageRoom';
 import Transactions from './components/Transactions';
 
 function App() {
