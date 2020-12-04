@@ -1,10 +1,9 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import {Redirect} from 'react-router-dom';
+// import {Redirect} from 'react-router-dom';
 import {AuthContext} from "../context/AuthContext";
 import Facade from '../utils/Facade';
 import CommissionModal from './CommissionModal';
 import LoadingIndicator from './LoadingIndicator';
-import Modal from './Modal';
 
 function Profile({match}) { 
     const [loading, setLoading] = useState(true);
@@ -56,9 +55,12 @@ function Profile({match}) {
 
     const UserInteractions = () => {
         const chatArtist = () => {
-            // window.location = '/messages'
-            // create message room IF NOT EXISTS
-            // redirect to message room
+            new Facade().post("/api/messages/room", {user_id: user.id, user_classification: user['user_classification'], id: profileData['user_id'], classification: profileData['user_classification'] }, (success) => {
+                window.location = `/messages/${success.room.room_id}`
+            }, (error) => {
+                console.log(error.message)
+                // modal informing user of what went wrong
+            })
         }
 
         const viewMessages = () => window.location = '/messages';
@@ -100,7 +102,7 @@ function Profile({match}) {
                     </div>
                 </div>
                 {/* modal should close when clicked anywhere else same with hamburger */}
-                {!isMe && profileData['user_classification'] === 'artist' && (<CommissionModal show={showHireModal} handleClose={(e) => setShowHireModal(false)} header={'Commission Form'} handleSubmit={() => {console.log('submit form')}}/>)}
+                {!isMe && profileData['user_classification'] === 'artist' && (<CommissionModal show={showHireModal} handleClose={(e) => setShowHireModal(false)} handleSubmit={() => {console.log('submit form')}}/>)}
                 <div style={{lineBreak: "normal", wordBreak: "break-word"}}>
                 {JSON.stringify(profileData)}
                 </div>
