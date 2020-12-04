@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 // import {Redirect} from 'react-router-dom';
 import {AuthContext} from "../context/AuthContext";
 import Facade from '../utils/Facade';
-import CommissionModal from './CommissionModal';
+import CommissionModal from './modals/CommissionModal';
 import LoadingIndicator from './LoadingIndicator';
 
 function Profile({match}) { 
@@ -56,7 +56,7 @@ function Profile({match}) {
     const UserInteractions = () => {
         const chatArtist = () => {
             new Facade().post("/api/messages/room", {user_id: user.id, user_classification: user['user_classification'], id: profileData['user_id'], classification: profileData['user_classification'] }, (success) => {
-                window.location = `/messages/${success.room.room_id}`
+                window.location.href = `/messages/${success.room.room_id}`
             }, (error) => {
                 console.log(error.message)
                 // modal informing user of what went wrong
