@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState } from "react";
+import React, {useCallback, useContext, useEffect, useState } from "react";
 import {Redirect, useParams} from 'react-router-dom';
 import { AuthContext } from "../../context/AuthContext";
 import Facade from "../../utils/Facade";
@@ -22,11 +22,11 @@ export default function MessageRoom() {
   const [data, setData] = useState([]);
   const [input, setInput] = useState('');
   const [error, setError] = useState(null);
-const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const user = useContext(AuthContext).user;
 
-  function fetchMessages(room) {
+  const fetchMessages = useCallback((room) => {
     return new Facade().get(`/api/messages/room/${room}`, (response) => {
       setData(response);
       setLoading(false);
@@ -37,7 +37,7 @@ const [loading, setLoading] = useState(true);
       console.log(error)
       setError(error);
     });
-  }
+  }, []);
 
   function sendMessage(user, content) {
     const message = {
@@ -62,7 +62,7 @@ const [loading, setLoading] = useState(true);
   useEffect(() => {
       fetchMessages(room);
       scrollLastMessageIntoView()
-  }, [room]);
+  }, [fetchMessages, room]);
 
   return (
     <div className="messages">
