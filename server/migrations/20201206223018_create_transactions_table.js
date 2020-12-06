@@ -10,6 +10,7 @@ exports.up = function(knex) {
         title VARCHAR(30) NOT NULL,
         short_description VARCHAR(80) NOT NULL,
         description VARCHAR(300) NOT NULL,
+        price MONEY NOT NULL,
         status transaction_status DEFAULT 'pending' NOT NULL
     );
   `);
