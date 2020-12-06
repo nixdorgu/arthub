@@ -279,6 +279,19 @@ pool.connect((error, client) => {
 
 
   // protected
+  app.post("/api/transactions", (req, res) => {
+    const {title, shortDescription, description, price, artistId, userId} = req.body;
+
+    client.query('INSERT INTO transactions VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, DEFAULT) RETURNING *', [artistId, userId, title, shortDescription, description, price], (error, result) => {
+      if (error) {
+        return res.status(500).json({success: false, message: "Something went wrong."})
+      }
+
+      return res.status(200).json({success: true, message: "Transaction completed successfully", data: result.rows[0]})
+    })
+  });
+
+  // protected
   app.get("/api/transactions", (req, res) => {});
 
   // protected

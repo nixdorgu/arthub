@@ -33,6 +33,21 @@ function Profile({match}) {
         }
     }, [match, isMe, user]);
 
+    const processTransaction = (e) => {
+        e.preventDefault();
+
+        const [title, shortDescription, description] = e.target.childNodes;
+        const data = {title: title.value, shortDescription: shortDescription.value, description: description.value, userId: user.id, artistId: profileData['user_id']};
+
+        new Facade().post('/api/transactions', data, (success) => {
+            // show modal
+            console.log(success.message);
+        }, (error) => {
+            // show modal
+            console.log(error.message);
+        })
+    }
+
     const imgStyle = {
         borderRadius: "10px",
         width: "100px",
@@ -103,7 +118,7 @@ function Profile({match}) {
                     </div>
                 </div>
                 {/* modal should close when clicked anywhere else same with hamburger */}
-                {!isMe && profileData['user_classification'] === 'artist' && (<CommissionModal show={showHireModal} handleClose={(e) => setShowHireModal(false)} handleSubmit={() => {console.log('submit form')}}/>)}
+                {!isMe && profileData['user_classification'] === 'artist' && (<CommissionModal show={showHireModal} handleClose={(e) => setShowHireModal(false)} handleSubmit={processTransaction}/>)}
                 <div style={{lineBreak: "normal", wordBreak: "break-word"}}>
                 {JSON.stringify(profileData)}
                 </div>
