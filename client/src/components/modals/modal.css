@@ -89,3 +89,7 @@
     background-color: #ff5678;
     color: #fff;
 }
+
+textarea {
+    resize: vertical;
+}
