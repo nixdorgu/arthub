@@ -14,7 +14,7 @@ export default function Modal({ handleClose, handleSubmit, header, show, childre
                 </form>
                 <div className="modal button-group">
                     <button className="modal button-group cancel" onClick={handleClose}>Cancel</button>
-                    <button form="modal-form" type="submit" className="modal button-group submit">Submit</button>
+                    <button form="modal-form" type="submit" className="modal button-group submit" onClick={handleClose}>Submit</button>
                 </div>
             </div>
 
