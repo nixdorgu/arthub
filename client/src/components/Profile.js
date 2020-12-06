@@ -4,6 +4,7 @@ import {AuthContext} from "../context/AuthContext";
 import Facade from '../utils/Facade';
 import CommissionModal from './modals/CommissionModal';
 import LoadingIndicator from './LoadingIndicator';
+import showFullName from '../tests/showFullName';
 
 function Profile({match}) { 
     const [loading, setLoading] = useState(true);
@@ -96,7 +97,7 @@ function Profile({match}) {
                         <img src='' style={imgStyle} alt="profile"/>
                     </div>
                     <div className="bio" style={{flex: "3", display: "flex", flexDirection: "column", justifyContent: "flex-end", height: "100%", width: "100%"}}>
-                        <p>{isMe ? `${user.first_name} ${user.last_name}` : profileData.name}</p>
+                        <p>{isMe ? showFullName(user) : showFullName(profileData)}</p>
                         <i style={{padding: ".5rem 0", fontSize: "small"}}>{isMe? 'Member since Nov. 17, 2020' : ` Member since ${new Date(profileData['member_since']).toLocaleDateString()}`}</i>
                         <UserInteractions/>
                     </div>
