@@ -7,6 +7,7 @@ import Home from './components/Home';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Profile from './components/Profile';
+import EditProfile from './components/EditProfile';
 import { AuthProvider } from './context/AuthContext';
 import PageNotFound from './components/PageNotFound';
 import Messages from './components/messages/Messages';
@@ -26,6 +27,7 @@ function App() {
                                 <Route exact path="/register" component={Signup}></Route>
                                 <Route exact path="/profile" component={Profile}/>
                                 <Route exact path="/profile/:id" component={Profile}/>
+                                <Route exact path="/edit/profile/" component={EditProfile}/>
                                 <Route exact path="/messages" component={Messages}/>
                                 <Route exact path="/transactions" component={Transactions}/>
                                 <Route path="/messages/:room" component={MessageRoom}/>
