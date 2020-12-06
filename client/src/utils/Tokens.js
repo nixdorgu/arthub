@@ -10,3 +10,9 @@ export const removeToken = () => {
 export const setToken = (token) => {
   localStorage.setItem("arthub_token", token);
 };
+
+export const logout = (setAuthenticated, setUser) => {
+  setAuthenticated(false);
+  setUser({});
+  removeToken();
+}
