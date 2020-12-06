@@ -141,7 +141,6 @@ pool.connect((error, client) => {
 
   // protected
     app.get("/api/profile/:id", isAuthenticated, (req, res) => {
-      // console.log(req.headers)
     return client.query(
       `SELECT user_id, CONCAT(first_name, ' ', last_name) AS name, email, member_since, user_classification FROM users WHERE user_id = $1`, [req.params.id],
       (error, result) => {
@@ -310,21 +309,31 @@ pool.connect((error, client) => {
 
   // middleware - TODO: move to separate folder
   function isAuthenticated(req, res, next) {
-    const token  = req.headers['authentication'].slice(7);
+    let token  = req.headers['authorization'];
+    
+    if (!token) {
+      return res
+      .status(403)
+      .json({ success: false, message: "No token." });
+    } else {
+      token = token.slice(7);
 
-    jwt.verify(token, process.env.JWT_SECRET, {}, (error, authentic) => {
-      if (error)
-        return res
-          .status(403)
-          .json({ success: false, message: "Invalid token." });
+      jwt.verify(token, process.env.JWT_SECRET, {}, (error, authentic) => {
+        if (error)
+          return res
+            .status(403)
+            .json({ success: false, message: "Invalid token." });
+  
+        if (authentic.exp < Date.now()) {
+          // return res.status(403).json({success: false, message: "Expired token."})
+          // refresh token here
+        }
+  
+        next()
+      });
+    }
 
-      if (authentic.exp < Date.now()) {
-        // return res.status(403).json({success: false, message: "Expired token."})
-        // refresh token here
-      }
-
-      next()
-    });
+    
   };
 
   app.listen(port, () => {
