@@ -36,8 +36,8 @@ function Profile({match}) {
     const processTransaction = (e) => {
         e.preventDefault();
 
-        const [title, shortDescription, description] = e.target.childNodes;
-        const data = {title: title.value, shortDescription: shortDescription.value, description: description.value, userId: user.id, artistId: profileData['user_id']};
+        const [title, shortDescription, description, price] = e.target.childNodes;
+        const data = {title: title.value, shortDescription: shortDescription.value, description: description.value, userId: user.id, artistId: profileData['user_id'], price: price.value };
 
         new Facade().post('/api/transactions', data, (success) => {
             // show modal
