@@ -292,10 +292,22 @@ pool.connect((error, client) => {
   });
 
   // protected
-  app.get("/api/transactions", (req, res) => {});
+  app.get("/api/transactions/:id", (req, res) => {
+    const id = req.params.id;
 
-  // protected
-  app.get("/api/transactions/:id", (req, res) => {});
+    if (id === "undefined" || id === "null") {
+      return res.status(500).json({success: false, message: "Something went wrong."})
+    } else {
+      client.query("SELECT transaction_id, artist_id, CONCAT(first_name, ' ', last_name) AS artist_name, t.user_id, (SELECT CONCAT(first_name, ' ', last_name) FROM users AS sub WHERE sub.user_id = t.user_id) as customer_name, title, description, short_description, price, t.status FROM transactions AS t INNER JOIN users AS u ON u.user_id = t.artist_id WHERE t.artist_id = $1 OR t.user_id = $1", [id], (error, result) => {
+        if (error) {
+          console.log(error)
+          return res.status(500).json({success: false, message: "Something went wrong."})
+        }
+
+        return res.status(200).json({success: true, message: "Transaction completed successfully", data: result.rows})
+      })
+    }
+  });
 
 
   // protected
