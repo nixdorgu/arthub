@@ -93,3 +93,11 @@
 textarea {
     resize: vertical;
 }
+
+.price-disclaimer {
+    align-self: flex-end;
+    color: #ff5678;
+    font-size: .6rem;
+    margin-right: 10%;
+    width: max-content;
+}
