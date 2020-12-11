@@ -36,7 +36,7 @@ function Header() {
           <div>
             <Link to="/profile">Profile</Link>
             <Link to="/messages">Messages</Link>
-            <Link to="/transactions">Trnasactions</Link>
+            <Link to="/transactions">Transactions</Link>
           </div>
         )}
       </div>
