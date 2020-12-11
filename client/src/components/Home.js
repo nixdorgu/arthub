@@ -36,7 +36,6 @@ function Home() {
         {data.length > 0 ? (
 
           <div id="artists" style={{margin: "2rem", display: "flex", flexWrap: "wrap"}}>
-            {/* link to artist page */}
           {data.map((artist) => {
             return <div key={artist.user_id} style={{padding: ".8rem", boxShadow: "1px 1px 1px 1px #ff5678", flex: "1", margin: ".2rem", borderRadius: "10px"}}>
               <div style={{display: "flex", justifyContent: "space-around"}}>
