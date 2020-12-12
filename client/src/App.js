@@ -14,14 +14,14 @@ import Messages from './components/messages/Messages';
 import MessageRoom from './components/messages/MessageRoom';
 import Transactions from './components/Transactions';
 import ProtectedRoute from './components/ProtectedRoute';
-import UnprotectedRoute from './components/ProtectedRoute';
+import UnprotectedRoute from './components/UnprotectedRoute';
 
 function App() {
     return (
-        <Router>
-            <AuthProvider>
-                    <div className="grid-container">
-                        <Header/>
+        <AuthProvider>
+            <Router>
+                <div className="grid-container">
+                    <Header/>
                         <main>
                             <Switch>
                                 <ProtectedRoute exact path="/" component={Home}/>
@@ -36,10 +36,10 @@ function App() {
                                 <Route component={PageNotFound}/>
                             </Switch>
                         </main>
-                        <Footer/>
-                    </div>
-            </AuthProvider>
-        </Router>
+                    <Footer/>
+                </div>
+            </Router>
+        </AuthProvider>
     );
 }
 
