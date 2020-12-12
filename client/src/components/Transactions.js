@@ -119,7 +119,7 @@ export default function Transactions() {
             {data.filter((t) => t.status === "pending").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
           </TabPanel>
           <TabPanel value={value} index={1}>
-            {data.filter((t) => t.status === "payment_pending").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
+            {data.filter((t) => t.status === "payment pending").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
           </TabPanel>
           <TabPanel value={value} index={2}>
             {data.filter((t) => t.status === "cancelled").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
