@@ -13,6 +13,8 @@ import PageNotFound from './components/PageNotFound';
 import Messages from './components/messages/Messages';
 import MessageRoom from './components/messages/MessageRoom';
 import Transactions from './components/Transactions';
+import ProtectedRoute from './components/ProtectedRoute';
+import UnprotectedRoute from './components/ProtectedRoute';
 
 function App() {
     return (
@@ -22,15 +24,15 @@ function App() {
                         <Header/>
                         <main>
                             <Switch>
-                                <Route exact path="/" component={Home}></Route>
-                                <Route exact path="/login" component={Login}></Route>
-                                <Route exact path="/register" component={Signup}></Route>
-                                <Route exact path="/profile" component={Profile}/>
-                                <Route exact path="/profile/:id" component={Profile}/>
-                                <Route exact path="/edit/profile/" component={EditProfile}/>
-                                <Route exact path="/messages" component={Messages}/>
-                                <Route exact path="/transactions" component={Transactions}/>
-                                <Route path="/messages/:room" component={MessageRoom}/>
+                                <ProtectedRoute exact path="/" component={Home}/>
+                                <UnprotectedRoute exact path="/login" component={Login}/>
+                                <UnprotectedRoute exact path="/register" component={Signup}/>
+                                <ProtectedRoute exact path="/profile" component={Profile}/>
+                                <ProtectedRoute exact path="/profile/:id" component={Profile}/>
+                                <ProtectedRoute exact path="/edit/profile/" component={EditProfile}/>
+                                <ProtectedRoute exact path="/messages" component={Messages}/>
+                                <ProtectedRoute exact path="/transactions" component={Transactions}/>
+                                <ProtectedRoute path="/messages/:room" component={MessageRoom}/>
                                 <Route component={PageNotFound}/>
                             </Switch>
                         </main>
