@@ -3,8 +3,7 @@ const express = require('express');
 const messagesRoutes = (client) => {
     const router = express.Router();
 
-    // protected
-    router.post("", (req, res) => {
+    router.post("/", (req, res) => {
       const {room_id, sender_id, content, timestamp} = req.body;
       client.query(`INSERT INTO messages VALUES ($1, $2, $3, $4)`, [room_id, sender_id, content, timestamp], (error, result) => {
         if (error) return res.status(500).json({message: "Something went wrong"});
@@ -37,7 +36,6 @@ const messagesRoutes = (client) => {
       })
     });
   
-    // protected
     router.post("/room/", (req, res) => {
       const {user_id, user_classification, id, classification} = req.body;
   
@@ -70,7 +68,6 @@ const messagesRoutes = (client) => {
     router.get("/room/:room", (req, res) => {
       const room_id = req.params.room;
   
-      // valid room
       return client.query('SELECT * FROM message_rooms WHERE $1 = room_id', [room_id], (roomError, room) => {
         if(roomError || room.rows.length === 0) return res.status(404).json({message: "Room not found."});
   
