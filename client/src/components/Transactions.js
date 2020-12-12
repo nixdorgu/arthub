@@ -1,81 +1,139 @@
-import React, {useEffect, useCallback, useState, useContext} from 'react'
-import { AuthContext } from '../context/AuthContext'
-import Facade from '../utils/Facade';
-import LoadingIndicator from './LoadingIndicator';
-import NoTransactions from './states/NoTransactions';
+import React, { useEffect, useCallback, useState, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { Tabs, Tab} from "@material-ui/core";
+import Facade from "../utils/Facade";
+import LoadingIndicator from "./LoadingIndicator";
+import NoTransactions from "./states/NoTransactions";
+
+import PropTypes from "prop-types";
+import { makeStyles } from "@material-ui/core/styles";
+import Box from "@material-ui/core/Box";
+import TransactionCard from "./TransactionCard";
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.paper,
+  },
+}));
 
 export default function Transactions() {
-    const {user} = useContext(AuthContext);
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const { user } = useContext(AuthContext);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [value, setValue] = useState(0);
 
-    const updateData = useCallback(() => {
-        new Facade().get(`/api/transactions/${user.id}`,
-            (success) => {
-                setData(success.data);
-                setTimeout(() => updateData, 10_000)
-            },
-            (error) => {
-                setError(error.message)
-                setLoading(false); 
-            }
-        )
-    }, [user]);
+  const updateData = useCallback(() => {
+    new Facade().get(
+      `/api/transactions/${user.id}`,
+      (success) => {
+        setData(success.data);
+        setTimeout(() => updateData, 10_000);
+      },
+      (error) => {
+        setError(error.message);
+        setLoading(false);
+      }
+    );
+  }, [user]);
 
-    const fetchTransactions = useCallback(() => {
-        setLoading(true);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
-        new Facade().get(`/api/transactions/${user.id}`,
-            (success) => {
-                setError(null)
+  const fetchTransactions = useCallback(() => {
+    setLoading(true);
 
-                console.log(success.data);
-                setData(success.data);
-                setLoading(false);
-                updateData();
-            },
-            (error) => {
-                setError(error.message)
-                setLoading(false);
-            }
-        )
-    }, [user, updateData]);
+    new Facade().get(
+      `/api/transactions/${user.id}`,
+      (success) => {
+        setError(null);
 
-    useEffect(() => {
-        fetchTransactions();
-    }, [fetchTransactions, updateData, error])
-    return (
+        console.log(success.data);
+        setData(success.data);
+        setLoading(false);
+        updateData();
+      },
+      (error) => {
+        setError(error.message);
+        setLoading(false);
+      }
+    );
+  }, [user, updateData]);
+
+  useEffect(() => {
+    fetchTransactions();
+  }, [fetchTransactions, updateData, error]);
+  return (
+    <div>
+      {loading ? (
+        <LoadingIndicator />
+      ) : error ? (
+        error
+      ) : data.length === 0 ? (
+        <NoTransactions />
+      ) : (
         <div>
-            {loading ? <LoadingIndicator/> : (
-               error ? (
-                error
-               ) : (
-                    data.length === 0 ? <NoTransactions/> : (
-                    data.map((transaction) => {
-                        return (
-                            <div key={transaction.transaction_id} style={{boxShadow: "1px 0px 5px 2px #ccc", padding: "1rem"}}>
-                                <h4>{transaction.title}</h4>
-                            <p style={{lineBreak: "anywhere", wordBreak: "break-word", fontSize: ".8rem", padding: ".5rem 0"}}>
-                                {transaction.artist_id !== user.id ? (
-                                    <a href={`profile/${transaction.artist_id}`}>Commissioned to {transaction.artist_name}</a>
-                                ) : (
-                                    <a href={`profile/${transaction.user_id}`}>Commissioned by {transaction.customer_name}</a>
-                                )}
-                            </p>
-                                <p style={{wordBreak: "break-all", hyphens:"auto", overflowWrap:"break-word", wordWrap:"break-word", fontSize: ".8rem", padding: ".5rem 0"}}>{transaction.short_description}</p>
-                                <div style={{display: "flex", justifyContent: "space-between", alignItems: "baseline", paddingTop: ".3rem"}}>
-                                    <h5>${transaction.price}</h5>
-                                    <p style={{fontSize: ".7rem"}}>{transaction.status}</p>
-                                </div>
-                            </div> 
-                        );
-                    })
-                    )
-               )
-            )}
+          <Tabs value={value} onChange={handleChange}>
+            <Tab label="Pending" {...a11yProps(0)} />
+            <Tab label="Payment Pending" {...a11yProps(1)} />
+            <Tab label="Cancelled" {...a11yProps(2)} />
+            <Tab label="Accepted" {...a11yProps(3)} />
+            <Tab label="Completed" {...a11yProps(4)} />
+          </Tabs>
+          <TabPanel value={value} index={0}>
+            {data.filter((t) => t.status === "pending").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            {data.filter((t) => t.status === "payment_pending").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+            {data.filter((t) => t.status === "cancelled").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
+          </TabPanel>
+          <TabPanel value={value} index={3}>
+            {data.filter((t) => t.status === "accepted").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
+          </TabPanel>
+          <TabPanel value={value} index={4}>
+            {data.filter((t) => t.status === "completed").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
+          </TabPanel>
         </div>
-    )
+      )}
+    </div>
+  );
 }
 
 // TODO: WORK ON PROFILE SO THE LOGIC OF HOW TRANSACTIONS HAPPEN CAN LINK TO THIS
