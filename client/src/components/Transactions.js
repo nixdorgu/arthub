@@ -112,7 +112,7 @@ export default function Transactions() {
             <Tab label="Pending" {...a11yProps(0)} />
             <Tab label="Payment Pending" {...a11yProps(1)} />
             <Tab label="Cancelled" {...a11yProps(2)} />
-            <Tab label="Accepted" {...a11yProps(3)} />
+            <Tab label="Ongoing" {...a11yProps(3)} />
             <Tab label="Completed" {...a11yProps(4)} />
           </Tabs>
           <TabPanel value={value} index={0}>
@@ -125,7 +125,7 @@ export default function Transactions() {
             {data.filter((t) => t.status === "cancelled").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
           </TabPanel>
           <TabPanel value={value} index={3}>
-            {data.filter((t) => t.status === "accepted").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
+            {data.filter((t) => t.status === "ongoing").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
           </TabPanel>
           <TabPanel value={value} index={4}>
             {data.filter((t) => t.status === "completed").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
