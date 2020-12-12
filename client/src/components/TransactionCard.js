@@ -1,12 +1,14 @@
 import React, {useState} from "react";
 import Facade from "../utils/Facade";
 import PendingTransactionModal from "./modals/PendingTransactionModal";
-import {isArtist as commissioned} from "../tests/isArtist";
+import isArtist from "../tests/isArtist";
+import Undo from "./Undo";
+import PaymentPendingModal from "./modals/PaymentPendingModal";
 
 export default function TransactionCard(props) {
   const { transaction, user } = props.props;
   const [showModal, setShowModal] = useState(false);
-  const isArtist = commissioned(transaction, user); // wrap into fn + status stuff
+  const isArtistOfTransaction = isArtist(transaction, user); // wrap into fn + status stuff
   const status = transaction.status;
 
   const submit = (e, transaction) => {
@@ -23,8 +25,8 @@ export default function TransactionCard(props) {
 
   return (
     <>
-    {status === "pending" && showModal && <PendingTransactionModal isArtist={isArtist} transaction={transaction} show={showModal} handleClose={(e) => setShowModal(false)} handleSubmit={(e) => submit(e, transaction)} />}
-    {status === "payment pending" && !isArtist && showModal && <PendingTransactionModal isArtist={isArtist} transaction={transaction} show={showModal} handleClose={(e) => setShowModal(false)} handleSubmit={(e) => submit(e, transaction)} />}
+    {status === "pending" && showModal && <PendingTransactionModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={(e) => setShowModal(false)} handleSubmit={(e) => submit(e, transaction)} />}
+    {status === "payment pending" && !isArtistOfTransaction && showModal && <PaymentPendingModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={(e) => setShowModal(false)} handleSubmit={(e) => submit(e, transaction)} />}
     <div
       key={transaction.transaction_id}
       style={{
@@ -47,7 +49,7 @@ export default function TransactionCard(props) {
           padding: ".5rem 0",
         }}
       >
-        {transaction.artist_id !== user.id ? (
+        {!isArtistOfTransaction ? (
           <a className="transaction-link" href={`profile/${transaction.artist_id}`}>
             Commissioned to {transaction.artist_name}
           </a>
