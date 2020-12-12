@@ -1,17 +1,13 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Redirect, Route } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext'
+import { useAuth } from '../context/AuthContext'
 
 export default function UnprotectedRoute({component: Component, path, ...rest}) {
-    const auth = useContext(AuthContext);
+    const auth = useAuth();
 
     return (
         <Route path={path} {...rest} render={props => {
-            return !auth.authenticated ? (
-                <Component {...props}/>
-            ) : (
-                <Redirect to="/"/>
-            )
+            return !auth.authenticated ? <Component {...props}/>:  <Redirect to="/"/>
         }}/>
     );
 }
