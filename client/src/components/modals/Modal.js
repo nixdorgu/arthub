@@ -1,9 +1,10 @@
 import React from "react";
 import './modal.css';
 
-export default function Modal({ handleClose, handleSubmit, header, show, children }) {
+export default function Modal({ handleClose, handleSubmit, header, show, children, btnGroup }) {
   const className = show ? "modal-body show" : "modal-body hide";
-
+  const buttonGroup = (<><button className="modal button-group cancel" onClick={handleClose}>Cancel</button>
+        <button form="modal-form" type="submit" className="modal button-group submit" onClick={handleClose}>Submit</button></>);
   return (
     <div className={className}>
         <section>
@@ -13,8 +14,7 @@ export default function Modal({ handleClose, handleSubmit, header, show, childre
                     {children}
                 </form>
                 <div className="modal button-group">
-                    <button className="modal button-group cancel" onClick={handleClose}>Cancel</button>
-                    <button form="modal-form" type="submit" className="modal button-group submit" onClick={handleClose}>Submit</button>
+                    {btnGroup ? btnGroup : buttonGroup}
                 </div>
             </div>
 
