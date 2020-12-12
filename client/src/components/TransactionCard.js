@@ -1,11 +1,12 @@
 import React, {useState} from "react";
 import Facade from "../utils/Facade";
 import PendingTransactionModal from "./modals/PendingTransactionModal";
+import {isArtist as commissioned} from "../tests/isArtist";
 
 export default function TransactionCard(props) {
   const { transaction, user } = props.props;
   const [showModal, setShowModal] = useState(false);
-  const isArtist = transaction.artist_id === user.id; // wrap into fn + status stuff
+  const isArtist = commissioned(transaction, user); // wrap into fn + status stuff
   const status = transaction.status;
 
   const submit = (e, transaction) => {
