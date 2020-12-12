@@ -17,15 +17,17 @@ const pool = new pg.Pool(JSON.parse(process.env.DATABASE_CONFIG));
 const port = process.env.PORT ?? 3000;
 const app = express();
 
-
 app.use(express.json());
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5000', ],
+origin: ['http://localhost:3000', 'http://localhost:5000', 'https://facebook.com' ],
+methods: ['GET', 'POST', 'OPTIONS', 'PATCH']
 }));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
-
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', '*')
+// })
 pool.connect((error, client) => {
   checkConfig(error);
 
@@ -66,6 +68,14 @@ pool.connect((error, client) => {
       });
     }
   );
+
+  app.get('/auth/facebook', passport.authenticate('facebook', {session: false}));
+ 
+  app.get('/auth/facebook/callback',
+    passport.authenticate('facebook', {session: false, failureRedirect: '/auth/facebook'}), (req, res) => {
+      console.log(res)
+      res.status(200).json({success: true, message: "token here"})
+    });
 
   // protected - not logged in
   app.post("/api/register", (req, res) => {
@@ -309,6 +319,30 @@ pool.connect((error, client) => {
     }
   });
 
+  app.patch("/api/transactions/:id", (req, res) => {
+    const id = req.params.id;
+    const {classification} = req.body;
+
+    client.query('SELECT * FROM transactions WHERE transaction_id = $1', [id], (error, result) => {
+      if (error) {
+        return res.status(500).json({success: false, message: "Something went wrong"});
+      }
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({success: false, message: "No corresponding transaction found"});
+      } else {
+        client.query('UPDATE transactions SET status = $1 WHERE transaction_id = $2', [ classification, id], (error, result) => {
+          if (error) {
+        console.log(error)
+
+            return res.status(500).json({success: false, message: "Something went wrong"})
+          } else {
+            return res.status(200).json({success: true, message: "Transaction successfully updated."})
+          }
+        })
+      }
+    })
+  })
 
   // protected
   app.post("/api/logout", (req, res) => {});
@@ -356,9 +390,7 @@ pool.connect((error, client) => {
   
         next()
       });
-    }
-
-    
+    } 
   };
 
   app.listen(port, () => {
