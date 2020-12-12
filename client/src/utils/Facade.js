@@ -29,6 +29,7 @@ export default class Facade {
       xhr.onreadystatechange = () => {
         if (xhr.readyState === 4) {
           // add error handling
+          // const response = typeof xhr.responseText === "object" ? JSON.parse(xhr.responseText) : xhr.responseText;
           const response = JSON.parse(xhr.responseText);
           
           if (xhr.status === 200) return success(response);
@@ -39,5 +40,26 @@ export default class Facade {
       xhr.open("GET", url);
       xhr.setRequestHeader("Authorization", `Bearer ${token}`);
       xhr.send();
+    }
+
+    patch(url, data, success, error) {
+      const xhr = new XMLHttpRequest();
+      const token = getToken();
+
+
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          const response = JSON.parse(xhr.responseText);
+          
+          if (xhr.status === 200) return success(response);
+          else return error(response);
+        }
+      };
+  
+      
+      xhr.open("PATCH", url);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+      xhr.send(JSON.stringify(data));
     }
 }
