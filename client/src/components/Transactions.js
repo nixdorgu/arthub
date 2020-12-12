@@ -62,7 +62,7 @@ export default function Transactions() {
       `/api/transactions/${user.id}`,
       (success) => {
         setData(success.data);
-        setTimeout(() => updateData, 10_000);
+        setTimeout(() => updateData(), 10000);
       },
       (error) => {
         setError(error.message);
