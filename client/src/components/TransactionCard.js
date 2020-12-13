@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useRef} from "react";
 import Facade from "../utils/Facade";
 import PendingTransactionModal from "./modals/PendingTransactionModal";
 import isArtist from "../tests/isArtist";
@@ -11,22 +11,53 @@ export default function TransactionCard(props) {
   const isArtistOfTransaction = isArtist(transaction, user); // wrap into fn + status stuff
   const status = transaction.status;
 
-  const submit = (e, transaction) => {
+  const undoRef = useRef();
+  const [showUndo, setShowUndo] = useState(false);
+  const [undo, setUndo] = useState(null);
+  const [error, setError] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const changeStatus = (classificationArtist, classificationUser, onSuccess, onError) => {
+    const classification = isArtistOfTransaction? classificationArtist : classificationUser; // use command pattern here
+    new Facade().patch(`/api/transactions/${transaction.transaction_id}`, {classification}, onSuccess, onError);
+  }
+
+  const close = (e) => {
     setShowModal(false);
+  }
+
+  const submit = (e, transaction) => {
     e.preventDefault();
+    close(e);
+    changeStatus('payment pending', 'cancelled', () => {
+      setMessage(isArtistOfTransaction ? "The transaction is now awaiting payment": "The transaction has successfully been cancelled");
 
-    new Facade().patch(`/api/transactions/${transaction.transaction_id}`, {classification: isArtist? 'payment pending' : 'cancelled'}, (success) => {
-      console.log(JSON.stringify(success))
+      // command pattern here
+      setUndo(() => () => changeStatus('pending', 'pending', () => {
+        setMessage("Undo successful.")
+        setShowUndo(true);
+        setError(true);
+      }, () => {
+        setMessage("Undo unsuccessful.")
+        setShowUndo(true);
+        setError(true);
+      }));
 
-    }, (error) => console.log(JSON.stringify(error)))
-  
-    
+      setShowUndo(true);
+      setError(false);
+    }, () => {
+      setMessage(error.message);
+      setShowUndo(true);
+      setError(!error.success);
+    });
   }
 
   return (
     <>
-    {status === "pending" && showModal && <PendingTransactionModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={(e) => setShowModal(false)} handleSubmit={(e) => submit(e, transaction)} />}
-    {status === "payment pending" && !isArtistOfTransaction && showModal && <PaymentPendingModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={(e) => setShowModal(false)} handleSubmit={(e) => submit(e, transaction)} />}
+    {status === "pending" && showModal && <PendingTransactionModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={(e) => close(e)} handleSubmit={(e) => submit(e, transaction)} />}
+    {status === "payment pending" && !isArtistOfTransaction && showModal && <PaymentPendingModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={close} />}
+    {/* {status === "ongoing" && isArtistOfTransaction && showModal && <PaymentPendingModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={close} handleSubmit={(e) => submit(e, transaction)} />} */}
+    {<Undo hidden={showUndo} props={{message, undo, undoRef, error, showUndo, setShowUndo}}/>}
     <div
       key={transaction.transaction_id}
       style={{
