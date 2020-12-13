@@ -2,7 +2,7 @@ import React from 'react'
 import PayPal from '../PayPal';
 import Modal from './Modal';
 
-export default function PaymentPendingModal({transaction, show, handleClose, handleSubmit}) {
+export default function PaymentPendingModal({transaction, show, handleClose}) {
     const buttonGroup = 
             <>
             <div style={{display: "flex", flexDirection: "column", width: "100%"}}>
@@ -14,7 +14,7 @@ export default function PaymentPendingModal({transaction, show, handleClose, han
 
     
     return (
-        <Modal show={show} handleClose={(handleClose)} header={'Process Payment'} handleSubmit={handleSubmit} btnGroup={buttonGroup}>
+        <Modal show={show} handleClose={(handleClose)} header={'Process Payment'} btnGroup={buttonGroup}>
             <div style={{width: "80%", display: "flex", flexDirection: "column"}}>
                 <h3 style={{margin: ".5rem 0"}}>{transaction.title}</h3>
                 <p style={{margin: ".5rem 0"}}>Short Description: <i>{transaction.short_description}</i></p>
