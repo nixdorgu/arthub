@@ -2,13 +2,13 @@ const jwt = require('jsonwebtoken');
 
 const isAuthenticated = (req, res, next) => {
   let token = req.headers.authorization || req.body;
-  const isHeader = token.contains('Bearer');
+  const tokenIsEmpty = JSON.stringify(token) === JSON.stringify({});
 
-  if (!token) {
+  if (tokenIsEmpty) {
     return res.status(403).json({ success: false, message: 'No token.' });
   }
 
-  token = isHeader ? token.slice(7) : token;
+  token = token.includes('Bearer') ? token.slice(7) : token;
 
   return jwt.verify(token, process.env.JWT_SECRET, {}, (error, authentic) => {
     if (error) {
@@ -22,7 +22,7 @@ const isAuthenticated = (req, res, next) => {
       // refresh token here
     }
 
-    return isHeader ? next() : res.status(200).json({ success: true, user: authentic });
+    return next();
   });
 };
 
