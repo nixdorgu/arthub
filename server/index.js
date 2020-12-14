@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 
+const middleware = require("./middleware");
 const initPassport = require("./config/passport.config");
 const checkConfig = require("./config/envError");
 const formatPayload = require("./src/formatPayload");
@@ -180,7 +181,7 @@ pool.connect((error, client) => {
   });
 
 
-  app.use('/api', isAuthenticated, apiRoutes(client));
+  app.use('/api', middleware.isAuthenticated, apiRoutes(client));
 
   // TODO: delete
   app.post("/api/verify", (req, res) => {
@@ -200,33 +201,6 @@ pool.connect((error, client) => {
       res.status(200).json({ success: true, user: authentic });
     });
   });
-
-  // middleware - TODO: move to separate folder
-  function isAuthenticated(req, res, next) {
-    let token  = req.headers['authorization'];
-    
-    if (!token) {
-      return res
-      .status(403)
-      .json({ success: false, message: "No token." });
-    } else {
-      token = token.slice(7);
-
-      jwt.verify(token, process.env.JWT_SECRET, {}, (error, authentic) => {
-        if (error)
-          return res
-            .status(403)
-            .json({ success: false, message: "Invalid token." });
-  
-        if (authentic.exp < Date.now()) {
-          // return res.status(403).json({success: false, message: "Expired token."})
-          // refresh token here
-        }
-  
-        next()
-      });
-    } 
-  };
 
   app.listen(port, () => {
     initPassport(passport, client);
