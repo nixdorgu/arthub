@@ -192,7 +192,11 @@ pool.connect((connectionError, client) => {
   app.use('/api', middleware.isAuthenticated, apiRoutes(client));
 
   // TODO: delete
-  app.post('/api/verify', middleware.isAuthenticated);
+  app.post('/api/verify', middleware.isAuthenticated, (req, res) => {
+    const { token } = req.body;
+    const user = jwt.decode(token);
+    return res.status(200).json({ success: true, user });
+  });
 
   app.listen(port, () => {
     initPassport(passport, client);
