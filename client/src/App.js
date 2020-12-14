@@ -15,6 +15,7 @@ import MessageRoom from './components/messages/MessageRoom';
 import Transactions from './components/Transactions';
 import ProtectedRoute from './components/ProtectedRoute';
 import UnprotectedRoute from './components/UnprotectedRoute';
+import Auth from './components/Auth';
 
 function App() {
     return (
@@ -27,6 +28,7 @@ function App() {
                                 <ProtectedRoute exact path="/" component={Home}/>
                                 <UnprotectedRoute exact path="/login" component={Login}/>
                                 <UnprotectedRoute exact path="/register" component={Signup}/>
+                                <Route path="/success/:token" component={Auth}/>
                                 <ProtectedRoute exact path="/profile" component={Profile}/>
                                 <ProtectedRoute exact path="/profile/:id" component={Profile}/>
                                 <ProtectedRoute exact path="/edit/profile/" component={EditProfile}/>
