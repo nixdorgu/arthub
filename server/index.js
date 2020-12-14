@@ -11,7 +11,7 @@ const middleware = require("./middleware");
 const initPassport = require("./config/passport.config");
 const checkConfig = require("./config/envError");
 const formatPayload = require("./src/formatPayload");
-const apiRoutes = require('./routes/apiRoutes');
+const apiRoutes = require("./routes/apiRoutes");
 
 dotenv.config();
 
@@ -20,12 +20,18 @@ const port = process.env.PORT ?? 3000;
 const app = express();
 
 app.use(express.json());
-app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5000', 'https://www.facebook.com'],
-  methods: ['GET', 'POST', 'OPTIONS', 'PATCH'],
-  preflightContinue: true,
-  optionsSuccessStatus: 200,
-}));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:5000",
+      "https://www.facebook.com",
+    ],
+    methods: ["GET", "POST", "OPTIONS", "PATCH"],
+    preflightContinue: true,
+    optionsSuccessStatus: 200,
+  })
+);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
@@ -71,11 +77,19 @@ pool.connect((error, client) => {
     }
   );
 
-  app.get('/auth/facebook', passport.authenticate('facebook', {session: false, scope: ["email"]}));
- 
-  app.get('/auth/facebook/callback',
-    passport.authenticate('facebook', {session: false, failureRedirect: 'http:localhost:3000/error'}), (req, res) => {
-      console.log(req.user)
+  app.get(
+    "/auth/facebook",
+    passport.authenticate("facebook", { session: false, scope: ["email"] })
+  );
+
+  app.get(
+    "/auth/facebook/callback",
+    passport.authenticate("facebook", {
+      session: false,
+      failureRedirect: "http:localhost:3000/error",
+    }),
+    (req, res) => {
+      console.log(req.user);
       let user = req.user;
 
       if (JSON.stringify(user) === JSON.stringify({}))
@@ -89,7 +103,7 @@ pool.connect((error, client) => {
         if (error) {
           return res
             .status(500)
-            .location('http://localhost:3000/register')
+            .location("http://localhost:3000/register")
             .json({ success: false, message: "Something went wrong" });
         } else {
           return jwt.sign(
@@ -100,14 +114,18 @@ pool.connect((error, client) => {
               if (err)
                 return res
                   .status(500)
-                  .location('http://localhost:3000/register')
+                  .location("http://localhost:3000/register")
                   .json({ success: false, message: "Something went wrong" });
-              return res.status(200).redirect(`http://localhost:3000/success/${token}`).json({ token });
+              return res
+                .status(200)
+                .redirect(`http://localhost:3000/success/${token}`)
+                .json({ token });
             }
           );
         }
       });
-    });
+    }
+  );
 
   // protected - not logged in
   app.post("/api/register", (req, res) => {
@@ -180,8 +198,7 @@ pool.connect((error, client) => {
     });
   });
 
-
-  app.use('/api', middleware.isAuthenticated, apiRoutes(client));
+  app.use("/api", middleware.isAuthenticated, apiRoutes(client));
 
   // TODO: delete
   app.post("/api/verify", (req, res) => {
