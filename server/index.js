@@ -20,15 +20,15 @@ const app = express();
 
 app.use(express.json());
 app.use(cors({
-origin: ['http://localhost:3000', 'http://localhost:5000', 'https://facebook.com' ],
-methods: ['GET', 'POST', 'OPTIONS', 'PATCH']
+  origin: ['http://localhost:3000', 'http://localhost:5000', 'https://www.facebook.com'],
+  methods: ['GET', 'POST', 'OPTIONS', 'PATCH'],
+  preflightContinue: true,
+  optionsSuccessStatus: 200,
 }));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
-// app.use((req, res, next) => {
-//   res.header('Access-Control-Allow-Origin', '*')
-// })
+
 pool.connect((error, client) => {
   checkConfig(error);
 
@@ -70,12 +70,42 @@ pool.connect((error, client) => {
     }
   );
 
-  app.get('/auth/facebook', passport.authenticate('facebook', {session: false}));
+  app.get('/auth/facebook', passport.authenticate('facebook', {session: false, scope: ["email"]}));
  
   app.get('/auth/facebook/callback',
-    passport.authenticate('facebook', {session: false, failureRedirect: '/auth/facebook'}), (req, res) => {
-      console.log(res)
-      res.status(200).json({success: true, message: "token here"})
+    passport.authenticate('facebook', {session: false, failureRedirect: 'http:localhost:3000/error'}), (req, res) => {
+      console.log(req.user)
+      let user = req.user;
+
+      if (JSON.stringify(user) === JSON.stringify({}))
+        return res
+          .status(401)
+          .json({ success: false, message: "Incorrect credentials." });
+
+      user = formatPayload(user);
+
+      return req.login(user, { session: false }, (error) => {
+        if (error) {
+          return res
+            .status(500)
+            .location('http://localhost:3000/register')
+            .json({ success: false, message: "Something went wrong" });
+        } else {
+          return jwt.sign(
+            user,
+            process.env.JWT_SECRET,
+            { expiresIn: "3d" },
+            (err, token) => {
+              if (err)
+                return res
+                  .status(500)
+                  .location('http://localhost:3000/register')
+                  .json({ success: false, message: "Something went wrong" });
+              return res.status(200).redirect(`http://localhost:3000/success/${token}`).json({ token });
+            }
+          );
+        }
+      });
     });
 
   // protected - not logged in
@@ -203,3 +233,6 @@ pool.connect((error, client) => {
     console.log(`Server is listening on http://localhost:${port}`);
   });
 });
+
+// __paypal_storage__
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJmaXJzdF9uYW1lIjoiQW5pa2UiLCJsYXN0X25hbWUiOiJEb3JndSIsImVtYWlsIjoibml4ZG9yZ3VAZ21haWwuY29tIiwidXNlcl9jbGFzc2lmaWNhdGlvbiI6ImN1c3RvbWVyIiwiaWF0IjoxNjA3NTE3NTY3Nzk5LCJleHAiOjE2MDc1MTc2NTQxOTl9.mGhgIY4YF1lUeErF1cAX6P8S1r_bGPqYs_1b-3mEGc4
