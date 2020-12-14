@@ -42,6 +42,7 @@ pool.connect((connectionError, client) => {
   // protected - not logged in
   app.post(
     '/api/login',
+    middleware.isNotAuthenticated,
     passport.authenticate('local', { session: false }),
     (req, res) => {
       let { user } = req;
@@ -78,7 +79,7 @@ pool.connect((connectionError, client) => {
   );
 
   app.get(
-    '/auth/facebook',
+    '/auth/facebook', middleware.isNotAuthenticated,
     passport.authenticate('facebook', { session: false, scope: ['email'] }),
   );
 
@@ -126,8 +127,7 @@ pool.connect((connectionError, client) => {
     },
   );
 
-  // protected - not logged in
-  app.post('/api/register', (req, res) => {
+  app.post('/api/register', middleware.isNotAuthenticated, (req, res) => {
     const {
       firstName, lastName, email, password, isArtist,
     } = req.body;
@@ -191,7 +191,6 @@ pool.connect((connectionError, client) => {
 
   app.use('/api', middleware.isAuthenticated, apiRoutes(client));
 
-  // TODO: delete
   app.post('/api/verify', middleware.isAuthenticated, (req, res) => {
     const { token } = req.body;
     const user = jwt.decode(token);
