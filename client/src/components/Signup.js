@@ -49,12 +49,16 @@ function Signup() {
     });
   };
 
+  const signupWithFacebook = (e) => {
+    console.log(e.target)
+    window.location.href = "http://localhost:5000/auth/facebook"
+  };
+  
   // TODO: refine regex patterns and add error message + custom styling
   // TODO: email already in use error
 
   return (
     <div className="form">
-      {ctx.authenticated ? <Redirect to="/"/> : null}
       {registered ? <Redirect to="/login"/> : null}
       <form method="POST" className="signup-form" onSubmit={signup}>
         <div className="form-element">
@@ -91,12 +95,12 @@ function Signup() {
           <button id="signup" type="submit">
           Create an Account
         </button>
-        <div className="row center user-type-selection-btn-group authentication">
-              <button type="submit" id="facebook"><span>Continue with <i className="fa fa-facebook"/></span></button>
-              <button type="submit" id="twitter"><span>Continue with <i className="fa fa-google"/></span></button>
-          </div>
         </div>
       </form>
+      <div className="row center user-type-selection-btn-group authentication">
+              <button type="submit" id="facebook" onClick={(e) => signupWithFacebook(e)}><span>Continue with <i className="fa fa-facebook"/></span></button>
+              <button type="submit" id="twitter"><span>Continue with <i className="fa fa-google"/></span></button>
+          </div>
     </div>
   );
 }
