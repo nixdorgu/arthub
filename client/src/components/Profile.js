@@ -113,7 +113,7 @@ function Profile({match}) {
                     </div>
                     <div className="bio" style={{flex: "3", display: "flex", flexDirection: "column", justifyContent: "flex-end", height: "100%", width: "100%"}}>
                         <p>{isMe ? showFullName(user) : showFullName(profileData)}</p>
-                        <i style={{padding: ".5rem 0", fontSize: "small"}}>{isMe? 'Member since Nov. 17, 2020' : ` Member since ${new Date(profileData['member_since']).toLocaleDateString()}`}</i>
+                        <i style={{padding: ".5rem 0", fontSize: "small"}}>{`Member since ${new Date(profileData['member_since']).toLocaleDateString()}`}</i>
                         <UserInteractions/>
                     </div>
                 </div>
