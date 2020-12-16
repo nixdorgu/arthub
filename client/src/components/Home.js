@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState} from 'react';
 import { Redirect, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import Facade from '../utils/Facade';
+import ArtistCard from './ArtistCard';
 import LoadingIndicator from './LoadingIndicator';
 
 function Home() {
@@ -34,20 +35,8 @@ function Home() {
         </form>
         <>
         {data.length > 0 ? (
-
           <div id="artists" style={{margin: "2rem", display: "flex", flexWrap: "wrap"}}>
-          {data.map((artist) => {
-            return <div key={artist.user_id} style={{padding: ".8rem", boxShadow: "1px 1px 1px 1px #ff5678", flex: "1", margin: ".2rem", borderRadius: "10px"}}>
-              <div style={{display: "flex", justifyContent: "space-around"}}>
-                <div>Image</div>
-                <div>
-                  <h4>{artist.name}</h4>
-                  <p>Location</p>
-                  {/* <p>{artist.biography || <span>Reach me at <a href={`mailto:${artist.email}`}>{artist.email}</a></span>}</p> */}
-                </div> 
-              </div>
-            </div>  
-            })}
+          {data.map(artist => <ArtistCard key={artist.user_id} props={{artist}}/>)}
           </div>
         ) : (
           <LoadingIndicator/>
