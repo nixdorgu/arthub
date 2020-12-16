@@ -2,7 +2,7 @@ import React, {useState, useRef} from "react";
 import Facade from "../utils/Facade";
 import PendingTransactionModal from "./modals/PendingTransactionModal";
 import isArtist from "../tests/isArtist";
-import Undo from "./Undo";
+import Snackbar from "./Snackbar";
 import PaymentPendingModal from "./modals/PaymentPendingModal";
 
 export default function TransactionCard(props) {
@@ -57,7 +57,7 @@ export default function TransactionCard(props) {
     {status === "pending" && showModal && <PendingTransactionModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={(e) => close(e)} handleSubmit={(e) => submit(e, transaction)} />}
     {status === "payment pending" && !isArtistOfTransaction && showModal && <PaymentPendingModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={close} />}
     {/* {status === "ongoing" && isArtistOfTransaction && showModal && <PaymentPendingModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={close} handleSubmit={(e) => submit(e, transaction)} />} */}
-    {<Undo hidden={showUndo} props={{message, undo, undoRef, error, showUndo, setShowUndo}}/>}
+    {<Snackbar hidden={showUndo} props={{message, undo, undoRef, error, showUndo, setShowUndo}}/>}
     <div
       key={transaction.transaction_id}
       style={{
