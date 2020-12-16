@@ -21,7 +21,7 @@ export function AuthProvider ({children}) {
                     setAuthenticated(true);
 
                     let user = response.user;
-                    user = {id: user['user_id'], first_name: user['first_name'], last_name: user['last_name'], email: user['email'], user_classification: user['user_classification']}
+                    user = {id: user['user_id'], first_name: user['first_name'], last_name: user['last_name'], email: user['email'], user_classification: user['user_classification'], member_since: user['member_since']}
 
                     // authenticated
                     // if res contains token then setToken('arthub_token', response.token)
@@ -35,9 +35,9 @@ export function AuthProvider ({children}) {
                     setAuthenticated(false);
                 }
             )
-
         } else {
             setAuthenticated(false);
+            setUser({});
         }
     }, [authenticated]);
     
