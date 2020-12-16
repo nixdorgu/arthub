@@ -84,7 +84,7 @@ function Signup() {
   const validateAll = (e) => {
     e.preventDefault();
     const validator = OPTIONS.map(option => validate(option));
-    validator.every(message => message === true) ? console.log('solid') : console.log(validator.findIndex(item => item === false))
+    validator.every(message => message === true) ? signup(e) : console.log(validator.findIndex(item => item === false))
   }
 
 
