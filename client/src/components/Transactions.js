@@ -97,6 +97,10 @@ export default function Transactions() {
 
   useEffect(() => {
     fetchTransactions();
+
+    return () => {
+      clearTimeout(updateData);
+    }
   }, [fetchTransactions, updateData, error]);
   return (
     <div>
