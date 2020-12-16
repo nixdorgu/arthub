@@ -1,12 +1,13 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 import "./header.css";
+import { logout } from "../utils/Tokens";
 
 function Header() {
-  const ctx = useContext(AuthContext);
+  const ctx = useAuth();
   const [hamburgerOpen, setHamburgerOpen] = useState(false);
 
   function showLinks() {
@@ -37,6 +38,7 @@ function Header() {
             <Link to="/profile">Profile</Link>
             <Link to="/messages">Messages</Link>
             <Link to="/transactions">Transactions</Link>
+            <Link onClick={() => {logout(ctx)}}>Logout</Link>
           </div>
         )}
       </div>
