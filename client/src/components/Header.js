@@ -38,7 +38,7 @@ function Header() {
             <Link to="/profile">Profile</Link>
             <Link to="/messages">Messages</Link>
             <Link to="/transactions">Transactions</Link>
-            <Link onClick={() => {logout(ctx)}}>Logout</Link>
+            <Link to="#" onClick={() => {logout(ctx)}}>Logout</Link>
           </div>
         )}
       </div>
