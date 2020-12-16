@@ -1,13 +1,23 @@
-import React, { useState, useContext } from "react";
-import { Redirect, Link} from "react-router-dom";
-import {AuthContext} from '../context/AuthContext'
+import React, { useState, useRef } from "react";
+import { Redirect, Link } from "react-router-dom";
 import Facade from '../utils/Facade'
+import SocialLogin from "../utils/SocialLogin";
 
 function Signup() {
-  const ctx = useContext(AuthContext);
-  const [artist, setArtist] = useState(false);
+  const errorRef = useRef();
+  const [artist, setArtist] = useState(null);
   const [registered, setRegistered] = useState(false);
 
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const OPTIONS = ['firstName', 'lastName', 'email', 'password', 'artist'];
+  const NAME_REGEX = /([a-zA-Z])+\s*/;
+  const EMAIL_REGEX = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9-.]+\.[a-zA-Z]{2,4})/;
+  const MIN_LENGTH = 8, MAX_LENGTH = 15;
+  
   const toggleButtonElement = (activeId, inactiveId) => {
     document.querySelector(`#${activeId}`).classList.add('active');
     document.querySelector(`#${inactiveId}`).classList.remove('active');
@@ -43,52 +53,80 @@ function Signup() {
       setRegistered(true);
     },
     (error) => {
-      // 409 - email in use
-      // else something went wrong - snackbar/modal
-      alert(error.message)
+      errorRef.current.innerHTML = error.message;
     });
   };
 
-  const signupWithFacebook = (e) => {
-    console.log(e.target)
-    window.location.href = "http://localhost:5000/auth/facebook"
-  };
-  
-  // TODO: refine regex patterns and add error message + custom styling
-  // TODO: email already in use error
 
+  const validate = (targetId) => {
+    let message = '';
+
+    if (targetId === 'artist') {
+      message = typeof artist !== 'boolean' ? 'Must select type of account' : '';
+    } else {
+      const target = document.querySelector(`#${targetId}`);
+      const id = target.id;
+      const value = target.value;
+
+      if (OPTIONS.indexOf(id) < 2) {
+        message = !NAME_REGEX.test(value) ?'Name must contain only letters and spaces.': '';
+      } else if (OPTIONS.indexOf(id) === 2) {
+        message = !EMAIL_REGEX.test(value) ? 'Email must be a valid email.' : '';
+      } else if (OPTIONS.indexOf(id) === 3) {
+        message = (value.length < MIN_LENGTH || value.length > MAX_LENGTH) ? 'Password must be between 8 and 15 characters.' : '';
+      }
+    }
+    
+    errorRef.current.innerHTML = message;
+    return message === '';
+  }
+
+  const validateAll = (e) => {
+    e.preventDefault();
+    const validator = OPTIONS.map(option => validate(option));
+    validator.every(message => message === true) ? console.log('solid') : console.log(validator.findIndex(item => item === false))
+  }
+
+
+  const handleSocialLogin = (e, site) => window.location.href = SocialLogin(site);
+
+  const handleOnChange = (e, handler) => {
+    handler(e.target.value);
+    validate(e.target.id);
+  }
+  
   return (
     <div className="form">
       {registered ? <Redirect to="/login"/> : null}
-      <form method="POST" className="signup-form" onSubmit={signup}>
+      <form className="signup-form" onSubmit={(e) => validateAll(e)}>
+        <div className="form-element" ref={errorRef} style={{color: "red", fontSize: ".5rem"}}></div>
         <div className="form-element">
-          <label>First Name</label>
-          <input type="text" id="firstName" name="firstName" pattern="^\D+\s*" required />
+          <label htmlFor="firstName">First Name</label>
+          <input type="text" id="firstName" name="firstName" value={firstName} onChange={(e) => handleOnChange(e, setFirstName)} />
         </div>
         <div className="form-element">
-          <label>Last Name</label>
-          <input type="text" id="lastName" name="lastName" pattern="^\D+\s*" required />
+          <label htmlFor="lastName">Last Name</label>
+          <input type="text" id="lastName" name="lastName" value={lastName} onChange={(e) => handleOnChange(e, setLastName)} />
         </div>
         <div className="form-element">
-          <label>Email</label>
-          <input type="email" id="email" name="email" required />
+          <label htmlFor="email">Email</label>
+          <input type="email" id="email" name="email" value={email} onChange={(e) => handleOnChange(e, setEmail)} />
         </div>
         <div className="form-element">
-          <label>Password</label>
+          <label htmlFor="password">Password</label>
           <input
             type="password"
             id="password"
             name="password"
-            minLength="8"
-            maxLength="15"
             placeholder="Create a password"
-            required
+            value={password}
+            onChange={(e) => handleOnChange(e, setPassword)}
           />
         </div>
         <div  className="user-type-selection">
           <p className="user-selection-prompt">I want to: </p>
           <div className="row user-type-selection-btn-group">
-              <button id="hire" className="active" onClick={selectUserType}>Hire</button>
+              <button id="hire" onClick={selectUserType}>Hire</button>
               <button id="work" onClick={selectUserType}>Work</button>
           </div>
           <Link to="/login" className="form-link">Already have an account?</Link>
@@ -98,8 +136,8 @@ function Signup() {
         </div>
       </form>
       <div className="row center user-type-selection-btn-group authentication">
-              <button type="submit" id="facebook" onClick={(e) => signupWithFacebook(e)}><span>Continue with <i className="fa fa-facebook"/></span></button>
-              <button type="submit" id="twitter"><span>Continue with <i className="fa fa-google"/></span></button>
+              <button type="submit" id="facebook" onClick={(e) => handleSocialLogin(e, 'facebook')}><span>Continue with <i className="fa fa-facebook"/></span></button>
+              <button type="submit" id="google" onClick={(e) => handleSocialLogin(e, 'google')}><span>Continue with <i className="fa fa-google"/></span></button>
           </div>
     </div>
   );
