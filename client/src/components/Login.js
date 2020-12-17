@@ -1,13 +1,21 @@
-import React, { useContext } from "react";
-import { Redirect, Link} from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import React, { useRef } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import Facade from "../utils/Facade";
+import SocialLogin from "../utils/SocialLogin";
 import { setToken } from "../utils/Tokens";
 
 function Login() {
-  const ctx = useContext(AuthContext);
+  const ctx = useAuth();
+  const errorRef = useRef();
+  
+  const handleSocialLogin = (e, site) => {
+    window.location.href = SocialLogin(site);
+  };
+
   const handleLogin = (e) => {
     e.preventDefault();
+    errorRef.current.innerHTML = '';
 
     const email = document.querySelector("#email").value;
     const password = document.querySelector("#password").value;
@@ -15,18 +23,18 @@ function Login() {
     const data = { email, password };
 
     new Facade().post('/api/login', data, (success) => {
-      ctx.setAuthenticated(true);
       setToken(success.token);
+      ctx.setAuthenticated(true);
     }, (error) => {
-      alert(error.message)
-      // snackbar of response.message
+      errorRef.current.innerHTML = error.message;
     });
   };
 
   return (
     <div className="form">
-        {ctx.authenticated ? <Redirect to="/"/> : null}
       <form method="POST" className="login-form" onSubmit={handleLogin}>
+        <div className="form-element" ref={errorRef} style={{color: "red"}}>
+        </div>
         <div className="form-element">
           <label>Email</label>
           <input type="email" id="email" name="email" required />
@@ -41,12 +49,12 @@ function Login() {
             Login
           </button>
           <div className="row center user-type-selection-btn-group authentication">
-            <button type="submit" id="facebook">
+            <button id="facebook" onClick={(e) => handleSocialLogin(e, 'facebook')}>
               <span>
                 Login with <i className="fa fa-facebook" />
               </span>
             </button>
-            <button type="submit" id="twitter">
+            <button id="google" onClick={(e) => handleSocialLogin(e, 'google')} >
               <span>
                 Login with <i className="fa fa-google" />
               </span>
