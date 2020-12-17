@@ -85,10 +85,53 @@ pool.connect((connectionError, client) => {
 
   app.get(
     '/auth/facebook/callback',
-    passport.authenticate('facebook', {
-      session: false,
-      failureRedirect: 'http:localhost:3000/error',
-    }),
+    passport.authenticate('facebook', { session: false }),
+    (req, res) => {
+      let { user } = req;
+
+      if (JSON.stringify(user) === JSON.stringify({})) {
+        return res
+          .status(401)
+          .json({ success: false, message: 'Incorrect credentials.' });
+      }
+
+      user = formatPayload(user);
+
+      return req.login(user, { session: false }, (error) => {
+        if (error) {
+          return res
+            .status(500)
+            .location('http://localhost:3000/register')
+            .json({ success: false, message: 'Something went wrong' });
+        }
+        return jwt.sign(
+          user,
+          process.env.JWT_SECRET,
+          { expiresIn: '3d' },
+          (err, token) => {
+            if (err) {
+              return res
+                .status(500)
+                .location('http://localhost:3000/register')
+                .json({ success: false, message: 'Something went wrong' });
+            }
+            return res
+              .status(200)
+              .redirect(`http://localhost:3000/success/${token}`);
+          },
+        );
+      });
+    },
+  );
+
+  app.get(
+    '/auth/google', middleware.isNotAuthenticated,
+    passport.authenticate('google', { session: false, scope: ['profile', 'email'] }),
+  );
+
+  app.get(
+    '/auth/google/callback',
+    passport.authenticate('google', { session: false }),
     (req, res) => {
       let { user } = req;
 
