@@ -28,8 +28,8 @@ const messagesRoutes = (client) => {
       (SELECT sender_id FROM messages WHERE room_id = room.room_id ORDER BY timestamp DESC LIMIT 1) AS sent_by,
       (SELECT timestamp FROM messages WHERE room_id = room.room_id ORDER BY timestamp DESC LIMIT 1) AS sent_at 
       FROM message_rooms AS room INNER JOIN users USING(user_id)
-      WHERE EXISTS (SELECT content FROM messages WHERE room_id = room.room_id ORDER BY timestamp DESC LIMIT 1) 
-      AND $1 = room.user_id OR $1 = room.artist_id 
+      WHERE $1 = room.user_id OR $1 = room.artist_id AND
+      (SELECT (CASE WHEN COUNT(content) > 0 THEN TRUE ELSE FALSE END) FROM (SELECT content FROM messages WHERE room_id = room.room_id ORDER BY timestamp DESC LIMIT 1) AS sub) IS TRUE 
       ORDER BY sent_at DESC;`;
 
     return client.query(query, [id], (err, result) => {
