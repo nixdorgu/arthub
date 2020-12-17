@@ -1,4 +1,6 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
+
 const artistsRoutes = require('./api/artistsRoutes');
 const messagesRoutes = require('./api/messagesRoutes');
 const transactionsRoutes = require('./api/transactionsRoutes');
@@ -28,6 +30,12 @@ const apiRoute = (client) => {
   router.use('/artists', artistsRoutes(client));
   router.use('/messages', messagesRoutes(client));
   router.use('/transactions', transactionsRoutes(client));
+
+  router.post('/verify', (req, res) => {
+    const { token } = req.body;
+    const user = jwt.decode(token);
+    return res.status(200).json({ success: true, user });
+  });
 
   return router;
 };

@@ -144,12 +144,6 @@ pool.connect((connectionError, client) => {
   app.use('/auth', middleware.isNotAuthenticated, authRoute());
   app.use('/api', middleware.isAuthenticated, apiRoutes(client));
 
-  app.post('/api/verify', middleware.isAuthenticated, (req, res) => {
-    const { token } = req.body;
-    const user = jwt.decode(token);
-    return res.status(200).json({ success: true, user });
-  });
-
   app.listen(port, () => {
     initPassport(passport, client);
     // eslint-disable-next-line no-console
