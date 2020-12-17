@@ -1,22 +1,23 @@
 function outputError(message) {
-    if (!message) return;
+  if (!message) return;
 
-    console.log(message);
-    return process.exit(1);
+  // eslint-disable-next-line no-console
+  console.log(message);
+  process.exit(1);
 }
 
 function checkConfig(error = '') {
-    let message = '';
+  let message = '';
 
-    if (!process.env.JWT_SECRET) {
-        message = 'No JWT secret set.'
-    } else if (!process.env.DATABASE_CONFIG) {
-        message = 'Missing database configuration.'
-    } else if (error) {
-        message = 'Could not connect to database.'
-    }
+  if (!process.env.JWT_SECRET) {
+    message = 'No JWT secret set.';
+  } else if (!process.env.DATABASE_CONFIG) {
+    message = 'Missing database configuration.';
+  } else if (error) {
+    message = 'Could not connect to database.';
+  }
 
-    return outputError(message);
+  return outputError(message);
 }
 
 module.exports = checkConfig;
