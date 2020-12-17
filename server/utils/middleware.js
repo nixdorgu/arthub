@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const isAuthenticated = (req, res, next) => {
   let token = req.headers.authorization || req.body;
-  const tokenIsEmpty = token === 'Bearer null';
+  const tokenIsEmpty = token === 'Bearer null' || typeof token === 'undefined';
 
   if (tokenIsEmpty) {
     return res.status(403).json({ success: false, message: 'No token.' });
@@ -28,7 +28,7 @@ const isAuthenticated = (req, res, next) => {
 
 const isNotAuthenticated = (req, res, next) => {
   const token = req.headers.authorization;
-  const tokenIsEmpty = token === 'Bearer null';
+  const tokenIsEmpty = token === 'Bearer null' || typeof token === 'undefined';
 
   return tokenIsEmpty ? next() : res.status(403).json({ success: false, message: 'Authorization credentials found.' });
 };
