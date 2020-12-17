@@ -12,6 +12,7 @@ const initPassport = require('./config/passport.config');
 const checkConfig = require('./config/envError');
 const formatPayload = require('./src/formatPayload');
 const apiRoutes = require('./routes/apiRoutes');
+const authRoute = require('./routes/authRoutes');
 
 dotenv.config();
 
@@ -39,7 +40,7 @@ app.use(passport.initialize());
 pool.connect((connectionError, client) => {
   checkConfig(connectionError);
 
-  // protected - not logged in
+  // protected - not logged in // MOVE TO AUTH/
   app.post(
     '/api/login',
     middleware.isNotAuthenticated,
@@ -78,99 +79,7 @@ pool.connect((connectionError, client) => {
     },
   );
 
-  app.get(
-    '/auth/facebook', middleware.isNotAuthenticated,
-    passport.authenticate('facebook', { session: false, scope: ['email'] }),
-  );
-
-  app.get(
-    '/auth/facebook/callback',
-    passport.authenticate('facebook', { session: false }),
-    (req, res) => {
-      let { user } = req;
-
-      if (JSON.stringify(user) === JSON.stringify({})) {
-        return res
-          .status(401)
-          .json({ success: false, message: 'Incorrect credentials.' });
-      }
-
-      user = formatPayload(user);
-
-      return req.login(user, { session: false }, (error) => {
-        if (error) {
-          return res
-            .status(500)
-            .location('http://localhost:3000/register')
-            .json({ success: false, message: 'Something went wrong' });
-        }
-        return jwt.sign(
-          user,
-          process.env.JWT_SECRET,
-          { expiresIn: '3d' },
-          (err, token) => {
-            if (err) {
-              return res
-                .status(500)
-                .location('http://localhost:3000/register')
-                .json({ success: false, message: 'Something went wrong' });
-            }
-            return res
-              .status(200)
-              .redirect(`http://localhost:3000/success/${token}`);
-          },
-        );
-      });
-    },
-  );
-
-  app.get(
-    '/auth/google', middleware.isNotAuthenticated,
-    passport.authenticate('google', { session: false, scope: ['profile', 'email'] }),
-  );
-
-  app.get(
-    '/auth/google/callback',
-    passport.authenticate('google', { session: false }),
-    (req, res) => {
-      let { user } = req;
-
-      if (JSON.stringify(user) === JSON.stringify({})) {
-        return res
-          .status(401)
-          .json({ success: false, message: 'Incorrect credentials.' });
-      }
-
-      user = formatPayload(user);
-
-      return req.login(user, { session: false }, (error) => {
-        if (error) {
-          return res
-            .status(500)
-            .location('http://localhost:3000/register')
-            .json({ success: false, message: 'Something went wrong' });
-        }
-        return jwt.sign(
-          user,
-          process.env.JWT_SECRET,
-          { expiresIn: '3d' },
-          (err, token) => {
-            if (err) {
-              return res
-                .status(500)
-                .location('http://localhost:3000/register')
-                .json({ success: false, message: 'Something went wrong' });
-            }
-            return res
-              .status(200)
-              .redirect(`http://localhost:3000/success/${token}`);
-          },
-        );
-      });
-    },
-  );
-
-  app.post('/api/register', middleware.isNotAuthenticated, (req, res) => {
+  app.post('/api/register', (req, res) => {
     const {
       firstName, lastName, email, password, isArtist,
     } = req.body;
@@ -232,6 +141,7 @@ pool.connect((connectionError, client) => {
     });
   });
 
+  app.use('/auth', middleware.isNotAuthenticated, authRoute());
   app.use('/api', middleware.isAuthenticated, apiRoutes(client));
 
   app.post('/api/verify', middleware.isAuthenticated, (req, res) => {
