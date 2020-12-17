@@ -58,7 +58,7 @@ const messagesRoutes = (client) => {
         }
 
         if (result.rows.length === 0) {
-          return client.query('INSERT INTO message_rooms VALUES (DEFAULT, $1, $2)', [roles.artist, roles.customer], (roomError, roomResult) => {
+          return client.query('INSERT INTO message_rooms VALUES (DEFAULT, $1, $2) RETURNING *', [roles.artist, roles.customer], (roomError, roomResult) => {
             if (roomError) {
               return res.status(500).json({ message: 'Uh-oh, server temporarily down.' });
             }
