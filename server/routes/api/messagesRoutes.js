@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 const express = require('express');
+const jwt = require('jsonwebtoken');
 
 const messagesRoutes = (client) => {
   const router = express.Router();
@@ -31,7 +32,7 @@ const messagesRoutes = (client) => {
       AND $1 = room.user_id OR $1 = room.artist_id 
       ORDER BY sent_at DESC;`;
 
-    client.query(query, [id], (err, result) => {
+    return client.query(query, [id], (err, result) => {
       if (err) {
         return res.status(500).json({ message: 'Something went wrong.' });
       }
@@ -75,13 +76,17 @@ const messagesRoutes = (client) => {
 
   router.get('/room/:room', (req, res) => {
     const room_id = req.params.room;
+    const token = req.headers.authorization.slice(7);
+    const decodedToken = jwt.decode(token);
 
+    // only users part of conversation can access
     return client.query('SELECT * FROM message_rooms WHERE $1 = room_id', [room_id], (roomError, room) => {
-      if (roomError || room.rows.length === 0) return res.status(404).json({ message: 'Room not found.' });
+      if (roomError || room.rows.length === 0 || ![room.rows[0].artist_id, room.rows[0].user_id].includes(decodedToken.user_id)) return res.status(404).json({ message: 'Room not found.' });
+
 
       return client.query('SELECT * FROM messages WHERE $1 = room_id', [room_id], (err, result) => {
         if (err) {
-          return res.status(500).json({ message: 'Something wrong hrouterened.' });
+          return res.status(500).json({ message: 'Something wrong happened.' });
         }
 
         return res.status(200).json(result.rows);
