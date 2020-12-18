@@ -1,49 +1,51 @@
-import {createContext, useState, useEffect, useContext} from 'react';
-import Facade from '../utils/Facade';
-import {getToken} from '../utils/Tokens';
+import { createContext, useState, useEffect, useContext } from "react";
+import Facade from "../utils/Facade";
+import { getToken, removeToken } from "../utils/Tokens";
 
 export const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
-export function AuthProvider ({children}) {
-    const [authenticated, setAuthenticated] = useState(true);
-    const [user, setUser] = useState({});
+export function AuthProvider({ children }) {
+  const [authenticated, setAuthenticated] = useState(true);
+  const [user, setUser] = useState({});
 
-    useEffect(() => {
-        const token = getToken();
+  useEffect(() => {
+    const token = getToken();
 
-        if (token) {
-            new Facade()
-            .post(
-                '/api/verify', {token},
-                (response) => {
-                    setAuthenticated(true);
+    if (token) {
+      new Facade().post(
+        "/api/verify",
+        { token },
+        (response) => {
+          setAuthenticated(true);
+          // add check for response token -> if response.refreshToken != undefined then setToken to refresh token else proceed
+          let user = response.user;
+          user = {
+            id: user["user_id"],
+            first_name: user["first_name"],
+            last_name: user["last_name"],
+            email: user["email"],
+            user_classification: user["user_classification"],
+            member_since: user["member_since"],
+          };
 
-                    let user = response.user;
-                    user = {id: user['user_id'], first_name: user['first_name'], last_name: user['last_name'], email: user['email'], user_classification: user['user_classification'], member_since: user['member_since']}
-
-                    // authenticated
-                    // if res contains token then setToken('arthub_token', response.token)
-                    setUser(user);
-                    // alert(response)
-                    console.log(user)
-                },
-                (error) => {
-                    console.log(error)
-                    // invalid token ie not authenticated
-                    setAuthenticated(false);
-                }
-            )
-        } else {
-            setAuthenticated(false);
-            setUser({});
+          setUser(user);
+        },
+        (error) => {
+          setAuthenticated(false);
+          removeToken();
         }
-    }, [authenticated]);
-    
-    return (
-        <AuthContext.Provider value={{authenticated, setAuthenticated, user}}>
-            {children}
-        </AuthContext.Provider>
-    )
+      );
+    } else {
+      setAuthenticated(false);
+      setUser({});
+    }
+  }, [authenticated]);
+
+  return (
+    <AuthContext.Provider value={{ authenticated, setAuthenticated, user }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
