@@ -9,6 +9,7 @@ import LoadingIndicator from "../LoadingIndicator";
 export default function Messages() {
   let timeout;
   const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const user = useContext(AuthContext).user;
 
@@ -27,16 +28,18 @@ export default function Messages() {
         console.log(error);
       }
     );
+
+    setLoading(false);
   }, [user]);
 
   useEffect(() => {
-    // add loading indicator
     getRooms();
     return () => clearTimeout(timeout);
   }, [getRooms, timeout]); // having rooms here makes it render exponentially
 
   return (
     <div className="messages">
+      {loading ? <LoadingIndicator/> : null}
       {
         rooms.length > 0 ? (
           rooms.map((data, index) => (
@@ -61,13 +64,15 @@ export default function Messages() {
               </div>
             </Link>
           ))
-        ) : error ? (
-          <NoMessages />
-        ) : (
-          <LoadingIndicator />
-        )
-        // loading indicator if error i false else nomes
+        ) : null
       }
+      {error ? (
+        <div>
+          Something went wrong!
+        </div>
+        ) : (
+          <NoMessages />
+        )}
     </div>
   );
 }
