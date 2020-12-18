@@ -1,6 +1,6 @@
-import React, {useCallback, useContext, useEffect, useState, useRef } from "react";
+import React, {useCallback, useEffect, useState, useRef } from "react";
 import {Redirect, useParams} from 'react-router-dom';
-import { AuthContext } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import Facade from "../../utils/Facade";
 import LoadingIndicator from "../LoadingIndicator";
 import Message from "./Message";
@@ -18,7 +18,7 @@ export default function MessageRoom() {
   const [loading, setLoading] = useState(true);
   const inputRef = useRef();
 
-  const user = useContext(AuthContext).user;
+  const user = useAuth().user;
 
   const fetchMessages = useCallback((room) => {
     return new Facade().get(`/api/messages/room/${room}`, (response) => {
