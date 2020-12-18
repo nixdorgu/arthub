@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,6 +8,7 @@ import { logout } from "../utils/Tokens";
 
 function Header() {
   const ctx = useAuth();
+  const hamburgerRef = useRef();
   const [hamburgerOpen, setHamburgerOpen] = useState(false);
 
   function showLinks() {
@@ -21,7 +22,13 @@ function Header() {
   // add artists specific navlinks [transactions?]
   return (
     <header className="row">
-      <div>
+      <div onClick={() => {
+        if (hamburgerOpen) {
+          showLinks();
+          setHamburgerOpen(false);
+        }
+            
+          }}>
         <Link to="/" className="logo">
           arthub
         </Link>
@@ -34,7 +41,10 @@ function Header() {
             <Link to="/login">Login</Link>
           </div>
         ) : (
-          <div>
+          <div onClick={() => {
+            showLinks();
+            setHamburgerOpen(false);
+          }}>
             <Link to="/profile">Profile</Link>
             <Link to="/messages">Messages</Link>
             <Link to="/transactions">Transactions</Link>
@@ -42,7 +52,7 @@ function Header() {
           </div>
         )}
       </div>
-      <div className="hamburger show-mobile">
+      <div className="hamburger show-mobile" ref={hamburgerRef}>
         {hamburgerOpen ? (
           <FontAwesomeIcon
             icon={faTimes}
