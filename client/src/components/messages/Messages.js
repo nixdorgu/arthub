@@ -1,9 +1,7 @@
 import React, { useContext, useEffect, useState, useCallback } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import Facade from "../../utils/Facade";
-import { Link } from "react-router-dom";
 import NoMessages from "../states/NoMessages";
-import showRecipient from "../../tests/showRecipient";
 import LoadingIndicator from "../LoadingIndicator";
 import MessageCard from "./MessageCard";
 
@@ -40,19 +38,16 @@ export default function Messages() {
 
   return (
     <div className="messages">
-      {loading ? <LoadingIndicator/> : null}
-      {
-        rooms.length > 0 ? (
-          rooms.map((data, index) => <MessageCard props={{data, index, user}}/>)
-        ) : null
-      }
-      {error ? (
-        <div>
-          Something went wrong!
-        </div>
-        ) : (
-          <NoMessages />
-        )}
+      {loading ? <LoadingIndicator /> : null}
+      {rooms.length > 0 && !error ? (
+        rooms.map((data, index) => (
+          <MessageCard props={{ data, index, user }} />
+        ))
+      ) : error ? (
+        <div>Something went wrong!</div>
+      ) : (
+        <NoMessages />
+      )}
     </div>
   );
 }
