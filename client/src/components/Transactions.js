@@ -108,7 +108,7 @@ export default function Transactions() {
       ) : (
         <div>
           <Tabs value={value} onChange={handleChange} TabIndicatorProps={{style : {background: "#FF5678"}}} variant="scrollable" scrollButtons="auto" aria-label="Transaction tabs">
-            {options.map((option, index) => <Tab label={option} style={{fontFamily: "Montserrat, sans-serif"}} {...a11yProps(index)}/>)}
+            {options.map((option, index) => <Tab key={index} label={option} style={{fontFamily: "Montserrat, sans-serif"}} {...a11yProps(index)}/>)}
           </Tabs>
           <TabPanel value={value} index={0}>
             {data.filter((t) => t.status === "pending").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
