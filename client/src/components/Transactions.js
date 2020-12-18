@@ -1,12 +1,11 @@
-import React, { useEffect, useCallback, useState, useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import React, { useEffect, useCallback, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import { Tabs, Tab} from "@material-ui/core";
 import Facade from "../utils/Facade";
 import LoadingIndicator from "./LoadingIndicator";
 import NoTransactions from "./states/NoTransactions";
 
 import PropTypes from "prop-types";
-import { makeStyles } from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
 import TransactionCard from "./TransactionCard";
 
@@ -43,19 +42,14 @@ function a11yProps(index) {
   };
 }
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-  },
-}));
-
 export default function Transactions() {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [value, setValue] = useState(0);
+
+  const options = ["Pending", "Payment Pending", "Cancelled", "Ongoing", "Completed"];
 
   const updateData = useCallback(() => {
     new Facade().get(
@@ -102,6 +96,7 @@ export default function Transactions() {
       clearTimeout(updateData);
     }
   }, [fetchTransactions, updateData, error]);
+
   return (
     <div>
       {loading ? (
@@ -112,12 +107,8 @@ export default function Transactions() {
         <NoTransactions />
       ) : (
         <div>
-          <Tabs value={value} onChange={handleChange}>
-            <Tab label="Pending" {...a11yProps(0)} />
-            <Tab label="Payment Pending" {...a11yProps(1)} />
-            <Tab label="Cancelled" {...a11yProps(2)} />
-            <Tab label="Ongoing" {...a11yProps(3)} />
-            <Tab label="Completed" {...a11yProps(4)} />
+          <Tabs value={value} onChange={handleChange} TabIndicatorProps={{style : {background: "#FF5678"}}} variant="scrollable" scrollButtons="auto" aria-label="Transaction tabs">
+            {options.map((option, index) => <Tab label={option} style={{fontFamily: "Montserrat, sans-serif"}} {...a11yProps(index)}/>)}
           </Tabs>
           <TabPanel value={value} index={0}>
             {data.filter((t) => t.status === "pending").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
