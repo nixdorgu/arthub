@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import NoMessages from "../states/NoMessages";
 import showRecipient from "../../tests/showRecipient";
 import LoadingIndicator from "../LoadingIndicator";
+import MessageCard from "./MessageCard";
 
 export default function Messages() {
   let timeout;
@@ -42,28 +43,7 @@ export default function Messages() {
       {loading ? <LoadingIndicator/> : null}
       {
         rooms.length > 0 ? (
-          rooms.map((data, index) => (
-            <Link
-              to={`/messages/${data.room_id}`}
-              key={index}
-              className="room-link"
-            >
-              {/* MessageRoom */}
-              <div
-                className="room"
-                key={index}
-                style={{ width: "100%", background: "#ccc" }}
-              >
-                <p className="room-recipient">{showRecipient(data, user.id)}</p>
-                <div className="room-content">
-                  <p className="room-message">{data.last_message}</p>
-                  <p className="room-timestamp">
-                    {new Date(data.sent_at).toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          ))
+          rooms.map((data, index) => <MessageCard props={{data, index, user}}/>)
         ) : null
       }
       {error ? (
