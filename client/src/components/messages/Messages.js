@@ -41,7 +41,7 @@ export default function Messages() {
       {loading ? <LoadingIndicator /> : null}
       {rooms.length > 0 && !error ? (
         rooms.map((data, index) => (
-          <MessageCard props={{ data, index, user }} />
+          <MessageCard key={index} props={{ data, index, user }} />
         ))
       ) : error ? (
         <div>Something went wrong!</div>
