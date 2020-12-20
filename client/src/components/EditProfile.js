@@ -7,8 +7,6 @@ import Facade from "../utils/Facade";
 export default function EditProfile() {
   const { user } = useAuth();
   const photoRef = useRef();
-  const firstNameRef = useRef();
-  const lastNameRef = useRef();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -29,15 +27,18 @@ export default function EditProfile() {
     photoRef.current.src = URL.createObjectURL(e.target.files[0]);
   }
 
-  function hasChanges(e, handler) {
-    const options = {
-      firstName: firstName,
-      lastName: lastName,
-    };
+  function handleDisable() {
+    const noChangeFirstName = initialData.firstName === firstName.trim();
+    const noChangeLastName = initialData.lastName === lastName.trim();
 
+    if (!noChangeFirstName || !noChangeLastName) {
+      setIsDisabled(false);
+    }
+  }
+
+  function hasChanges(e, handler) {
     handler(e.target.value);
-    const hasChanged = initialData[e.target.id] !== options[e.target.id];
-    setIsDisabled(hasChanged);
+    handleDisable();
   }
 
   useEffect(() => {
@@ -101,27 +102,34 @@ export default function EditProfile() {
           helperText="Incorrect entry."
           variant="outlined"
         /> */}
-        <div style={{display: "flex",flexDirection: "column", justifyContent: "space-evenly", marginBottom: "1rem"}}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-evenly",
+            marginBottom: "1rem",
+          }}
+        >
           <TextField
-          ref={firstNameRef}
+            id="firstName"
             variant="outlined"
             label="First Name"
             placeholder={firstName}
             value={firstName}
-            style={{flex: "1", marginBottom: "1rem"}}
+            style={{ flex: "1", marginBottom: "1rem" }}
             onChange={(e) => hasChanges(e, setFirstName)}
           />
 
           <TextField
-          ref={lastNameRef}
+            id="lastName"
             variant="outlined"
             label="Last Name"
             placeholder={lastName}
             value={lastName}
-            style={{flex: "1", marginBottom: "1rem"}}
+            style={{ flex: "1", marginBottom: "1rem" }}
             onChange={(e) => hasChanges(e, setLastName)}
           />
-           {user.user_classification === "artist" ? (
+          {user.user_classification === "artist" ? (
             <Autocomplete
               multiple
               limitTags={3}
@@ -137,12 +145,11 @@ export default function EditProfile() {
                 />
               )}
             />
-        ) : (
-          <div></div>
-        )}
+          ) : (
+            <div></div>
+          )}
         </div>
 
-       
         <button disabled={isDisabled}>Save Changes</button>
       </form>
     </div>
