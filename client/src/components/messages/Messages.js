@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState, useCallback } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import React, { useEffect, useState, useCallback } from "react";
+import { useAuth } from "../../context/AuthContext";
 import Facade from "../../utils/Facade";
 import NoMessages from "../states/NoMessages";
 import LoadingIndicator from "../LoadingIndicator";
@@ -10,7 +10,7 @@ export default function Messages() {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const user = useContext(AuthContext).user;
+  const {user} = useAuth();
 
   const getRooms = useCallback(() => {
     new Facade().get(
@@ -32,9 +32,11 @@ export default function Messages() {
   }, [user]);
 
   useEffect(() => {
-    getRooms();
+    if (user.hasOwnProperty('id')) {
+      getRooms();
+    }
     return () => clearTimeout(timeout);
-  }, [getRooms, timeout]); // having rooms here makes it render exponentially
+  }, [getRooms, timeout, user]); // having rooms here makes it render exponentially
 
   return (
     <div className="messages">
