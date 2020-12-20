@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { Tabs, Tab} from "@material-ui/core";
+import { Tabs, Tab } from "@material-ui/core";
 import Facade from "../utils/Facade";
 import LoadingIndicator from "./LoadingIndicator";
 import NoTransactions from "./states/NoTransactions";
@@ -20,11 +20,7 @@ function TabPanel(props) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box p={3}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box p={3}>{children}</Box>}
     </div>
   );
 }
@@ -49,7 +45,13 @@ export default function Transactions() {
   const [error, setError] = useState(null);
   const [value, setValue] = useState(0);
 
-  const options = ["Pending", "Payment Pending", "Cancelled", "Ongoing", "Completed"];
+  const OPTIONS = [
+    "Pending",
+    "Payment Pending",
+    "Cancelled",
+    "Ongoing",
+    "Completed",
+  ];
 
   const updateData = useCallback(() => {
     new Facade().get(
@@ -94,7 +96,7 @@ export default function Transactions() {
 
     return () => {
       clearTimeout(updateData);
-    }
+    };
   }, [fetchTransactions, updateData, error]);
 
   return (
@@ -107,14 +109,32 @@ export default function Transactions() {
         <NoTransactions />
       ) : (
         <div>
-          <Tabs value={value} onChange={handleChange} TabIndicatorProps={{style : {background: "#FF5678"}}} variant="scrollable" scrollButtons="auto" aria-label="Transaction tabs">
-            {options.map((option, index) => <Tab key={index} label={option} style={{fontFamily: "Montserrat, sans-serif"}} {...a11yProps(index)}/>)}
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            TabIndicatorProps={{ style: { background: "#FF5678" } }}
+            variant="scrollable"
+            scrollButtons="auto"
+            aria-label="Transaction tabs"
+          >
+            {OPTIONS.map((option, index) => (
+              <Tab
+                key={index}
+                label={option}
+                style={{ fontFamily: "Montserrat, sans-serif" }}
+                {...a11yProps(index)}
+              />
+            ))}
           </Tabs>
-          {options.map((option, index) => 
+          {OPTIONS.map((option, index) => (
             <TabPanel value={value} index={index}>
-              {data.filter(t => t.status === option.toLowerCase()).map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
+              {data
+                .filter((t) => t.status === option.toLowerCase())
+                .map((transaction, index) => (
+                  <TransactionCard key={index} props={{ transaction, user }} />
+                ))}
             </TabPanel>
-          )}
+          ))}
         </div>
       )}
     </div>
