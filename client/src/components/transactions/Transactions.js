@@ -30,12 +30,13 @@ export default function Transactions() {
     "Completed",
   ];
 
+  let timeout;
   const updateData = useCallback(() => {
     new Facade().get(
       `/api/transactions/${user.id}`,
       (success) => {
         setData(success.data);
-        setTimeout(() => updateData(), 10000);
+        timeout = setTimeout(updateData, 10000);
       },
       (error) => {
         setError(error.message);
@@ -72,9 +73,9 @@ export default function Transactions() {
     fetchTransactions();
 
     return () => {
-      clearTimeout(updateData);
+      clearTimeout(timeout);
     };
-  }, [fetchTransactions, updateData, error]);
+  }, [fetchTransactions, updateData, error, timeout]);
 
   return (
     <div>
