@@ -28,7 +28,7 @@ const messagesRoutes = (client) => {
       (SELECT sender_id FROM messages WHERE room_id = room.room_id ORDER BY timestamp DESC LIMIT 1) AS sent_by,
       (SELECT timestamp FROM messages WHERE room_id = room.room_id ORDER BY timestamp DESC LIMIT 1) AS sent_at 
       FROM message_rooms AS room INNER JOIN users USING(user_id)
-      WHERE (SELECT sender_id FROM messages WHERE room_id = room.room_id ORDER BY timestamp DESC LIMIT 1) IS NOT NULL AND
+      WHERE EXISTS (SELECT sender_id FROM messages WHERE room_id = room.room_id ORDER BY timestamp DESC LIMIT 1) AND
       $1 = room.user_id OR $1 = room.artist_id   
       ORDER BY sent_at DESC;`;
 
@@ -37,7 +37,9 @@ const messagesRoutes = (client) => {
         return res.status(500).json({ message: 'Something went wrong.' });
       }
 
-      return res.status(200).json(result.rows);
+      // temporary fix until you can ask maam about this 
+      const data = result.rows.filter((message) => message.last_message !== null);
+      return res.status(200).json(data);
     });
   });
 
