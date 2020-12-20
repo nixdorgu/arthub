@@ -7,6 +7,10 @@ import Facade from "../utils/Facade";
 export default function EditProfile() {
   const { user } = useAuth();
   const photoRef = useRef();
+  const [firstNameError, setFirstNameError] = useState(false);
+  const [firstNameHelperText, setFirstNameHelperText] = useState('');
+  const [lastNameError, setLastNameError] = useState(false);
+  const [lastNameHelperText, setLastNameHelperText] = useState('');
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -19,6 +23,7 @@ export default function EditProfile() {
   const initialData = {
     firstName: user.first_name,
     lastName: user.last_name,
+    focus: []
   };
 
   function preview(e) {
@@ -28,16 +33,45 @@ export default function EditProfile() {
   }
 
   function handleDisable() {
-    const noChangeFirstName = initialData.firstName === firstName.trim();
-    const noChangeLastName = initialData.lastName === lastName.trim();
+    //   due to issues with asynchronous useState
+    const currentFirstName = document.querySelector(`#firstName`).value;
+    const currentLastName = document.querySelector(`#lastName`).value;
 
-    if (!noChangeFirstName || !noChangeLastName) {
+    const noChangeFirstName = initialData.firstName.trim() === currentFirstName.trim();
+    const noChangeLastName = initialData.lastName.trim() === currentLastName.trim();
+
+    if(currentLastName.trim() === '' || currentFirstName.trim() === '') {
+      setIsDisabled(true);
+    } else if (!noChangeFirstName || !noChangeLastName) {
       setIsDisabled(false);
+    } else {
+        setIsDisabled(true);
     }
   }
 
-  function hasChanges(e, handler) {
-    handler(e.target.value);
+  function hasChanges(e) {
+    const references = {
+        firstName: {
+            label: 'First name',
+            error: setFirstNameError,
+            helperText: setFirstNameHelperText
+        },
+        lastName: {
+            label: 'Last name',
+            error: setLastNameError,
+            helperText: setLastNameHelperText
+        },
+    };
+
+
+    if (e.target.value.trim() === '') {
+        references[e.target.id].error(true);
+        references[e.target.id].helperText(`${references[e.target.id].label} must not be empty`);
+    } else {
+        references[e.target.id].error(false);
+        references[e.target.id].helperText('');
+    }
+
     handleDisable();
   }
 
@@ -112,22 +146,33 @@ export default function EditProfile() {
         >
           <TextField
             id="firstName"
+            error={firstNameError}
+            helperText={firstNameHelperText}
             variant="outlined"
             label="First Name"
             placeholder={firstName}
             value={firstName}
             style={{ flex: "1", marginBottom: "1rem" }}
-            onChange={(e) => hasChanges(e, setFirstName)}
+            onChange={(e) => {
+                setFirstName(e.target.value);
+                hasChanges(e)
+            }}
           />
 
           <TextField
             id="lastName"
+            error={lastNameError}
+            helperText={lastNameHelperText}
             variant="outlined"
             label="Last Name"
             placeholder={lastName}
             value={lastName}
             style={{ flex: "1", marginBottom: "1rem" }}
-            onChange={(e) => hasChanges(e, setLastName)}
+            onChange={(e) => {
+                setLastName(e.target.value);
+                hasChanges(e)
+            }
+            }
           />
           {user.user_classification === "artist" ? (
             <Autocomplete
