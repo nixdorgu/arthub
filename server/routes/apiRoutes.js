@@ -27,6 +27,19 @@ const apiRoute = (client) => {
     },
   ));
 
+  router.get('/focus', (req, res) => client.query(
+    'SELECT * FROM focus',
+    (error, result) => {
+      if (error) {
+        return res
+          .status(500)
+          .json({ success: false, message: 'Something went wrong.' });
+      }
+
+      return res.status(200).json(result.rows);
+    },
+  ));
+
   router.use('/artists', artistsRoutes(client));
   router.use('/messages', messagesRoutes(client));
   router.use('/transactions', transactionsRoutes(client));
