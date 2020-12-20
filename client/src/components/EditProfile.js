@@ -1,17 +1,18 @@
 import { TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import Facade from "../utils/Facade";
 
 export default function EditProfile() {
   const { user } = useAuth();
+  const photoRef = useRef();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [isDisabled, setIsDisabled] = useState(true);
   const [genres, setGenres] = useState([]);
-  
+
   const ACCEPT = "image/jpeg, image/png";
 
   // fetch profile image url
@@ -22,8 +23,8 @@ export default function EditProfile() {
 
   function preview(e) {
     e.preventDefault();
-    const profile = document.querySelector("#profile");
-    profile.src = URL.createObjectURL(e.target.files[0]);
+    photoRef.current.style.display = "block";
+    photoRef.current.src = URL.createObjectURL(e.target.files[0]);
   }
 
   function hasChanges(e, handler) {
@@ -63,43 +64,32 @@ export default function EditProfile() {
           console.log("hi");
         }}
       >
-        <div className="initial-photo">
-          <img
-            id="profile"
-            src="#"
-            alt="profile"
-            style={{ maxWidth: "50vw" }}
-          />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-end",
+            marginBottom: "2rem",
+          }}
+        >
+          <div className="initial-photo">
+            <img
+              ref={photoRef}
+              id="profile"
+              src="#"
+              alt="profile"
+              style={{ maxWidth: "50vw", maxHeight: "25vh", display: "none" }}
+            />
+          </div>
+          <div>
+            <input
+              type="file"
+              name="filename"
+              accept={ACCEPT}
+              onChange={(e) => preview(e)}
+            />
+          </div>
         </div>
-        <div>
-          <input
-            type="file"
-            name="filename"
-            accept={ACCEPT}
-            onChange={(e) => preview(e)}
-          />
-        </div>
-        <div className="form-element">
-          <label htmlFor="firstName">First Name</label>
-          <input
-            type="text"
-            value={firstName}
-            onChange={(e) => hasChanges(e, setFirstName)}
-            id="firstName"
-            name="firstName"
-          />
-        </div>
-        <div className="form-element">
-          <label htmlFor="lastName">Last Name</label>
 
-          {/* <input
-            type="text"
-            value={lastName}
-            onChange={(e) => hasChanges(e, setLastName)}
-            id="lastName"
-            name="lastName" */}
-          {/* /> */}
-        </div>
         {/* <TextField
           error={true}
           id="outlined-error-helper-text"
