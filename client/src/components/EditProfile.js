@@ -7,11 +7,13 @@ import Facade from "../utils/Facade";
 export default function EditProfile() {
   const { user } = useAuth();
   const photoRef = useRef();
+
   const [firstNameError, setFirstNameError] = useState(false);
   const [firstNameHelperText, setFirstNameHelperText] = useState('');
   const [lastNameError, setLastNameError] = useState(false);
   const [lastNameHelperText, setLastNameHelperText] = useState('');
 
+  const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [isDisabled, setIsDisabled] = useState(true);
@@ -23,7 +25,7 @@ export default function EditProfile() {
   const initialData = {
     firstName: user.first_name,
     lastName: user.last_name,
-    focus: []
+    focus: [genres[0]] // dummy data
   };
 
   function preview(e) {
@@ -76,6 +78,7 @@ export default function EditProfile() {
   }
 
   useEffect(() => {
+      setLoading(true);
     if (user.hasOwnProperty("id")) {
       setFirstName(user.first_name);
       setLastName(user.last_name);
@@ -84,6 +87,7 @@ export default function EditProfile() {
         "/api/focus",
         (success) => {
           setGenres(success);
+          setLoading(false);
         },
         (error) => {
           console.log(error);
@@ -95,7 +99,9 @@ export default function EditProfile() {
 
   return (
     <div>
-      <form
+      {loading? (
+          <div>Loading...</div>
+      ) : <form
         onSubmit={(e) => {
           e.preventDefault();
           console.log("hi");
@@ -127,15 +133,6 @@ export default function EditProfile() {
             />
           </div>
         </div>
-
-        {/* <TextField
-          error={true}
-          id="outlined-error-helper-text"
-          label="Error"
-          defaultValue="Hello World"
-          helperText="Incorrect entry."
-          variant="outlined"
-        /> */}
         <div
           style={{
             display: "flex",
@@ -180,7 +177,9 @@ export default function EditProfile() {
               limitTags={3}
               id="multiple-limit-tags"
               options={genres}
+              defaultValue={initialData.focus.map(option => option)}
               getOptionLabel={(option) => option.focus_description}
+              getOptionSelected={(option, value) => option.id === value.id}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -196,7 +195,7 @@ export default function EditProfile() {
         </div>
 
         <button disabled={isDisabled}>Save Changes</button>
-      </form>
+      </form>}
     </div>
   );
 }
