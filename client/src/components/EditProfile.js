@@ -7,6 +7,8 @@ import Facade from "../utils/Facade";
 export default function EditProfile() {
   const { user } = useAuth();
   const photoRef = useRef();
+  const firstNameRef = useRef();
+  const lastNameRef = useRef();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -68,6 +70,7 @@ export default function EditProfile() {
           style={{
             display: "flex",
             alignItems: "flex-end",
+            justifyContent: "center",
             marginBottom: "2rem",
           }}
         >
@@ -98,26 +101,27 @@ export default function EditProfile() {
           helperText="Incorrect entry."
           variant="outlined"
         /> */}
-        <div>
+        <div style={{display: "flex",flexDirection: "column", justifyContent: "space-evenly", marginBottom: "1rem"}}>
           <TextField
+          ref={firstNameRef}
             variant="outlined"
             label="First Name"
             placeholder={firstName}
             value={firstName}
+            style={{flex: "1", marginBottom: "1rem"}}
             onChange={(e) => hasChanges(e, setFirstName)}
           />
 
           <TextField
+          ref={lastNameRef}
             variant="outlined"
             label="Last Name"
             placeholder={lastName}
             value={lastName}
+            style={{flex: "1", marginBottom: "1rem"}}
             onChange={(e) => hasChanges(e, setLastName)}
           />
-        </div>
-
-        {user.user_classification === "artist" ? (
-          <div>
+           {user.user_classification === "artist" ? (
             <Autocomplete
               multiple
               limitTags={3}
@@ -133,10 +137,12 @@ export default function EditProfile() {
                 />
               )}
             />
-          </div>
         ) : (
           <div></div>
         )}
+        </div>
+
+       
         <button disabled={isDisabled}>Save Changes</button>
       </form>
     </div>
