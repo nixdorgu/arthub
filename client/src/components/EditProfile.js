@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { AuthContext } from '../context/AuthContext'
+import React, {useEffect, useState } from 'react'
+import { useAuth } from '../context/AuthContext'
 
 export default function EditProfile() {
-    const user = useContext(AuthContext).user;
-    const [firstName, setFirstName] = useState(user.first_name);
-    const [lastName, setLastName] = useState(user.last_name);
+    const {user} = useAuth();
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [isDisabled, setIsDisabled] = useState(true);
 
     // fetch profile image url
     const initialData = {
@@ -19,12 +20,17 @@ export default function EditProfile() {
         profile.src = URL.createObjectURL(e.target.files[0]);
     }
 
-    function noChanges() {
-        return initialData.firstName === firstName && initialData.lastName === lastName;
+    function hasChanges(e, handler) {
+        handler(e.target.value);
+        const hasChanged = initialData.firstName === firstName || initialData.lastName === lastName; 
+        setIsDisabled(!hasChanged);
     }
 
     useEffect(() => {
-        setFirstName(user.last_name);
+        if (user.hasOwnProperty('id')) {
+            setFirstName(user.first_name);
+            setLastName(user.last_name);
+        }
     }, [user])
 
     return (
@@ -32,17 +38,20 @@ export default function EditProfile() {
             <form onSubmit={(e) => {
                 e.preventDefault();
              console.log('hi')}}>
+                 <div className="initial-photo">
+                 <img id="profile" src="#" alt="profile" style={{maxWidth: "50vw"}}/>
+
+                 </div>
                 <div>
                     <input type="file" name="filename" accept="image/jpeg, image/png" onChange={e => preview(e)}/>
-                    <img id="profile" src="#" alt="profile" style={{maxWidth: "50vw"}}/>
                 </div>
-                <div>
-                    <label htmlFor="firstName"></label>
-                    <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} id="firstName" name="firstName"/>
+                <div className="form-element">
+                    <label htmlFor="firstName">First Name</label>
+                    <input type="text" value={firstName} onChange={(e) => hasChanges(e, setFirstName)} id="firstName" name="firstName"/>
                 </div>
-                <div>
-                    <label htmlFor="lastName"></label>
-                    <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} id="lastName" name="lastName"/>
+                <div className="form-element">
+                    <label htmlFor="lastName">Last Name</label>
+                    <input type="text" value={lastName} onChange={(e) => hasChanges(e, setLastName)} id="lastName" name="lastName"/>
                 </div>
                 {
                     user.user_classification === 'artist' ? (
@@ -50,12 +59,10 @@ export default function EditProfile() {
                             Genres here
                         </div>
                     ) : (
-                        <div>
-                            No gneres here
-                        </div>
+                        <div></div>
                     )
                 }
-                <button disabled={noChanges}>BUTTON</button>
+                <button disabled={isDisabled}>Save Changes</button>
             </form>
         </div>
     )
