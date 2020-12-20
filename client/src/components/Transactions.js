@@ -110,21 +110,11 @@ export default function Transactions() {
           <Tabs value={value} onChange={handleChange} TabIndicatorProps={{style : {background: "#FF5678"}}} variant="scrollable" scrollButtons="auto" aria-label="Transaction tabs">
             {options.map((option, index) => <Tab key={index} label={option} style={{fontFamily: "Montserrat, sans-serif"}} {...a11yProps(index)}/>)}
           </Tabs>
-          <TabPanel value={value} index={0}>
-            {data.filter((t) => t.status === "pending").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            {data.filter((t) => t.status === "payment pending").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
-          </TabPanel>
-          <TabPanel value={value} index={2}>
-            {data.filter((t) => t.status === "cancelled").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
-          </TabPanel>
-          <TabPanel value={value} index={3}>
-            {data.filter((t) => t.status === "ongoing").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
-          </TabPanel>
-          <TabPanel value={value} index={4}>
-            {data.filter((t) => t.status === "completed").map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
-          </TabPanel>
+          {options.map((option, index) => 
+            <TabPanel value={value} index={index}>
+              {data.filter(t => t.status === option.toLowerCase()).map((transaction, index) => <TransactionCard key={index} props={{transaction, user}}/>)}
+            </TabPanel>
+          )}
         </div>
       )}
     </div>
