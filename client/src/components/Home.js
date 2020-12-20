@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState} from 'react';
-import { Redirect, Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import Facade from '../utils/Facade';
 import ArtistCard from './ArtistCard';
