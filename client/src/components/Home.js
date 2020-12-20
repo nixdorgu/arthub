@@ -35,7 +35,7 @@ function Home() {
         </form>
         <>
         {data.length > 0 ? (
-          <div id="artists" style={{margin: "2rem", display: "flex", flexWrap: "wrap"}}>
+          <div id="artists" style={{width: "calc(100vw - 4rem)", margin: "2rem", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gridTemplateRows: "auto", gap: ".5rem"}}>
           {data.map(artist => <ArtistCard key={artist.user_id} props={{artist}}/>)}
           </div>
         ) : (
