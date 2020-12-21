@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const isAuthenticated = (req, res, next) => {
   let token = req.headers.authorization || req.body;
-  const tokenIsEmpty = token === 'Bearer null' || typeof token === 'undefined';
+  const tokenIsEmpty = token === 'Bearer null' || typeof token === 'undefined' || JSON.stringify(token) === JSON.stringify({});
 
   if (tokenIsEmpty) {
     return res.status(403).json({ success: false, message: 'No token.' });
