@@ -11,8 +11,8 @@ export default function TransactionCard(props) {
   const isArtistOfTransaction = isArtist(transaction, user); // wrap into fn + status stuff
   const status = transaction.status;
 
-  const undoRef = useRef();
-  const [showUndo, setShowUndo] = useState(false);
+  const snackbarRef = useRef();
+  const [showSnackbar, setShowSnackbar] = useState(false);
   const [undo, setUndo] = useState(null);
   const [error, setError] = useState(false);
   const [message, setMessage] = useState('');
@@ -34,19 +34,19 @@ export default function TransactionCard(props) {
 
       setUndo(() => () => changeStatus('pending', 'pending', () => {
         setMessage("Undo successful.")
-        setShowUndo(true);
+        setShowSnackbar(true);
         setError(true);
       }, () => {
         setMessage("Undo unsuccessful.")
-        setShowUndo(true);
+        setShowSnackbar(true);
         setError(true);
       }));
 
-      setShowUndo(true);
+      setShowSnackbar(true);
       setError(false);
     }, () => {
       setMessage(error.message);
-      setShowUndo(true);
+      setShowSnackbar(true);
       setError(!error.success);
     });
   }
@@ -56,7 +56,7 @@ export default function TransactionCard(props) {
     {status === "pending" && showModal && <PendingTransactionModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={(e) => close(e)} handleSubmit={(e) => submit(e, transaction)} />}
     {status === "payment pending" && !isArtistOfTransaction && showModal && <PaymentPendingModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={close} />}
     {/* {status === "ongoing" && isArtistOfTransaction && showModal && <PaymentPendingModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={close} handleSubmit={(e) => submit(e, transaction)} />} */}
-    {<Snackbar hidden={showUndo} props={{message, undo, undoRef, error, showUndo, setShowUndo}}/>}
+    {<Snackbar hidden={showSnackbar} props={{message, undo, snackbarRef, error, showSnackbar, setShowSnackbar}}/>}
     <div
       key={transaction.transaction_id}
       style={{
