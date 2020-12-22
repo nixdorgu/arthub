@@ -17,21 +17,18 @@ function Profile({match}) {
 
     const checkProfileUser = useCallback(() => JSON.stringify(match.params) === JSON.stringify({}) ? setIsMe(true) : setIsMe(false), [match.params]);
     const fetchProfileData = useCallback(() => {
-        if (!isMe && match.params.id !== undefined) {
-            const id = match.params.id;
+            const id = match.params.id || user.id;
+
             new Facade().get(`/api/profile/${id}`,
             (success) => {
+                const ownProfile = success.user_id === user.id;
                 setProfileData(success);
-                setIsMe(false);
+                setIsMe(ownProfile);
             },
             (error) => {
                 setError(error.message);
             });
-        } else {
-            setProfileData(user);
-            setIsMe(true);
-        }
-    }, [match, isMe, user]);
+    }, [match, user]);
 
     const processTransaction = (e) => {
         e.preventDefault();
@@ -58,16 +55,18 @@ function Profile({match}) {
 
     useEffect(() => {
         setLoading(true);
-        checkProfileUser();
-        fetchProfileData();
 
-        if (!error) {
-            setLoading(false);
-        } else {
-            window.location = '/404';
+        if (user.hasOwnProperty('id')) {
+            checkProfileUser();
+            fetchProfileData();
+    
+            if (!error) {
+                setLoading(false);
+            } else {
+                window.location = '/404';
+            }
         }
-        // fetch profile and 
-    }, [match, error, fetchProfileData, checkProfileUser]);
+    }, [match, error, user, fetchProfileData, checkProfileUser]);
 
     const UserInteractions = () => {
         const chatArtist = () => {
@@ -112,7 +111,7 @@ function Profile({match}) {
                         <img src='' style={imgStyle} alt="profile"/>
                     </div>
                     <div className="bio" style={{flex: "3", display: "flex", flexDirection: "column", justifyContent: "flex-end", height: "100%", width: "100%"}}>
-                        <p>{isMe ? showFullName(user) : showFullName(profileData)}</p>
+                        <p>{showFullName(profileData)}</p>
                         <i style={{padding: ".5rem 0", fontSize: "small"}}>{`Member since ${new Date(profileData['member_since']).toLocaleDateString()}`}</i>
                         <UserInteractions/>
                     </div>
