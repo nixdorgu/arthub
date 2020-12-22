@@ -17,7 +17,6 @@ export default function SimpleSnackbar(props) {
   };
 
   return (
-    <div>
       <Snackbar
         anchorOrigin={{
           vertical: 'bottom',
@@ -44,6 +43,5 @@ export default function SimpleSnackbar(props) {
           </>
         }
       />
-    </div>
   );
 }
