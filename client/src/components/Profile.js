@@ -1,6 +1,6 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-// import {Redirect} from 'react-router-dom';
-import {AuthContext} from "../context/AuthContext";
+import React, { useCallback, useEffect, useState, useRef } from 'react';
+import Snackbar from './Snackbar';
+import {useAuth} from "../context/AuthContext";
 import Facade from '../utils/Facade';
 import CommissionModal from './modals/CommissionModal';
 import LoadingIndicator from './LoadingIndicator';
@@ -12,7 +12,11 @@ function Profile({match}) {
     const [isMe, setIsMe] = useState(null);
     const [showHireModal, setShowHireModal] = useState(false);
 
-    const user = useContext(AuthContext).user;
+    const snackbarRef = useRef();
+    const [showSnackbar, setShowSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+
+    const {user} = useAuth();
     const [profileData, setProfileData] = useState({});
 
     const checkProfileUser = useCallback(() => JSON.stringify(match.params) === JSON.stringify({}) ? setIsMe(true) : setIsMe(false), [match.params]);
@@ -37,11 +41,11 @@ function Profile({match}) {
         const data = {title: title.value, shortDescription: shortDescription.value, description: description.value, userId: user.id, artistId: profileData['user_id'], price: price.value };
 
         new Facade().post('/api/transactions', data, (success) => {
-            // show modal
-            console.log(success.message);
+            setShowSnackbar(true);
+            setSnackbarMessage(success.message);
         }, (error) => {
-            // show modal
-            console.log(error.message);
+            setShowSnackbar(true);
+            setSnackbarMessage(error.message);
         })
     }
 
@@ -103,6 +107,8 @@ function Profile({match}) {
     // LOGIC
     return (
         <div style={{flexDirection: "column", display: "flex", alignItems:"center", width: "100%"}}>
+        {<Snackbar hidden={showSnackbar} props={{ message: snackbarMessage, snackbarRef, error: true, showSnackbar, setShowSnackbar}}/> }
+
         {loading ?  <LoadingIndicator/> : (
             // TODO: refactor this
             <div className="profile-proper" style={{width: "100%"}}>
