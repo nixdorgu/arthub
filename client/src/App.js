@@ -12,7 +12,7 @@ import { AuthProvider } from './context/AuthContext';
 import PageNotFound from './components/PageNotFound';
 import Messages from './components/messages/Messages';
 import MessageRoom from './components/messages/MessageRoom';
-import Transactions from './components/Transactions';
+import Transactions from './components/transactions/Transactions';
 import ProtectedRoute from './components/ProtectedRoute';
 import UnprotectedRoute from './components/UnprotectedRoute';
 import Auth from './components/Auth';
@@ -38,7 +38,7 @@ function App() {
                                 <Route component={PageNotFound}/>
                             </Switch>
                         </main>
-                    <Footer/>
+                    {/* <Footer/> */}
                 </div>
             </Router>
         </AuthProvider>
