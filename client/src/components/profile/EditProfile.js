@@ -1,8 +1,8 @@
 import { TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import React, { useEffect, useState, useRef } from "react";
-import { useAuth } from "../context/AuthContext";
-import Facade from "../utils/Facade";
+import { useAuth } from "../../context/AuthContext";
+import Facade from "../../utils/Facade";
 
 export default function EditProfile() {
   const { user } = useAuth();
@@ -16,6 +16,12 @@ export default function EditProfile() {
   const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [biography, setBiography] = useState("");
+
+  const [src, setSrc] = useState('#');
+  const [file, setFile] = useState();
+  const [fileObject, setFileObject] = useState({});
+
   const [isDisabled, setIsDisabled] = useState(true);
   const [genres, setGenres] = useState([]);
 
@@ -28,10 +34,49 @@ export default function EditProfile() {
     focus: [genres[0]] // dummy data
   };
 
+  function readFile(file) {
+    if (typeof file !== 'undefined') {
+        const fileReader = new FileReader();
+        fileReader.readAsArrayBuffer(file);
+
+        fileReader.onload = () => {
+            const MAX_FILE_SIZE = 5000000;
+            const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png'];
+            const result = fileReader.result;
+            const buffer = Buffer.from(result, 'utf8');
+            
+            if (ALLOWED_IMAGE_TYPES.includes(file.type) && file.size <= MAX_FILE_SIZE) {
+                setFileObject({mimetype: file.type, buffer});
+            }
+        }
+
+    }
+}
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    // ON IMAGE DISPLAY
+            //         console.log(buffer.toString('base64'))
+        //   setSrc(`data:image/png;base64,${buffer.toString('base64')}`)
+   
+    readFile(file);
+    const data = {file: fileObject, firstName, lastName, biography, genres}
+
+    console.log(fileObject)
+      new Facade().post('/api/profile/edit', data, (success) => {
+          console.log(success)
+        // alert(success.message)
+      }, (error) => {
+          console.log(error)
+        // alert(error.message)
+      })
+  }
+
   function preview(e) {
     e.preventDefault();
     photoRef.current.style.display = "block";
-    photoRef.current.src = URL.createObjectURL(e.target.files[0]);
+    setFile(e.target.files[0]);
+    setSrc(URL.createObjectURL(e.target.files[0]));
   }
 
   function handleDisable() {
@@ -44,7 +89,7 @@ export default function EditProfile() {
 
     if(currentLastName.trim() === '' || currentFirstName.trim() === '') {
       setIsDisabled(true);
-    } else if (!noChangeFirstName || !noChangeLastName) {
+    } else if (!noChangeFirstName || !noChangeLastName || src !=='#') {
       setIsDisabled(false);
     } else {
         setIsDisabled(true);
@@ -78,22 +123,28 @@ export default function EditProfile() {
   }
 
   useEffect(() => {
-      setLoading(true);
+    setLoading(true);
+
     if (user.hasOwnProperty("id")) {
       setFirstName(user.first_name);
       setLastName(user.last_name);
 
-      new Facade().get(
-        "/api/focus",
-        (success) => {
-          setGenres(success);
-          setLoading(false);
-        },
-        (error) => {
-          console.log(error);
-          setGenres(["None"]);
-        }
-      );
+      if (user.user_classification === "artist") {
+        new Facade().get(
+            "/api/focus",
+            (success) => {
+              setGenres(success);
+              setLoading(false);
+            },
+            (error) => {
+              console.log(error);
+              setGenres(["None"]);
+            }
+        );
+      } else {
+        setLoading(false);
+      }
+
     }
   }, [user]);
 
@@ -101,37 +152,41 @@ export default function EditProfile() {
     <div>
       {loading? (
           <div>Loading...</div>
-      ) : <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          console.log("hi");
-        }}
+      ) : <form encType="multipart/form" onSubmit={handleSubmit}
       >
         <div
           style={{
             display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "center",
+            flexDirection: "column",
+            justifyContent: "flex-end",
             marginBottom: "2rem",
+            width: "100vw"
           }}
         >
-          <div className="initial-photo">
+            <p style={{fontWeight: 500 }}>
+            Select a Profile Image:
+
+            </p>
+          <div className="initial-photo" style={{flex: "2"}}>
             <img
               ref={photoRef}
               id="profile"
-              src="#"
+              src={src}
               alt="profile"
-              style={{ maxWidth: "50vw", maxHeight: "25vh", display: "none" }}
+              style={{maxWidth: "50vw", maxHeight: "25vh", display: "none" }}
             />
           </div>
-          <div>
             <input
               type="file"
-              name="filename"
+              id="avatar"
+              name="avatar"
               accept={ACCEPT}
-              onChange={(e) => preview(e)}
+              onChange={(e) => {
+                  preview(e)
+                  handleDisable()
+              }}
+              style={{fontFamily: "Montserrat, sans-serif"}}
             />
-          </div>
         </div>
         <div
           style={{
@@ -194,7 +249,7 @@ export default function EditProfile() {
           )}
         </div>
 
-        <button disabled={isDisabled}>Save Changes</button>
+        <button type="submit">Save Changes</button>
       </form>}
     </div>
   );
