@@ -5,8 +5,8 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
 export default function SimpleSnackbar(props) {
-  const {message, undo, undoRef, showUndo, error, setShowUndo} = props.props;
-  const [open, setOpen] = [showUndo, setShowUndo];
+  const {message, undo, snackbarRef, error, showSnackbar, setShowSnackbar} = props.props;
+  const [open, setOpen] = [showSnackbar, setShowSnackbar];
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -23,7 +23,7 @@ export default function SimpleSnackbar(props) {
           vertical: 'bottom',
           horizontal: 'right',
         }}
-        ref={undoRef}
+        ref={snackbarRef}
         open={open}
         autoHideDuration={6000}
         onClose={handleClose}
