@@ -5,6 +5,8 @@ const dotenv = require('dotenv');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
+const socket = require('socket.io');
+const http = require('http');
 
 const middleware = require('./utils/middleware');
 const initPassport = require('./config/passport.config');
@@ -18,6 +20,9 @@ dotenv.config();
 const pool = new pg.Pool(JSON.parse(process.env.DATABASE_CONFIG));
 const port = process.env.PORT ?? 3000;
 const app = express();
+
+const server = http.createServer(app);
+const io = socket(server);
 
 app.use(
   cors({
@@ -139,10 +144,11 @@ pool.connect((connectionError, client) => {
       );
     });
   });
+
   app.use('/auth', middleware.isNotAuthenticated, authRoute());
   app.use('/api', middleware.isAuthenticated, apiRoutes(client));
 
-  app.listen(port, () => {
+  server.listen(port, () => {
     initPassport(passport, client);
     // eslint-disable-next-line no-console
     console.log(`Server is listening on http://localhost:${port}`);
