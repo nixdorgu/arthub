@@ -152,6 +152,14 @@ pool.connect((connectionError, client) => {
   app.use('/auth', middleware.isNotAuthenticated, authRoute());
   app.use('/api', middleware.isAuthenticated, apiRoutes(client));
 
+  // SocketIO ops
+  io.on('connection', (socket) => {
+    console.log('Connection!!!');
+
+    socket.on('disconnect', () => {
+      console.log('User left!')
+    })
+  });
 
   server.listen(port, () => {
     initPassport(passport, client);
