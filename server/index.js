@@ -22,7 +22,11 @@ const port = process.env.PORT ?? 3000;
 const app = express();
 
 const server = http.createServer(app);
-const io = socket(server);
+const io = socket(server, {
+  cors: {
+    origin: 'http://localhost:3000',
+  },
+});
 
 app.use(
   cors({
@@ -147,6 +151,7 @@ pool.connect((connectionError, client) => {
 
   app.use('/auth', middleware.isNotAuthenticated, authRoute());
   app.use('/api', middleware.isAuthenticated, apiRoutes(client));
+
 
   server.listen(port, () => {
     initPassport(passport, client);
