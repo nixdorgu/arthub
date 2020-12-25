@@ -1,16 +1,16 @@
-import React, {useCallback, useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {Redirect, useParams} from 'react-router-dom';
 import { useAuth } from "../../context/AuthContext";
+import { useSocket } from "../../context/SocketContext";
 import Facade from "../../utils/Facade";
 import LoadingIndicator from "../LoadingIndicator";
 import Message from "./Message";
 
 function scrollLastMessageIntoView(inputRef) {
-  inputRef.current.scrollIntoView({ smooth: true });
+  inputRef.current?.scrollIntoView({ smooth: true });
 }
 
 export default function MessageRoom() {
-  let timeout;
   const {room} = useParams();
   const [data, setData] = useState([]);
   const [input, setInput] = useState('');
@@ -18,22 +18,8 @@ export default function MessageRoom() {
   const [loading, setLoading] = useState(true);
   const inputRef = useRef();
 
-  const user = useAuth().user;
-
-  const fetchMessages = useCallback((room) => {
-    return new Facade().get(`/api/messages/room/${room}`, (response) => {
-      setData(response);
-      setLoading(false);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      timeout = setTimeout(() => fetchMessages(room), 9000); // end-to-end communication with less requests per min than adding dep
-      console.log(response)
-      scrollLastMessageIntoView(inputRef)
-    }, (error) => {
-      // show message
-      console.log(error)
-      setError(error);
-    });
-  }, []);
+  const socket = useSocket();
+  const {user} = useAuth();
 
   function sendMessage(user, content) {
     const message = {
@@ -44,18 +30,36 @@ export default function MessageRoom() {
     }
 
     new Facade().post('/api/messages', message, (response) => {
-      setData([...data, message])
-      message.timestamp = message.timestamp.toLocaleString();
-      scrollLastMessageIntoView(inputRef)
+      socket.emit('send-message', message);
+      setInput('');
     }, (error) => {
       console.log(error)
     })
   }
 
   useEffect(() => {
-      fetchMessages(room);
-      return () => clearTimeout(timeout);
-  }, [fetchMessages, room, timeout]);
+    socket.emit('join', room);
+
+    new Facade().get(`/api/messages/room/${room}`, (response) => {
+      setData(response);
+      setLoading(false);
+      scrollLastMessageIntoView(inputRef)
+    }, (error) => {
+      // show message
+      // console.log(error)
+      setError(error);
+    });
+
+    socket.on('new-message', (message) => {
+      const updated = {...message, timestamp: message.timestamp.toLocaleString()};
+      setData([...data, updated])
+      scrollLastMessageIntoView(inputRef)
+    });
+
+    return () => {
+      socket.emit('leave', room);
+    }
+  });
 
   return (
     <div className="messages">
