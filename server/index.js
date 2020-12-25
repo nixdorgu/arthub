@@ -156,9 +156,22 @@ pool.connect((connectionError, client) => {
   io.on('connection', (socket) => {
     console.log('Connection!!!');
 
+    socket.on('join', (room) => {
+      socket.join(room);
+    });
+
+    socket.on('send-message', (message) => {
+      const roomId = message.room_id;
+      socket.to(roomId).emit('new-message', message);
+    });
+
+    socket.on('leave', (room) => {
+      socket.leave(room);
+    });
+
     socket.on('disconnect', () => {
       console.log('User left!');
-    })
+    });
   });
 
   server.listen(port, () => {
