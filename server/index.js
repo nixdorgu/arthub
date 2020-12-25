@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const socket = require('socket.io');
+const socketio = require('socket.io');
 const http = require('http');
 
 const middleware = require('./utils/middleware');
@@ -22,7 +22,7 @@ const port = process.env.PORT ?? 3000;
 const app = express();
 
 const server = http.createServer(app);
-const io = socket(server, {
+const io = socketio(server, {
   cors: {
     origin: 'http://localhost:3000',
   },
@@ -157,7 +157,7 @@ pool.connect((connectionError, client) => {
     console.log('Connection!!!');
 
     socket.on('disconnect', () => {
-      console.log('User left!')
+      console.log('User left!');
     })
   });
 
