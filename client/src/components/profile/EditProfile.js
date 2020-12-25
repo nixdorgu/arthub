@@ -3,6 +3,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import Facade from "../../utils/Facade";
+import Snackbar from '../Snackbar';
 
 export default function EditProfile() {
   const { user } = useAuth();
