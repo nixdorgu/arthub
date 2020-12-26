@@ -17,6 +17,7 @@
     "nodemon": "^2.0.6"
   },
   "dependencies": {
+    "@material-ui/icons": "^4.11.2",
     "commitizen": "^4.2.2",
     "express": "^4.17.1",
     "pg": "^8.4.2"
