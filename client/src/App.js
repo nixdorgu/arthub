@@ -7,6 +7,7 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import Profile from './components/profile/Profile';
 import EditProfile from './components/profile/EditProfile';
+import { SocketProvider } from './context/SocketContext';
 import { AuthProvider } from './context/AuthContext';
 import PageNotFound from './components/PageNotFound';
 import Messages from './components/messages/Messages';
@@ -19,6 +20,7 @@ import Auth from './components/Auth';
 function App() {
     return (
         <AuthProvider>
+            <SocketProvider>
             <Router>
                 <div className="grid-container">
                     <Header/>
@@ -39,6 +41,7 @@ function App() {
                         </main>
                 </div>
             </Router>
+            </SocketProvider>
         </AuthProvider>
     );
 }
