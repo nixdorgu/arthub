@@ -19,21 +19,38 @@ function Profile({match}) {
 
     const {user} = useAuth();
     const [profileData, setProfileData] = useState({});
+    const [src, setSrc] = useState('#');
 
     const checkProfileUser = useCallback(() => JSON.stringify(match.params) === JSON.stringify({}) ? setIsMe(true) : setIsMe(false), [match.params]);
     const fetchProfileData = useCallback(() => {
-            const id = match.params.id || user.id;
+                const id = match.params.id || user.id;
 
-            new Facade().get(`/api/profile/${id}`,
-            (success) => {
-                const ownProfile = success.user_id === user.id;
-                setProfileData(success);
-                setIsMe(ownProfile);
-            },
-            (error) => {
-                setError(error.message);
-            });
-    }, [match, user]);
+                new Facade().get(`/api/profile/${id}`,
+                (success) => {
+                    const ownProfile = success.user_id === user.id;
+                    setProfileData(success);
+                    setIsMe(ownProfile);
+    
+                    if (profileData.hasOwnProperty('source')) {
+                        const source = profileData.source;
+
+
+                        if (profileData.source.hasOwnProperty('type')) {
+                            const buffer = Buffer.from(source.image)
+                            const image = `data:${source.type};base64,${buffer.toString('base64')}`;
+                            setSrc(image);
+                        } else {
+                            setSrc(source);
+                        }
+
+                        setLoading(false);
+                    }
+                },
+                (error) => {
+                    setLoading(false);
+                    setError(error.message);
+                });
+    }, [match, user, profileData]);
 
     const processTransaction = (e) => {
         e.preventDefault();
@@ -55,7 +72,7 @@ function Profile({match}) {
         width: "100px",
         height: "100px",
         objectFit: "cover",
-        boxShadow: "1px 1px 5px 1px #aaa"
+        boxShadow: "1px 1px 3px 1px #ccc"
     }
 
     useEffect(() => {
@@ -65,10 +82,8 @@ function Profile({match}) {
             checkProfileUser();
             fetchProfileData();
     
-            if (!error) {
-                setLoading(false);
-            } else {
-                window.location = '/404';
+            if (error) {
+              window.location = '/404';
             }
         }
     }, [match, error, user, fetchProfileData, checkProfileUser]);
@@ -80,14 +95,14 @@ function Profile({match}) {
 
         {loading ?  <LoadingIndicator/> : (
             // TODO: refactor this
-            <div className="profile-proper" style={{width: "100%"}}>
-                <div className="profile header" style={{display: "flex", justifyContent: "center", height: "100px", width: "100%"}}>
-                    <div className="image" style={{flex: "2"}}>
-                        <img src='' style={imgStyle} alt="profile"/>
+            <div className="profile-proper" style={{width: "80%"}}>
+                <div className="profile header" style={{display: "flex", justifyContent: "center", alignItems: "center", height: "max-content", width: "100%"}}>
+                    <div className="image" style={{marginRight: "3vw"}}>
+                        <img src={src} style={imgStyle} alt="profile"/>
                     </div>
-                    <div className="bio" style={{flex: "3", display: "flex", flexDirection: "column", justifyContent: "flex-end", height: "100%", width: "100%"}}>
+                    <div className="bio" style={{display: "flex", flexDirection: "column", justifyContent: "flex-end", height: "100%", width: "100%"}}>
                         <p>{showFullName(profileData)}</p>
-                        <i style={{padding: ".5rem 0", fontSize: "small"}}>{`Member since ${new Date(profileData['member_since']).toLocaleDateString()}`}</i>
+                        <i style={{padding: ".5rem 0", fontSize: "1.5vh"}}>{`Member since ${new Date(profileData['member_since']).toLocaleDateString()}`}</i>
                         <ProfileInteractions props={{isMe, user, setShowHireModal, profileData}}/>
 
                     </div>
