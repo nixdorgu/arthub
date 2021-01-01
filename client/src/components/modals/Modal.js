@@ -8,7 +8,7 @@ export default function Modal({ handleClose, handleSubmit, header, show, childre
 
     useEffect(() => {
         function removeListener() {
-            return window.removeEventListener('click', onClick, true);
+            return window.removeEventListener('click', onClick);
         }
 
         function onClick(e, element = '.modal-body') {
@@ -21,7 +21,7 @@ export default function Modal({ handleClose, handleSubmit, header, show, childre
         }
 
         if (show) {
-            window.addEventListener('click', onClick, true);
+            window.addEventListener('click', onClick);
         }
 
         return () => removeListener();
