@@ -18,7 +18,7 @@ export default function UserFlow(props) {
 UserFlow.propTypes = {
     isLoading: PropTypes.bool.isRequired,
     isError: PropTypes.bool,
-    loading: PropTypes.element.isRequired,
+    loading: PropTypes.element,
     error: PropTypes.element,
     success: PropTypes.element.isRequired
 }
