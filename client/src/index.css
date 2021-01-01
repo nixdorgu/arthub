@@ -9,6 +9,9 @@ body {
     height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    hyphens: auto;
+    -webkit-hypens: auto;
+    -webkit-hyphens: auto;
 }
 
 #root {
@@ -16,12 +19,17 @@ body {
 }
 
 header, footer {
-    background-color: #000055;
-    color: #efefef;
+    /* background-color: #000055; */
+    background-color: #fff;
+    /* background-color: transparent; */
+    /* color: #efefef; */
+    color: #ff5678;
     width: 100%;
 }
 
 header {
+    position: sticky;
+    top: 0;
     grid-area: header;
 }
 
@@ -57,21 +65,25 @@ main {
 /* COMMON */
 a {
     text-decoration: none;
-    color: #efefef;
+    /* color: #efefef; */
+    color: #ff5678;
 }
 
 a:hover {
-    color: #050505;
+    /* color: #050505; */
+    color: #e496a4;
 }
 
 /* HEADER */
 header a.logo {
-    color: #efefef;
+    /* color: #efefef; */
+    color: #ff5678;
     font-size: 1.2rem;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 header a {
+    color: #ff5678;
     padding: 1rem;
 }
 
@@ -135,9 +147,9 @@ header a {
     padding: .3rem 1rem;
 }
 
-.form-element input:invalid{
+/* .form-element input:invalid{
     border: 1px solid red;
-}
+} */
 
 .login-form > .form-element input {
     border: 1px solid #000;
@@ -173,7 +185,7 @@ button {
 }
 
 .user-type-selection-btn-group button.active, .user-type-selection #signup, .user-type-selection #login, button.search, .send-message {
-    background-color: #000055;
+    background-color: #ff5678;
     color: #fff;
 }
 
@@ -259,7 +271,6 @@ button {
     from {
         opacity: 0%;
     } to {
-        background-color: #fff;
         opacity: 100%;
     }
 }
@@ -289,6 +300,7 @@ button {
 }
 
 .messages .room-content > .room-timestamp {
+    background-color: #fff;
     flex: 40%;
     display: flex;
     justify-content: flex-end;
@@ -296,17 +308,6 @@ button {
     padding: 0;
     margin: 0;
     animation: on-load 2s;
-
-}
-
-@media screen and (min-width: 600px) {
-    /* .messages .room-content > .room-message {
-        flex: 70%;
-    }
-    
-    .messages .room-content > .room-timestamp {
-        flex: 30%;
-    } */
 }
 
 /* Message Component */
