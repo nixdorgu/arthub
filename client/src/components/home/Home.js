@@ -9,15 +9,20 @@ import HomeSearchBar from './HomeSearchBar';
 function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [empty, setEmpty] = useState(false)
   const [data, setData] = useState([]);
   const [input, setInput] = useState('');
 
   function searchArtists(input) {
     new Facade().get(`/api/artists/${input}`, (success) => {
-      setData(() => success);
-      success.length > 0 ? setError(false) : setError(true);
+      const isEmpty = success.length > 0;
+
+      setData(success);
+      setError(!isEmpty);
+      setEmpty(!isEmpty);
     }, (error) => {
       setError(true);
+      setEmpty(false);
     });
   }
 
@@ -37,7 +42,7 @@ function Home() {
       {/* don't forget genres */}
       <HomeSearchBar onSubmit={onSubmit} input={input} setInput={setInput}/>
       <UserFlow isLoading={loading} isError={error} error={
-        data.length === 0 ? <NoSearch/> : <Error500/>
+        empty ? <NoSearch/> : <Error500/>
       } success={
         <div id="artists" style={{width: "calc(100vw - 8rem)", margin: "2rem", display: "grid", justifyContent: "center", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gridTemplateRows: "auto", gap: ".5rem"}}>
         {data.map(artist => <ArtistCard key={artist.user_id} props={{artist}}/>)}
