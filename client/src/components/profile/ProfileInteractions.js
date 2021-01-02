@@ -2,14 +2,14 @@ import React from 'react';
 import Facade from '../../utils/Facade';
 
 function ProfileInteractions(props) {
-    const { isMe, setShowHireModal, profileData, user } = props.props;
+    const { isMe, setShowHireModal, setShowSnackbar, setSnackbarMessage, profileData, user } = props.props;
 
     const chatArtist = () => {
         new Facade().post("/api/messages/room", {user_id: user.id, user_classification: user['user_classification'], id: profileData['user_id'], classification: profileData['user_classification'] }, (success) => {
             window.location.href = `/messages/${success.room.room_id}`
         }, (error) => {
-            console.log(error.message)
-            // modal informing user of what went wrong
+            setShowSnackbar(true);
+            setSnackbarMessage(error.message);
         })
     }
 
