@@ -52,14 +52,14 @@ export default function MessageRoom() {
 
     socket.on('new-message', (message) => {
       const updated = {...message, timestamp: message.timestamp.toLocaleString()};
-      setData([...data, updated])
+      setData(data => [...data, updated])
       scrollLastMessageIntoView(inputRef)
     });
 
     return () => {
       socket.emit('leave', room);
     }
-  });
+  }, [socket, room]);
 
   return (
     <div className="messages">
