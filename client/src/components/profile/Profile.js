@@ -1,14 +1,18 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import Snackbar from '../Snackbar';
 import {useAuth} from "../../context/AuthContext";
+import {useSocket} from '../../context/SocketContext';
+
 import Facade from '../../utils/Facade';
 import CommissionModal from '../modals/CommissionModal';
 import UserFlow from '../../utils/UserFlow';
 import ProfileHeader from './ProfileHeader';
+import isEmptyObject from '../../tests/isEmptyObject';
+import PageNotFound from '../PageNotFound';
 
 function Profile({match}) { 
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState(false);
     const [isMe, setIsMe] = useState(null);
     const [showHireModal, setShowHireModal] = useState(false);
 
@@ -17,38 +21,39 @@ function Profile({match}) {
     const [snackbarMessage, setSnackbarMessage] = useState('');
 
     const {user} = useAuth();
+    const socket = useSocket();
     const [profileData, setProfileData] = useState({});
     const [src, setSrc] = useState('#');
 
-    const checkProfileUser = useCallback(() => JSON.stringify(match.params) === JSON.stringify({}) ? setIsMe(true) : setIsMe(false), [match.params]);
+    const checkProfileUser = useCallback(() => isEmptyObject(match.params) ? setIsMe(true) : setIsMe(false), [match.params]);
     const fetchProfileData = useCallback(() => {
-                const id = match.params.id || user.id;
+        const id = match.params.id || user.id;
 
-                new Facade().get(`/api/profile/${id}`,
+        if (isEmptyObject(profileData)) {
+            new Facade().get(`/api/profile/${id}`,
                 (success) => {
                     const ownProfile = success.user_id === user.id;
-                    setProfileData(success);
+
+                    setError(false);
+                    setProfileData(() => success);
                     setIsMe(ownProfile);
-    
-                    if (profileData.hasOwnProperty('source')) {
-                        const source = profileData.source;
 
+                    if (success.hasOwnProperty('source')) {
+                        const source = success.source;
 
-                        if (profileData.source.hasOwnProperty('type')) {
+                        if (success.source.hasOwnProperty('type')) {
                             const buffer = Buffer.from(source.image)
                             const image = `data:${source.type};base64,${buffer.toString('base64')}`;
                             setSrc(image);
                         } else {
                             setSrc(source);
                         }
-
-                        setLoading(false);
                     }
                 },
                 (error) => {
-                    setLoading(false);
-                    setError(error.message);
+                    setError(true);
                 });
+            }       
     }, [match, user, profileData]);
 
     const processTransaction = (e) => {
@@ -79,20 +84,22 @@ function Profile({match}) {
 
         if (user.hasOwnProperty('id')) {
             checkProfileUser();
-            fetchProfileData();
-    
-            if (error) {
-              window.location = '/404';
-            }
+            fetchProfileData();   
+            setLoading(false);
         }
-    }, [match, error, user, fetchProfileData, checkProfileUser]);
+        
+    }, [match, user, fetchProfileData, checkProfileUser]);
 
     // LOGIC
     return (
         <div style={{flexDirection: "column", display: "flex", alignItems:"center", width: "100%"}}>
         {<Snackbar hidden={showSnackbar} props={{ message: snackbarMessage, snackbarRef, error: true, showSnackbar, setShowSnackbar}}/> }
 
-        <UserFlow isLoading={loading} success={<div className="profile-proper" style={{width: "80%"}}>
+        <UserFlow isLoading={loading} 
+        isError={error}
+        error={<PageNotFound/>}
+        success={
+            <div className="profile-proper" style={{width: "80%"}}>
                 <ProfileHeader isMe={isMe} user={user} setShowHireModal={setShowHireModal} profileData={profileData} src={src} imgStyle={imgStyle}/>
                 {/* modal should close when clicked anywhere else same with hamburger */}
                 {!isMe && profileData['user_classification'] === 'artist' && (<CommissionModal show={showHireModal} handleClose={(e) => setShowHireModal(false)} handleSubmit={processTransaction}/>)}
