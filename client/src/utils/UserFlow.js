@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import LoadingIndicator from '../components/LoadingIndicator';
 
 export default function UserFlow(props) {
-    const {isLoading, isError, error, success} = props;
+    const {isLoading, isError, loading, error, success} = props;
 
     return (
         isLoading ? (
-            <LoadingIndicator/>
+            loading ? loading : <LoadingIndicator/>
         ) : (isError ?
             error : success
         )
