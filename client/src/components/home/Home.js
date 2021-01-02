@@ -21,7 +21,7 @@ function Home() {
     });
   }
 
-  function onSubmit(e) {
+  function onSubmit(e, input) {
     e.preventDefault();
     searchArtists(input)
   }
