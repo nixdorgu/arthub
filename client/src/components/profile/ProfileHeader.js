@@ -9,6 +9,8 @@ export default function ProfileHeader({
   setShowHireModal,
   profileData,
   src,
+  setShowSnackbar,
+  setSnackbarMessage,
   imgStyle,
 }) {
 
@@ -43,7 +45,8 @@ export default function ProfileHeader({
           style={{ padding: ".5rem 0", fontSize: "1.5vh" }}
         >{formatAsDate(profileData, locale)}</i>
         <ProfileInteractions
-          props={{ isMe, user, setShowHireModal, profileData }}
+          props={{ isMe, user, setShowHireModal, setShowSnackbar,
+            setSnackbarMessage, profileData }}
         />
       </div>
     </div>
