@@ -27,6 +27,7 @@ function Home() {
   }
 
   useEffect(() => {
+    setLoading(true);
     searchArtists(input);
     setLoading(false);
   }, [input]); 
