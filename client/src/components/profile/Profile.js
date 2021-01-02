@@ -98,7 +98,7 @@ function Profile({match}) {
         error={<PageNotFound/>}
         success={
             <div className="profile-proper" style={{width: "80%"}}>
-                <ProfileHeader isMe={isMe} user={user} setShowHireModal={setShowHireModal} profileData={profileData} src={src} imgStyle={imgStyle}/>
+                <ProfileHeader isMe={isMe} user={user} setShowHireModal={setShowHireModal} setShowSnackbar={setShowSnackbar} setSnackbarMessage={setSnackbarMessage} profileData={profileData} src={src} imgStyle={imgStyle}/>
                 {/* modal should close when clicked anywhere else same with hamburger */}
                 {!isMe && profileData['user_classification'] === 'artist' && (<CommissionModal show={showHireModal} handleClose={(e) => setShowHireModal(false)} handleSubmit={processTransaction}/>)}
                 <div style={{lineBreak: "normal", wordBreak: "break-word"}}>
