@@ -7,7 +7,7 @@ import CommissionModal from '../modals/CommissionModal';
 import UserFlow from '../../utils/UserFlow';
 import ProfileHeader from './ProfileHeader';
 import isEmptyObject from '../../tests/isEmptyObject';
-import PageNotFound from '../PageNotFound';
+import { Redirect } from 'react-router-dom';
 
 function Profile({match}) { 
     const [loading, setLoading] = useState(true);
@@ -95,7 +95,7 @@ function Profile({match}) {
 
         <UserFlow isLoading={loading} 
         isError={error}
-        error={<PageNotFound/>}
+        error={<Redirect to="/404"/>}
         success={
             <div className="profile-proper" style={{width: "80%"}}>
                 <ProfileHeader isMe={isMe} user={user} setShowHireModal={setShowHireModal} setShowSnackbar={setShowSnackbar} setSnackbarMessage={setSnackbarMessage} profileData={profileData} src={src} imgStyle={imgStyle}/>
