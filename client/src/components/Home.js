@@ -1,6 +1,4 @@
-import React, { useContext, useEffect, useState} from 'react';
-import { Redirect } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import React, { useEffect, useState} from 'react';
 import Facade from '../utils/Facade';
 import ArtistCard from './ArtistCard';
 import UserFlow from '../utils/UserFlow';
@@ -8,7 +6,6 @@ import NoSearch from './states/NoSearch';
 import Error500 from './states/Error500';
 
 function Home() {
-  const ctx = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [data, setData] = useState([]);
