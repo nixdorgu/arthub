@@ -1,6 +1,6 @@
 import React, { useEffect, useState} from 'react';
 import Facade from '../../utils/Facade';
-import ArtistCard from '../ArtistCard';
+import ArtistCard from './ArtistCard';
 import UserFlow from '../../utils/UserFlow';
 import NoSearch from '../states/NoSearch';
 import Error500 from '../states/Error500';
