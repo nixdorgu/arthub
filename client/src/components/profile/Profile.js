@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import Snackbar from '../Snackbar';
 import {useAuth} from "../../context/AuthContext";
-import {useSocket} from '../../context/SocketContext';
 
 import Facade from '../../utils/Facade';
 import CommissionModal from '../modals/CommissionModal';
@@ -21,7 +20,6 @@ function Profile({match}) {
     const [snackbarMessage, setSnackbarMessage] = useState('');
 
     const {user} = useAuth();
-    const socket = useSocket();
     const [profileData, setProfileData] = useState({});
     const [src, setSrc] = useState('#');
 
