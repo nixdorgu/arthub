@@ -21,62 +21,24 @@ export default function EditProfile() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [biography, setBiography] = useState("");
+  const [focus, setFocus] = useState([]);
 
   const [profileData, setProfileData] = useState({});
   const [src, setSrc] = useState('#');
-  const [fileObject, setFileObject] = useState({});
 
   const [genres, setGenres] = useState([]);
 
-  const ACCEPT = "image/jpeg, image/png";
-
-  // fetch profile image url
-  const initialData = {
-    firstName: user.first_name,
-    lastName: user.last_name,
-    focus: [genres[0]] // dummy data
-  };
-
-//   function readFile(file) {
-//     if (typeof file === 'undefined') return {};
-
-//     const fileReader = new FileReader();
-//     fileReader.readAsArrayBuffer(file);
-
-//     // error here
-//     fileReader.onprogress = () => {
-
-//     }
-//     fileReader.onerror = () =>  {};
-
-//     fileReader.onload = () => {
-//         const MAX_FILE_SIZE = 1000000;
-//         const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png'];
-//         const result = fileReader.result;
-//         const buffer = Buffer.from(result, 'utf8');
-        
-//         if (ALLOWED_IMAGE_TYPES.includes(file.type) && file.size <= MAX_FILE_SIZE) {
-//           // return { mimetype: file.type, buffer }
-//           setFileObject({mimetype: file.type, buffer});
-//         }
-//     }
-
-//     return fileReader;
-// }
   function handleSubmit(e) {
     e.preventDefault();
+    const data = {link, firstName, lastName, biography, genres}
 
-    const data = {link: link, firstName, lastName, biography, genres}
-
-    // console.log(buffer)
-    // console.log(file)
-      new Facade().post('/api/profile/edit', data, (success) => {
-          console.log(success)
-        // alert(success.message)
-      }, (error) => {
-          console.log(error)
-        // alert(error.message)
-      })
+    new Facade().post('/api/profile/edit', data, (success) => {
+        console.log(success)
+      // alert(success.message)
+    }, (error) => {
+        console.log(error)
+      // alert(error.message)
+    })
   }
 
   function preview(e, input) {
@@ -115,7 +77,6 @@ export default function EditProfile() {
         references[e.target.id].helperText('');
     }
 
-    // handleDisable();
   }
 
   useEffect(() => {
@@ -142,6 +103,16 @@ export default function EditProfile() {
       setLink(profileData.source);
 
       if (profileData.user_classification === "artist") {
+        new Facade().get(
+          "/api/artists/focus",
+          (success) => {
+            setFocus(success);
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+
         new Facade().get(
             "/api/focus",
             (success) => {
@@ -193,7 +164,6 @@ export default function EditProfile() {
               type="text"
               id="link"
               name="link"
-              accept={ACCEPT}
               value={link}
               onChange={(e) => {
                 setLink(e.target.value);
@@ -246,7 +216,7 @@ export default function EditProfile() {
               limitTags={3}
               id="multiple-limit-tags"
               options={genres}
-              defaultValue={initialData.focus.map(option => option)}
+              defaultValue={focus.map(option => option)}
               getOptionLabel={(option) => option.focus_description}
               getOptionSelected={(option, value) => option.id === value.id}
               renderInput={(params) => (
