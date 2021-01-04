@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { useSocket } from "../../context/SocketContext";
 import Facade from "../../utils/Facade";
 import NoMessages from "../states/NoMessages";
 import MessageCard from "./MessageCard";
@@ -8,13 +7,11 @@ import UserFlow from "../../utils/UserFlow";
 import Error500 from "../states/Error500";
 
 export default function Messages() {
-  let timeout;
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [empty, setEmpty] = useState(false);
   const {user} = useAuth();
-  const socket = useSocket();
 
   const getRooms = useCallback(() => {
     new Facade().get(
@@ -25,13 +22,6 @@ export default function Messages() {
         setRooms(response);
         setError(isEmpty);
         setEmpty(isEmpty);
-        // ADD ON_NEW_ROOM EVENT
-        // CONSIDER USING USER_ID AS LISTENER ON NEW MESSAGE
-
-        // rooms.map(room => {
-        //   const id = room.room_id;
-        //   return socket.emit('join', id);
-        // })
       },
       (error) => {
         // show error page
@@ -47,8 +37,7 @@ export default function Messages() {
     if (user.hasOwnProperty('id')) {
       getRooms();
     }
-    return () => clearTimeout(timeout);
-  }, [getRooms, user, timeout]); // having rooms here makes it render exponentially
+  }, [getRooms, user]); // having rooms here makes it render exponentially
 
   return (
     <div className="messages">
