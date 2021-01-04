@@ -42,7 +42,7 @@ const profileRoutes = (client) => {
     const token = req.headers.authorization.slice(7);
     const { user_id: id } = jwt.decode(token);
     const {
-      link, firstName, lastName, biography, genres,
+      link, firstName, lastName, biography, focus,
     } = req.body;
 
     return client.query('SELECT * FROM users WHERE user_id = $1', [id], (userError, userResult) => {
@@ -62,30 +62,47 @@ const profileRoutes = (client) => {
       }
 
       if (typeof lastName !== 'undefined' && lastName.trim() !== user.last_name) {
-        return client.query('UPDATE users SET last_name = $1 WHERE user_id = $2', [lastName, id], (error, result) => {
+        client.query('UPDATE users SET last_name = $1 WHERE user_id = $2', [lastName, id], (error, result) => {
           if (error) return res.status(500).json({ success: false, message: 'Something went wrong.' });
         });
       }
 
       if (user.user_classification === 'artist') {
-        client.query('SELECT * FROM users INNER JOIN artists AS a ON user_id = a.artist_id  WHERE user_id = $1', [id], (error, artistResult) => {
+        return client.query('SELECT * FROM users INNER JOIN artists AS a ON user_id = a.artist_id  WHERE user_id = $1', [id], (error, artistResult) => {
           if (error) return res.status(500).json({ success: false, message: 'Something went wrong.' });
 
           const artistData = artistResult.rows[0];
 
           if (typeof biography !== 'undefined' && biography.trim() !== artistData.biography?.trim()) {
-            client.query('UPDATE artists SET biography = $1 WHERE artist_id = $2', [biography, id], (artistError, result) => {
+            return client.query('UPDATE artists SET biography = $1 WHERE artist_id = $2', [biography, id], (artistError, result) => {
               if (artistError) return res.status(500).json({ success: false, message: 'Something went wrong.' });
             });
           }
 
-          if (typeof genres !== 'undefined' && genres.length > 0) {
-            // LOGIC HERE
+          if (focus !== 'undefined' && focus.length > 0) {
+            client.query('SELECT focus.id, focus.focus_description FROM artist_focus AS artist INNER JOIN focus ON focus.id = artist.focus_id WHERE artist_id = $1', [id], (focusError, result) => {
+              if (focusError) return res.status(500).json({ message: 'Something went wrong.' });
+
+              const priorFocus = result.rows.map((initial) => initial.id);
+
+              const add = focus.filter((item) => !priorFocus.includes(item.id));
+              const remove = priorFocus
+                .filter((item) => !focus.map((newItem) => newItem.id).includes(item))
+                .map((item) => Number(item));
+
+              remove.forEach((item) => client.query('DELETE FROM artist_focus WHERE artist_id = $1 AND focus_id = $2 RETURNING *', [id, item], (deleteError, deleteResult) => {
+                if (deleteError) return res.status(500).json({ message: 'Something went wrong.' });
+              }));
+
+              add.forEach((item) => client.query('INSERT INTO artist_focus VALUES (DEFAULT, $1, $2)', [id, item.id], (insertError, insertResult) => {
+                if (insertError) return res.status(500).json({ message: 'Something went wrong.' });
+              }));
+            });
           }
+
+          return res.status(200).json({ success: true, message: 'Profile successfully updated.' });
         });
       }
-
-      return res.status(200).json({ success: true, message: 'Profile successfully updated.' });
     });
   });
 
