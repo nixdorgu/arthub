@@ -2,17 +2,13 @@ import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Facade from "../utils/Facade";
-import SocialLogin from "../utils/SocialLogin";
+import handleSocialLogin from "../utils/SocialLogin";
 import { setToken } from "../utils/Tokens";
 
 function Login() {
   const ctx = useAuth();
   const errorRef = useRef();
   
-  const handleSocialLogin = (e, site) => {
-    window.location.href = SocialLogin(site);
-  };
-
   const handleLogin = (e) => {
     e.preventDefault();
     errorRef.current.innerHTML = '';
@@ -22,7 +18,7 @@ function Login() {
 
     const data = { email, password };
 
-    new Facade().post('/api/login', data, (success) => {
+    new Facade().post('/auth/login', data, (success) => {
       setToken(success.token);
       ctx.setAuthenticated(true);
     }, (error) => {

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Redirect, Link } from "react-router-dom";
 import Facade from '../utils/Facade'
-import SocialLogin from "../utils/SocialLogin";
+import handleSocialLogin from "../utils/SocialLogin";
 
 function Signup() {
   const errorRef = useRef();
@@ -49,7 +49,7 @@ function Signup() {
 
     const data = {firstName, lastName, email, password, isArtist}
 
-    new Facade().post('/api/register', data, (success) => {
+    new Facade().post('/auth/register', data, (success) => {
       setRegistered(true);
     },
     (error) => {
@@ -86,9 +86,6 @@ function Signup() {
     const validator = OPTIONS.map(option => validate(option));
     validator.every(message => message === true) ? signup(e) : console.log(validator.findIndex(item => item === false))
   }
-
-
-  const handleSocialLogin = (e, site) => window.location.href = SocialLogin(site);
 
   const handleOnChange = (e, handler) => {
     handler(e.target.value);
