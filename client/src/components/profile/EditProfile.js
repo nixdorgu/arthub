@@ -18,6 +18,8 @@ export default function EditProfile() {
   const [firstNameHelperText, setFirstNameHelperText] = useState('');
   const [lastNameError, setLastNameError] = useState(false);
   const [lastNameHelperText, setLastNameHelperText] = useState('');
+  const [biographyError, setBiographyError] = useState(false);
+  const [biographyHelperText, setBiographyHelperText] = useState('');
 
   const [link, setLink] = useState('');
   const [firstName, setFirstName] = useState("");
@@ -32,15 +34,17 @@ export default function EditProfile() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    const data = {link, firstName, lastName, biography, focus}
+    const data = {link: src, firstName, lastName, biography, focus}
 
-    new Facade().post('/api/profile/edit', data, (success) => {
+    if (!firstNameError && !lastNameError && !biographyError) {
+      new Facade().post('/api/profile/edit', data, (success) => {
         console.log(success)
       // alert(success.message)
     }, (error) => {
         console.log(error)
       // alert(error.message)
     })
+    }
   }
 
   function preview(e, input) {
@@ -59,21 +63,28 @@ export default function EditProfile() {
   function hasChanges(e) {
     const references = {
         firstName: {
-            label: 'First name',
-            error: setFirstNameError,
-            helperText: setFirstNameHelperText
+          label: 'First name',
+          error: setFirstNameError,
+          helperText: setFirstNameHelperText
         },
         lastName: {
-            label: 'Last name',
-            error: setLastNameError,
-            helperText: setLastNameHelperText
+          label: 'Last name',
+          error: setLastNameError,
+          helperText: setLastNameHelperText
         },
+        biography: {
+          label: 'Biography',
+          error: setBiographyError,
+          helperText: setBiographyHelperText
+        }
     };
 
-
     if (e.target.value.trim() === '') {
-        references[e.target.id].error(true);
-        references[e.target.id].helperText(`${references[e.target.id].label} must not be empty`);
+      references[e.target.id].error(true);
+      references[e.target.id].helperText(`${references[e.target.id].label} must not be empty`);
+    } else if (e.target.id === 'biography' && e.target.value.length > 80) {
+      references[e.target.id].error(true);
+      references[e.target.id].helperText(`${references[e.target.id].label} must not exceed 80 characters.`);
     } else {
         references[e.target.id].error(false);
         references[e.target.id].helperText('');
@@ -193,8 +204,8 @@ export default function EditProfile() {
             value={firstName}
             style={{ flex: "1", marginBottom: "1rem" }}
             onChange={(e) => {
-                setFirstName(e.target.value);
-                hasChanges(e)
+              setFirstName(e.target.value);
+              hasChanges(e)
             }}
           />
 
@@ -208,12 +219,28 @@ export default function EditProfile() {
             value={lastName}
             style={{ flex: "1", marginBottom: "1rem" }}
             onChange={(e) => {
-                setLastName(e.target.value);
-                hasChanges(e)
-            }
-            }
+              setLastName(e.target.value);
+              hasChanges(e)
+            }}
           />
           {user.user_classification === "artist" ? (
+            <>
+            <TextField
+            id="biography"
+            error={biographyError}
+            helperText={biographyHelperText}
+            variant="outlined"
+            label="Biography"
+            
+            placeholder={biography}
+            value={biography}
+            style={{ flex: "1", marginBottom: "1rem" }}
+            onChange={(e) => {
+              setBiography(e.target.value);
+              hasChanges(e)
+            }}
+          />
+
             <Autocomplete
               multiple
               limitTags={3}
@@ -236,6 +263,7 @@ export default function EditProfile() {
                 />
               )}
             />
+            </>
           ) : (
             <div></div>
           )}
