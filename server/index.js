@@ -2,16 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const pg = require('pg');
 const dotenv = require('dotenv');
-const bcrypt = require('bcrypt');
 const passport = require('passport');
-const jwt = require('jsonwebtoken');
 const socketio = require('socket.io');
 const http = require('http');
 
 const middleware = require('./utils/middleware');
 const initPassport = require('./config/passport.config');
 const checkConfig = require('./config/envError');
-const formatPayload = require('./src/formatPayload');
 const apiRoutes = require('./routes/apiRoutes');
 const authRoute = require('./routes/authRoutes');
 
