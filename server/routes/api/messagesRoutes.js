@@ -79,19 +79,26 @@ const messagesRoutes = (client) => {
   router.get('/room/:room', (req, res) => {
     const room_id = req.params.room;
     const token = req.headers.authorization.slice(7);
-    const decodedToken = jwt.decode(token);
+    const { user_id: id } = jwt.decode(token);
 
     // only users part of conversation can access
     return client.query('SELECT * FROM message_rooms WHERE $1 = room_id', [room_id], (roomError, room) => {
-      if (roomError || room.rows.length === 0 || ![room.rows[0].artist_id, room.rows[0].user_id].includes(decodedToken.user_id)) return res.status(404).json({ message: 'Room not found.' });
+      if (roomError || room.rows.length === 0 || ![room.rows[0].artist_id, room.rows[0].user_id].includes(id)) return res.status(404).json({ message: 'Room not found.' });
 
+      const user = id === room.rows[0].artist_id ? room.rows[0].user_id : room.rows[0].artist_id;
 
-      return client.query('SELECT * FROM messages WHERE $1 = room_id', [room_id], (err, result) => {
-        if (err) {
+      return client.query('SELECT CONCAT(first_name, \' \', last_name) FROM users WHERE $1 = user_id', [user], (userError, userResult) => {
+        if (userError) {
           return res.status(500).json({ message: 'Something wrong happened.' });
         }
 
-        return res.status(200).json(result.rows);
+        return client.query('SELECT * FROM messages WHERE $1 = room_id', [room_id], (err, result) => {
+          if (err) {
+            return res.status(500).json({ message: 'Something wrong happened.' });
+          }
+
+          return res.status(200).json({ data: result.rows, name: userResult.rows[0].concat });
+        });
       });
     });
   });
