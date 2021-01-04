@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const formatPayload = require('../src/formatPayload');
 
-const authRoute = () => {
+const authRoute = (client) => {
   const router = express.Router();
 
   router.post(
