@@ -127,13 +127,11 @@ function Signup() {
               <button id="work" onClick={selectUserType}>Work</button>
           </div>
           <Link to="/login" className="form-link">Already have an account?</Link>
-          <button id="signup" type="submit">
-          Create an Account
-        </button>
+          <button id="signup" type="submit">Create an Account</button>
         </div>
         <div className="row center user-type-selection-btn-group authentication">
-        <SocialMediaButton login={false} site={'facebook'}/>
-            <SocialMediaButton login={false} site={'google'}/>
+          <SocialMediaButton login={false} site={'facebook'}/>
+          <SocialMediaButton login={false} site={'google'}/>
         </div>
       </form>
     </div>
