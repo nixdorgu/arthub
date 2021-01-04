@@ -1,6 +1,6 @@
 import {useEffect} from 'react'
-import {useAuth} from '../context/AuthContext';
-import {setToken} from '../utils/Tokens';
+import {useAuth} from '../../context/AuthContext';
+import {setToken} from '../../utils/Tokens';
 
 export default function Auth({match}) {
     const auth = useAuth();
