@@ -9,7 +9,7 @@ import Profile from './components/profile/Profile';
 import EditProfile from './components/profile/EditProfile';
 import { SocketProvider } from './context/SocketContext';
 import { AuthProvider } from './context/AuthContext';
-import PageNotFound from './components/PageNotFound';
+import PageNotFound from './components/states/PageNotFound';
 import Messages from './components/messages/Messages';
 import MessageRoom from './components/messages/MessageRoom';
 import Transactions from './components/transactions/Transactions';
