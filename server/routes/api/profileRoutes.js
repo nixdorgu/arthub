@@ -5,7 +5,8 @@ const profileRoutes = (client) => {
   const router = express.Router();
 
   router.get('/:id', (req, res) => client.query(
-    'SELECT user_id, CONCAT(first_name, \' \', last_name) AS name, email, member_since, user_classification FROM users WHERE user_id = $1', [req.params.id],
+    // 'SELECT user_id, CONCAT_WS(\' \', first_name, last_name) AS name, email, member_since, user_classification, type, image FROM users LEFT JOIN profile_images USING(user_id) WHERE user_id = $1', [req.params.id],
+    'SELECT user_id, first_name, last_name, email, member_since, user_classification FROM users WHERE user_id = $1', [req.params.id],
     (error, result) => {
       if (error) {
         return res
@@ -19,7 +20,22 @@ const profileRoutes = (client) => {
           .json({ success: false, message: 'Profile not found.' });
       }
 
-      return res.status(200).json(result.rows[0]);
+      const DEFAULT_SOURCE = 'https://i.ibb.co/XV9b3h2/Untitled-1.png';
+      const initialData = result.rows[0];
+
+      const source = typeof initialData.link !== 'undefined' && initialData.link !== null ? initialData.link : DEFAULT_SOURCE;
+
+      const data = {
+        user_id: initialData.user_id,
+        first_name: initialData.first_name,
+        last_name: initialData.last_name,
+        email: initialData.email,
+        member_since: initialData.member_since,
+        user_classification: initialData.user_classification,
+        source,
+      };
+
+      return res.status(200).json(data);
     },
   ));
 
@@ -35,7 +51,7 @@ const profileRoutes = (client) => {
       const user = result.rows[0];
 
       if (JSON.stringify(file) !== JSON.stringify({})) {
-        const buffer = Buffer.from(file.buffer.data);
+        const buffer = file.buffer.data;
         client.query('INSERT INTO profile_images VALUES($1, $2, $3) ON CONFLICT(user_id) DO UPDATE SET type = $2, image = $3', [id, file.mimetype, buffer], (error, result) => {
           if (error) return res.status(500).json({ success: false, message: 'Something went wrong.' });
         });
