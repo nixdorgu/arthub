@@ -15,7 +15,7 @@ import MessageRoom from './components/messages/MessageRoom';
 import Transactions from './components/transactions/Transactions';
 import ProtectedRoute from './components/ProtectedRoute';
 import UnprotectedRoute from './components/UnprotectedRoute';
-import Auth from './components/Auth';
+import Auth from './components/auth/Auth';
 
 function App() {
     return (
