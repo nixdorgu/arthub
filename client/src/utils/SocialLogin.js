@@ -1,4 +1,4 @@
-export default function SocialLogin(site) {
+export function SocialLogin(site) {
     const redirect = site.toLowerCase() || '';
 
     const options = {
@@ -7,4 +7,9 @@ export default function SocialLogin(site) {
     }
 
     return !options.hasOwnProperty(redirect) ? null : options[redirect];
+}
+
+  
+export default function handleSocialLogin(e, site) {
+    window.location.href = SocialLogin(site);
 }
