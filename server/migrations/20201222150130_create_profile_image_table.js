@@ -9,5 +9,5 @@ exports.up = function (knex) {
 };
 
 exports.down = function (knex) {
-  return knex.raw(`DROP TABLE profile_images`);
+  return knex.raw('DROP TABLE profile_images');
 };
