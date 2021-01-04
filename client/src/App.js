@@ -3,8 +3,8 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 
 import Header from './components/Header';
 import Home from './components/home/Home';
-import Login from './components/Login';
-import Signup from './components/Signup';
+import Login from './components/auth/Login';
+import Signup from './components/auth/Signup';
 import Profile from './components/profile/Profile';
 import EditProfile from './components/profile/EditProfile';
 import { SocketProvider } from './context/SocketContext';
