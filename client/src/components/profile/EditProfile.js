@@ -160,6 +160,7 @@ export default function EditProfile() {
     if (profileData.hasOwnProperty("user_id")) {
       setFirstName(profileData.first_name);
       setLastName(profileData.last_name);
+      setSrc(profileData.source);
 
       if (profileData.user_classification === "artist") {
         new Facade().get(
@@ -208,15 +209,19 @@ export default function EditProfile() {
               id="profile"
               src={src}
               alt="profile"
-              style={{maxWidth: "50vw", maxHeight: "25vh", display: "none" }}
+              style={{maxWidth: "50vw", maxHeight: "25vh", 
+              // display: "none"
+            }}
             />
           </div>
             <input
-              type="file"
+              type="text"
               id="avatar"
               name="avatar"
               accept={ACCEPT}
+              value={src}
               onChange={(e) => {
+                checkImageValidity()
                   preview(e)
                   // handleDisable()
               }}
