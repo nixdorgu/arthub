@@ -9,16 +9,19 @@ export default function EditProfile() {
   const { user } = useAuth();
   const photoRef = useRef();
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
   const [firstNameError, setFirstNameError] = useState(false);
   const [firstNameHelperText, setFirstNameHelperText] = useState('');
   const [lastNameError, setLastNameError] = useState(false);
   const [lastNameHelperText, setLastNameHelperText] = useState('');
 
-  const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [biography, setBiography] = useState("");
 
+  const [profileData, setProfileData] = useState({});
   const [src, setSrc] = useState('#');
   const [file, setFile] = useState();
   const [fileObject, setFileObject] = useState({});
@@ -35,24 +38,32 @@ export default function EditProfile() {
     focus: [genres[0]] // dummy data
   };
 
-  function readFile(file) {
-    if (typeof file !== 'undefined') {
-        const fileReader = new FileReader();
-        fileReader.readAsArrayBuffer(file);
+//   function readFile(file) {
+//     if (typeof file === 'undefined') return {};
 
-        fileReader.onload = () => {
-            const MAX_FILE_SIZE = 5000000;
-            const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png'];
-            const result = fileReader.result;
-            const buffer = Buffer.from(result, 'utf8');
-            
-            if (ALLOWED_IMAGE_TYPES.includes(file.type) && file.size <= MAX_FILE_SIZE) {
-                setFileObject({mimetype: file.type, buffer});
-            }
-        }
+//     const fileReader = new FileReader();
+//     fileReader.readAsArrayBuffer(file);
 
-    }
-}
+//     // error here
+//     fileReader.onprogress = () => {
+
+//     }
+//     fileReader.onerror = () =>  {};
+
+//     fileReader.onload = () => {
+//         const MAX_FILE_SIZE = 1000000;
+//         const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png'];
+//         const result = fileReader.result;
+//         const buffer = Buffer.from(result, 'utf8');
+        
+//         if (ALLOWED_IMAGE_TYPES.includes(file.type) && file.size <= MAX_FILE_SIZE) {
+//           // return { mimetype: file.type, buffer }
+//           setFileObject({mimetype: file.type, buffer});
+//         }
+//     }
+
+//     return fileReader;
+// }
   function handleSubmit(e) {
     e.preventDefault();
 
@@ -60,10 +71,13 @@ export default function EditProfile() {
             //         console.log(buffer.toString('base64'))
         //   setSrc(`data:image/png;base64,${buffer.toString('base64')}`)
    
-    readFile(file);
+    // const buffer = readFile(file);
+    // console.log(fileObject)
+
     const data = {file: fileObject, firstName, lastName, biography, genres}
 
-    console.log(fileObject)
+    // console.log(buffer)
+    // console.log(file)
       new Facade().post('/api/profile/edit', data, (success) => {
           console.log(success)
         // alert(success.message)
@@ -77,25 +91,28 @@ export default function EditProfile() {
     e.preventDefault();
     photoRef.current.style.display = "block";
     setFile(e.target.files[0]);
+
+    // readFile(e.target.files[0]);
+
     setSrc(URL.createObjectURL(e.target.files[0]));
   }
 
-  function handleDisable() {
-    //   due to issues with asynchronous useState
-    const currentFirstName = document.querySelector(`#firstName`).value;
-    const currentLastName = document.querySelector(`#lastName`).value;
+  // function handleDisable() {
+  //   //   due to issues with asynchronous useState
+  //   const currentFirstName = document.querySelector(`#firstName`).value;
+  //   const currentLastName = document.querySelector(`#lastName`).value;
 
-    const noChangeFirstName = initialData.firstName.trim() === currentFirstName.trim();
-    const noChangeLastName = initialData.lastName.trim() === currentLastName.trim();
+  //   const noChangeFirstName = initialData.firstName.trim() === currentFirstName.trim();
+  //   const noChangeLastName = initialData.lastName.trim() === currentLastName.trim();
 
-    if(currentLastName.trim() === '' || currentFirstName.trim() === '') {
-      setIsDisabled(true);
-    } else if (!noChangeFirstName || !noChangeLastName || src !=='#') {
-      setIsDisabled(false);
-    } else {
-        setIsDisabled(true);
-    }
-  }
+  //   if(currentLastName.trim() === '' || currentFirstName.trim() === '') {
+  //     setIsDisabled(true);
+  //   } else if (!noChangeFirstName || !noChangeLastName || src !=='#') {
+  //     setIsDisabled(false);
+  //   } else {
+  //       setIsDisabled(true);
+  //   }
+  // }
 
   function hasChanges(e) {
     const references = {
@@ -120,17 +137,31 @@ export default function EditProfile() {
         references[e.target.id].helperText('');
     }
 
-    handleDisable();
+    // handleDisable();
   }
 
   useEffect(() => {
     setLoading(true);
 
     if (user.hasOwnProperty("id")) {
-      setFirstName(user.first_name);
-      setLastName(user.last_name);
+      new Facade().get(`/api/profile/${user.id}`, (success) => {
+        setProfileData(() => success);
+      }, (error) => {
+          console.log(error)
+          setError(true);
+        // alert(error.message)
+      });
+    }
+  }, [user]);
 
-      if (user.user_classification === "artist") {
+  useEffect(() => {
+    setLoading(true);
+
+    if (profileData.hasOwnProperty("user_id")) {
+      setFirstName(profileData.first_name);
+      setLastName(profileData.last_name);
+
+      if (profileData.user_classification === "artist") {
         new Facade().get(
             "/api/focus",
             (success) => {
@@ -145,9 +176,12 @@ export default function EditProfile() {
       } else {
         setLoading(false);
       }
-
     }
-  }, [user]);
+
+    return () => {
+      setLoading(false);
+    }
+  }, [profileData]);
 
   return (
     <div>
@@ -165,7 +199,7 @@ export default function EditProfile() {
           }}
         >
             <p style={{fontWeight: 500 }}>
-            Select a Profile Image:
+            Provide a Profile Image link:
 
             </p>
           <div className="initial-photo" style={{flex: "2"}}>
@@ -184,7 +218,7 @@ export default function EditProfile() {
               accept={ACCEPT}
               onChange={(e) => {
                   preview(e)
-                  handleDisable()
+                  // handleDisable()
               }}
               style={{fontFamily: "Montserrat, sans-serif"}}
             />
