@@ -4,8 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useSocket } from "../../context/SocketContext";
 import Facade from "../../utils/Facade";
 import UserFlow from "../../utils/UserFlow";
-import NewConversation from "../states/NewConversation";
-import Message from "./Message";
+import MessageRoomComponent from "./MessageRoomComponent";
 
 function scrollLastMessageIntoView(inputRef) {
   inputRef.current?.scrollIntoView({ smooth: true });
@@ -16,27 +15,38 @@ export default function MessageRoom() {
   const [data, setData] = useState([]);
   const [recipient, setRecipient] = useState('');
   const [empty, setEmpty] = useState(false);
-  const [input, setInput] = useState('');
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+
   const inputRef = useRef();
+  const [input, setInput] = useState('');
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const snackbarRef = useRef();
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [message, setMessage] = useState('');
 
   const socket = useSocket();
   const {user} = useAuth();
 
-  function sendMessage(user, content) {
-    const message = {
+  function sendNewMessage(user, content) {
+    const newMessage = {
       room_id: room,
       sender_id: user['id'],
       content: content,
       timestamp: new Date()
     }
 
-    new Facade().post('/api/messages', message, (response) => {
-      socket.emit('send-message', message);
+    new Facade().post('/api/messages', newMessage, (response) => {
+      setMessage(response.message);
+      setShowSnackbar(true);
+      setError(false);
+      setEmpty(false);
+      socket.emit('send-message', newMessage);
+      setData(data => [...data, newMessage]);
       setInput('');
     }, (error) => {
-      console.log(error)
+      setMessage(error.message);
+      setShowSnackbar(true);
     })
   }
 
@@ -48,48 +58,40 @@ export default function MessageRoom() {
 
       setRecipient(response.name)
       setData(response.data);
-      setEmpty(isEmpty);
       setLoading(false);
-      
+      setEmpty(isEmpty);
+      setError(isEmpty);
+
       scrollLastMessageIntoView(inputRef)
     }, (error) => {
+      setLoading(false);
       setError(error);
+      setEmpty(false);
     });
 
     socket.on('new-message', (message) => {
       const updated = {...message, timestamp: message.timestamp.toLocaleString()};
+
       setData(data => [...data, updated])
+      setError(false);
+      setEmpty(false);
+
       scrollLastMessageIntoView(inputRef)
     });
 
-    return () => {
-      socket.emit('leave', room);
-    }
+    return () => socket.emit('leave', room);
   }, [socket, room]);
 
   return (
       <UserFlow
       isLoading={loading}
       isError={error}
-      error={<Redirect to="/messages"/>}
+      error={!empty ? <Redirect to="/messages"/> :( 
+        <MessageRoomComponent props={{empty, recipient, data, sendNewMessage, user, input, setInput, inputRef, message, snackbarRef, error: true, showSnackbar, setShowSnackbar}}/>
+      )  
+    }
       success={
-        <div className="messages">
-          <div style={{minHeight: "calc(90vh - 5rem)", overflow: empty ? "hidden" : "scroll"}}>
-            {
-              empty ? <NewConversation recipient={recipient}/> :
-              data.map((data, index) => <Message key={index} props={data} />)
-            }
-          </div>
-          <div className="message-form" ref={inputRef} style={{paddingBottom: "2vh"}}>
-            <input className="message-input" value={input} onChange={(e) => setInput(e.target.value)}/>
-            <button
-              className="send-message"
-              onClick={() => sendMessage(user, input)}
-            >
-              Send
-            </button>
-          </div>
-        </div>
+        <MessageRoomComponent props={{empty, recipient, data, sendNewMessage, user, input, setInput, inputRef, message, snackbarRef, error: true, showSnackbar, setShowSnackbar}}/>
       }/>
   );
 }
