@@ -45,12 +45,12 @@ function Login() {
             Login
           </button>
           <div className="row center user-type-selection-btn-group authentication">
-            <button id="facebook" onClick={(e) => handleSocialLogin(e, 'facebook')}>
+            <button type="button" id="facebook" onClick={(e) => handleSocialLogin(e, 'facebook')}>
               <span>
                 Login with <i className="fa fa-facebook" />
               </span>
             </button>
-            <button id="google" onClick={(e) => handleSocialLogin(e, 'google')} >
+            <button type="button" id="google" onClick={(e) => handleSocialLogin(e, 'google')} >
               <span>
                 Login with <i className="fa fa-google" />
               </span>

@@ -132,8 +132,8 @@ function Signup() {
         </button>
         </div>
         <div className="row center user-type-selection-btn-group authentication">
-            <button id="facebook" onClick={(e) => handleSocialLogin(e, 'facebook')}><span>Continue with <i className="fa fa-facebook"/></span></button>
-            <button id="google" onClick={(e) => handleSocialLogin(e, 'google')}><span>Continue with <i className="fa fa-google"/></span></button>
+            <button type="button" id="facebook" onClick={(e) => handleSocialLogin(e, 'facebook')}><span>Continue with <i className="fa fa-facebook"/></span></button>
+            <button type="button" id="google" onClick={(e) => handleSocialLogin(e, 'google')}><span>Continue with <i className="fa fa-google"/></span></button>
         </div>
       </form>
     </div>
