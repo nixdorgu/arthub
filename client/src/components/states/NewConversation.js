@@ -1,24 +1,16 @@
 import React from "react";
-
+import State from "./State";
 import sitting from "../../images/sitting-reading.svg";
 
-export default function NewConversation({recipient}) {
+export default function NewConversation({ recipient }) {
+  const h1Style = { textAlign: "left", color: "#FF5678", fontWeight: "300" };
+
   return (
-    <div
-      style={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <h1 style={{textAlign: "left", color: "#FF5678", fontWeight: "300"}}>Start a conversation with {recipient}</h1>
-      <img
-        src={sitting}
-        alt="Serenity"
-        style={{ width: "100%", display: "block", maxHeight: "50vh", margin: "2rem 0" }}
-      />
-    </div>
+    <State
+      caption={`Start a conversation with ${recipient}`}
+      h1Style={h1Style}
+      image={sitting}
+      subtitle="Art will nurture your soul just as music does."
+    />
   );
 }
