@@ -3,7 +3,8 @@ import {Redirect, useParams} from 'react-router-dom';
 import { useAuth } from "../../context/AuthContext";
 import { useSocket } from "../../context/SocketContext";
 import Facade from "../../utils/Facade";
-import LoadingIndicator from "../LoadingIndicator";
+import UserFlow from "../../utils/UserFlow";
+import NewConversation from "../states/NewConversation";
 import Message from "./Message";
 
 function scrollLastMessageIntoView(inputRef) {
@@ -13,6 +14,8 @@ function scrollLastMessageIntoView(inputRef) {
 export default function MessageRoom() {
   const {room} = useParams();
   const [data, setData] = useState([]);
+  const [recipient, setRecipient] = useState('');
+  const [empty, setEmpty] = useState(false);
   const [input, setInput] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -41,12 +44,15 @@ export default function MessageRoom() {
     socket.emit('join', room);
 
     new Facade().get(`/api/messages/room/${room}`, (response) => {
-      setData(response);
+      const isEmpty = response.data.length === 0;
+
+      setRecipient(response.name)
+      setData(response.data);
+      setEmpty(isEmpty);
       setLoading(false);
+      
       scrollLastMessageIntoView(inputRef)
     }, (error) => {
-      // show message
-      // console.log(error)
       setError(error);
     });
 
@@ -62,25 +68,28 @@ export default function MessageRoom() {
   }, [socket, room]);
 
   return (
-    <div className="messages">
-      {/* <div> */}
-      {loading ? <LoadingIndicator/> : null}
-      {error ? <Redirect to="/messages"/> : null }
-      <div style={{minHeight: "calc(90vh - 5rem)", overflow: "scroll"}}>
-      {data.map((data, index) => (
-        <Message key={index} props={data} />
-      ))}
-      </div>
-      {/* </div> */}
-      <div className="message-form" ref={inputRef} style={{paddingBottom: "2vh"}}>
-        <input className="message-input" value={input} onChange={(e) => setInput(e.target.value)}/>
-        <button
-          className="send-message"
-          onClick={() => sendMessage(user, input)}
-        >
-          Send
-        </button>
-      </div>
-    </div>
+      <UserFlow
+      isLoading={loading}
+      isError={error}
+      error={<Redirect to="/messages"/>}
+      success={
+        <div className="messages">
+          <div style={{minHeight: "calc(90vh - 5rem)", overflow: empty ? "hidden" : "scroll"}}>
+            {
+              empty ? <NewConversation recipient={recipient}/> :
+              data.map((data, index) => <Message key={index} props={data} />)
+            }
+          </div>
+          <div className="message-form" ref={inputRef} style={{paddingBottom: "2vh"}}>
+            <input className="message-input" value={input} onChange={(e) => setInput(e.target.value)}/>
+            <button
+              className="send-message"
+              onClick={() => sendMessage(user, input)}
+            >
+              Send
+            </button>
+          </div>
+        </div>
+      }/>
   );
 }
