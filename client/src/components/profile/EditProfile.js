@@ -3,6 +3,8 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import Facade from "../../utils/Facade";
+import UserFlow from "../../utils/UserFlow";
+import SimpleSnackbar from "../Snackbar";
 import Snackbar from '../Snackbar';
 
 export default function EditProfile() {
@@ -135,11 +137,12 @@ export default function EditProfile() {
   }, [profileData]);
 
   return (
-    <div>
-      {loading? (
-          <div>Loading...</div>
-      ) : <form onSubmit={handleSubmit}
-      >
+    <UserFlow
+    isLoading={loading}
+    isError={error}
+    success={
+      <form onSubmit={handleSubmit}>
+        {/* <SimpleSnackbar/> */}
         <div
           style={{
             display: "flex",
@@ -239,7 +242,8 @@ export default function EditProfile() {
         </div>
 
         <button type="submit">Save Changes</button>
-      </form>}
-    </div>
+      </form>
+    }
+    />
   );
 }
