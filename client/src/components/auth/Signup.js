@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Redirect, Link } from "react-router-dom";
-import Facade from '../utils/Facade'
-import handleSocialLogin from "../utils/SocialLogin";
+import Facade from '../../utils/Facade'
+import SocialMediaButton from "./SocialMediaButton";
 
 function Signup() {
   const errorRef = useRef();
@@ -132,8 +132,8 @@ function Signup() {
         </button>
         </div>
         <div className="row center user-type-selection-btn-group authentication">
-            <button type="button" id="facebook" onClick={(e) => handleSocialLogin(e, 'facebook')}><span>Continue with <i className="fa fa-facebook"/></span></button>
-            <button type="button" id="google" onClick={(e) => handleSocialLogin(e, 'google')}><span>Continue with <i className="fa fa-google"/></span></button>
+        <SocialMediaButton login={false} site={'facebook'}/>
+            <SocialMediaButton login={false} site={'google'}/>
         </div>
       </form>
     </div>
