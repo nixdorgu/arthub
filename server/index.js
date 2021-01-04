@@ -45,7 +45,7 @@ app.use(passport.initialize());
 pool.connect((connectionError, client) => {
   checkConfig(connectionError);
 
-  app.use('/auth', middleware.isNotAuthenticated, authRoute());
+  app.use('/auth', middleware.isNotAuthenticated, authRoute(client));
   app.use('/api', middleware.isAuthenticated, apiRoutes(client));
 
   // SocketIO ops
