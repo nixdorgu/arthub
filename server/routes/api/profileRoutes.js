@@ -6,8 +6,7 @@ const profileRoutes = (client) => {
   const DEFAULT_SOURCE = 'https://i.ibb.co/XV9b3h2/Untitled-1.png';
 
   router.get('/:id', (req, res) => client.query(
-    // 'SELECT user_id, CONCAT_WS(\' \', first_name, last_name) AS name, email, member_since, user_classification, type, image FROM users LEFT JOIN profile_images USING(user_id) WHERE user_id = $1', [req.params.id],
-    'SELECT user_id, first_name, last_name, email, member_since, user_classification FROM users WHERE user_id = $1', [req.params.id],
+    'SELECT user_id, first_name, last_name, email, member_since, user_classification, link FROM users LEFT JOIN profile_images USING(user_id) WHERE user_id = $1', [req.params.id],
     (error, result) => {
       if (error) {
         return res
