@@ -13,6 +13,7 @@ const artistsRoutes = (client) => {
           .json({ success: false, message: 'Something went wrong.' });
       }
 
+      console.log('prof')
       return res.status(200).json(result.rows);
     },
   ));
@@ -34,11 +35,11 @@ const artistsRoutes = (client) => {
     },
   ));
 
-  router.get('/focus', (req, res) => {
+  router.get('/artist/focus', (req, res) => {
     const token = req.headers.authorization.slice(7);
     const { user_id: id } = jwt.decode(token);
 
-    return client.query('SELECT focus.focus_id, focus.description FROM artist_focus AS artist RIGHT JOIN focus AS focus USING (focus_id) WHERE artist_id = $1', [id], (error, result) => {
+    return client.query('SELECT focus.id, focus.focus_description FROM artist_focus AS artist INNER JOIN focus ON focus.id = artist.focus_id WHERE artist_id = $1', [id], (error, result) => {
       if (error) return res.status(500).json({ message: 'Something went wrong.' });
 
       return res.status(200).json(result.rows);
