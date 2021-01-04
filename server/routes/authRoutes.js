@@ -1,8 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-
-const middleware = require('../utils/middleware');
+const bcrypt = require('bcrypt');
 const formatPayload = require('../src/formatPayload');
 
 const authRoute = () => {
@@ -10,7 +9,6 @@ const authRoute = () => {
 
   router.post(
     '/login',
-    middleware.isNotAuthenticated,
     passport.authenticate('local', { session: false }),
     (req, res) => {
       let { user } = req;
@@ -109,7 +107,7 @@ const authRoute = () => {
   });
 
   router.get(
-    '/facebook', middleware.isNotAuthenticated,
+    '/facebook',
     passport.authenticate('facebook', { session: false, scope: ['email'] }),
   );
 
@@ -155,7 +153,7 @@ const authRoute = () => {
   );
 
   router.get(
-    '/google', middleware.isNotAuthenticated,
+    '/google',
     passport.authenticate('google', { session: false, scope: ['profile', 'email'] }),
   );
 
