@@ -17,16 +17,15 @@ export default function EditProfile() {
   const [lastNameError, setLastNameError] = useState(false);
   const [lastNameHelperText, setLastNameHelperText] = useState('');
 
+  const [link, setLink] = useState('');
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [biography, setBiography] = useState("");
 
   const [profileData, setProfileData] = useState({});
   const [src, setSrc] = useState('#');
-  const [file, setFile] = useState();
   const [fileObject, setFileObject] = useState({});
 
-  const [isDisabled, setIsDisabled] = useState(true);
   const [genres, setGenres] = useState([]);
 
   const ACCEPT = "image/jpeg, image/png";
@@ -67,14 +66,7 @@ export default function EditProfile() {
   function handleSubmit(e) {
     e.preventDefault();
 
-    // ON IMAGE DISPLAY
-            //         console.log(buffer.toString('base64'))
-        //   setSrc(`data:image/png;base64,${buffer.toString('base64')}`)
-   
-    // const buffer = readFile(file);
-    // console.log(fileObject)
-
-    const data = {file: fileObject, firstName, lastName, biography, genres}
+    const data = {link: link, firstName, lastName, biography, genres}
 
     // console.log(buffer)
     // console.log(file)
@@ -87,32 +79,18 @@ export default function EditProfile() {
       })
   }
 
-  function preview(e) {
+  function preview(e, input) {
     e.preventDefault();
-    photoRef.current.style.display = "block";
-    setFile(e.target.files[0]);
-
-    // readFile(e.target.files[0]);
-
-    setSrc(URL.createObjectURL(e.target.files[0]));
+    setSrc(input);
   }
 
-  // function handleDisable() {
-  //   //   due to issues with asynchronous useState
-  //   const currentFirstName = document.querySelector(`#firstName`).value;
-  //   const currentLastName = document.querySelector(`#lastName`).value;
+  function checkImageValidity(e, input) {
+    let url = input.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g);
 
-  //   const noChangeFirstName = initialData.firstName.trim() === currentFirstName.trim();
-  //   const noChangeLastName = initialData.lastName.trim() === currentLastName.trim();
-
-  //   if(currentLastName.trim() === '' || currentFirstName.trim() === '') {
-  //     setIsDisabled(true);
-  //   } else if (!noChangeFirstName || !noChangeLastName || src !=='#') {
-  //     setIsDisabled(false);
-  //   } else {
-  //       setIsDisabled(true);
-  //   }
-  // }
+    if (url !== null) {
+      preview(e, input);
+    }
+  }
 
   function hasChanges(e) {
     const references = {
@@ -161,6 +139,7 @@ export default function EditProfile() {
       setFirstName(profileData.first_name);
       setLastName(profileData.last_name);
       setSrc(profileData.source);
+      setLink(profileData.source);
 
       if (profileData.user_classification === "artist") {
         new Facade().get(
@@ -188,7 +167,7 @@ export default function EditProfile() {
     <div>
       {loading? (
           <div>Loading...</div>
-      ) : <form encType="multipart/form" onSubmit={handleSubmit}
+      ) : <form onSubmit={handleSubmit}
       >
         <div
           style={{
@@ -199,33 +178,28 @@ export default function EditProfile() {
             width: "100vw"
           }}
         >
-            <p style={{fontWeight: 500 }}>
-            Provide a Profile Image link:
-
-            </p>
+            <p style={{fontWeight: 500 }}>Provide a Profile Image link:</p>
           <div className="initial-photo" style={{flex: "2"}}>
             <img
               ref={photoRef}
               id="profile"
               src={src}
               alt="profile"
-              style={{maxWidth: "50vw", maxHeight: "25vh", 
-              // display: "none"
-            }}
+              onError={() => setSrc(profileData.source)}
+              style={{ maxWidth: "50vw", maxHeight: "25vh" }}
             />
           </div>
             <input
               type="text"
-              id="avatar"
-              name="avatar"
+              id="link"
+              name="link"
               accept={ACCEPT}
-              value={src}
+              value={link}
               onChange={(e) => {
-                checkImageValidity()
-                  preview(e)
-                  // handleDisable()
+                setLink(e.target.value);
+                checkImageValidity(e, e.target.value);
               }}
-              style={{fontFamily: "Montserrat, sans-serif"}}
+              style={{fontFamily: "Montserrat, sans-serif", width: "70%", alignSelf: "center"}}
             />
         </div>
         <div
