@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const profileRoutes = (client) => {
   const router = express.Router();
+  const DEFAULT_SOURCE = 'https://i.ibb.co/XV9b3h2/Untitled-1.png';
 
   router.get('/:id', (req, res) => client.query(
     // 'SELECT user_id, CONCAT_WS(\' \', first_name, last_name) AS name, email, member_since, user_classification, type, image FROM users LEFT JOIN profile_images USING(user_id) WHERE user_id = $1', [req.params.id],
@@ -20,7 +21,6 @@ const profileRoutes = (client) => {
           .json({ success: false, message: 'Profile not found.' });
       }
 
-      const DEFAULT_SOURCE = 'https://i.ibb.co/XV9b3h2/Untitled-1.png';
       const initialData = result.rows[0];
 
       const source = typeof initialData.link !== 'undefined' && initialData.link !== null ? initialData.link : DEFAULT_SOURCE;
@@ -43,16 +43,15 @@ const profileRoutes = (client) => {
     const token = req.headers.authorization.slice(7);
     const { user_id: id } = jwt.decode(token);
     const {
-      file, firstName, lastName, biography, genres,
+      link, firstName, lastName, biography, genres,
     } = req.body;
 
-    return client.query('SELECT * FROM users WHERE user_id = $1', [id], (userError, result) => {
+    return client.query('SELECT * FROM users WHERE user_id = $1', [id], (userError, userResult) => {
       if (userError) return res.status(500).json({ success: false, message: 'Something went wrong.' });
-      const user = result.rows[0];
+      const user = userResult.rows[0];
 
-      if (JSON.stringify(file) !== JSON.stringify({})) {
-        const buffer = file.buffer.data;
-        client.query('INSERT INTO profile_images VALUES($1, $2, $3) ON CONFLICT(user_id) DO UPDATE SET type = $2, image = $3', [id, file.mimetype, buffer], (error, result) => {
+      if (link.trim().length > 0 && link !== DEFAULT_SOURCE) {
+        client.query('INSERT INTO profile_images VALUES($1, $2) ON CONFLICT(user_id) DO UPDATE SET link = $2', [id, link], (error, result) => {
           if (error) return res.status(500).json({ success: false, message: 'Something went wrong.' });
         });
       }
