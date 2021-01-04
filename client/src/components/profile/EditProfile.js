@@ -30,7 +30,7 @@ export default function EditProfile() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    const data = {link, firstName, lastName, biography, genres}
+    const data = {link, firstName, lastName, biography, focus}
 
     new Facade().post('/api/profile/edit', data, (success) => {
         console.log(success)
@@ -104,7 +104,7 @@ export default function EditProfile() {
 
       if (profileData.user_classification === "artist") {
         new Facade().get(
-          "/api/artists/focus",
+          "/api/artists/artist/focus",
           (success) => {
             setFocus(success);
           },
@@ -216,7 +216,12 @@ export default function EditProfile() {
               limitTags={3}
               id="multiple-limit-tags"
               options={genres}
-              defaultValue={focus.map(option => option)}
+              value={focus}
+              onChange={(e, value, reason) => {
+                if (['select-option', 'remove-option'].includes(reason)) {
+                  setFocus(value);
+                }
+              }}
               getOptionLabel={(option) => option.focus_description}
               getOptionSelected={(option, value) => option.id === value.id}
               renderInput={(params) => (
