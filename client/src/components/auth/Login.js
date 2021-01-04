@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import Facade from "../utils/Facade";
-import handleSocialLogin from "../utils/SocialLogin";
-import { setToken } from "../utils/Tokens";
+import { useAuth } from "../../context/AuthContext";
+import Facade from "../../utils/Facade";
+import { setToken } from "../../utils/Tokens";
+import SocialMediaButton from "./SocialMediaButton";
 
 function Login() {
   const ctx = useAuth();
@@ -45,16 +45,8 @@ function Login() {
             Login
           </button>
           <div className="row center user-type-selection-btn-group authentication">
-            <button type="button" id="facebook" onClick={(e) => handleSocialLogin(e, 'facebook')}>
-              <span>
-                Login with <i className="fa fa-facebook" />
-              </span>
-            </button>
-            <button type="button" id="google" onClick={(e) => handleSocialLogin(e, 'google')} >
-              <span>
-                Login with <i className="fa fa-google" />
-              </span>
-            </button>
+            <SocialMediaButton login={true} site={'facebook'}/>
+            <SocialMediaButton login={true} site={'google'}/>
           </div>
         </div>
       </form>
