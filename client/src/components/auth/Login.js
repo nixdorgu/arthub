@@ -29,8 +29,7 @@ function Login() {
   return (
     <div className="form">
       <form method="POST" className="login-form" onSubmit={handleLogin}>
-        <div className="form-element" ref={errorRef} style={{color: "red"}}>
-        </div>
+        <div className="form-element" ref={errorRef} style={{color: "red"}}></div>
         <div className="form-element">
           <label>Email</label>
           <input type="email" id="email" name="email" required />
@@ -41,9 +40,7 @@ function Login() {
           <Link to="/register" className="form-link">Don't have an account?</Link>
         </div>
         <div className="user-type-selection">
-          <button id="login" type="submit">
-            Login
-          </button>
+          <button id="login" type="submit">Login</button>
           <div className="row center user-type-selection-btn-group authentication">
             <SocialMediaButton login={true} site={'facebook'}/>
             <SocialMediaButton login={true} site={'google'}/>
