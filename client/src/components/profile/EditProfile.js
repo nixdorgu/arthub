@@ -2,7 +2,7 @@ import { TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
-import Facade from "../../utils/Facade";
+import Facade, {fetch} from "../../utils/Facade";
 import UserFlow from "../../utils/UserFlow";
 import SimpleSnackbar from "../Snackbar";
 import Snackbar from '../Snackbar';
@@ -30,20 +30,29 @@ export default function EditProfile() {
   const [profileData, setProfileData] = useState({});
   const [src, setSrc] = useState('#');
 
+  const [file, setFile] = useState('');
   const [genres, setGenres] = useState([]);
 
   function handleSubmit(e) {
     e.preventDefault();
+    const file = document.querySelector('#img').files[0];
+    const ACCEPTABLE_FILES = ['image/jpeg', 'image/png'];
+    const MAX_SIZE = 1024 * 1024 * 3;
+
     const data = {link: src, firstName, lastName, biography, focus}
 
+
     if (!firstNameError && !lastNameError && !biographyError) {
-      new Facade().post('/api/profile/edit', data, (success) => {
-        console.log(success)
-      // alert(success.message)
-    }, (error) => {
-        console.log(error)
-      // alert(error.message)
-    })
+      fetch('/api/profile/edit', {
+        method: 'POST',
+        data: data,
+        success: (data) => {
+          console.log(data)
+        },
+        error: (error) => {
+          console.log(error)
+        }
+      });
     }
   }
 
@@ -96,12 +105,15 @@ export default function EditProfile() {
     setLoading(true);
 
     if (user.hasOwnProperty("id")) {
-      new Facade().get(`/api/profile/${user.id}`, (success) => {
-        setProfileData(() => success);
-      }, (error) => {
+      fetch(`/api/profile/${user.id}`, {
+        method: "GET",
+        success: (data) => {
+          setProfileData(data);
+        },
+        error: (error) => {
           console.log(error)
           setError(true);
-        // alert(error.message)
+        }
       });
     }
   }, [user]);
@@ -116,30 +128,54 @@ export default function EditProfile() {
       setLink(profileData.source);
 
       if (profileData.user_classification === "artist") {
-        new Facade().get(
-          "/api/artists/artist/focus",
-          (success) => {
-            setFocus(success);
-          },
-          (error) => {
-            console.log(error);
-          }
-        );
+        // new Facade().get(
+        //   "/api/artists/artist/focus",
+        //   (success) => {
+        //     setFocus(success);
+        //   },
+        //   (error) => {
+        //     console.log(error);
+        //   }
+        // );
 
-        new Facade().get(
-            "/api/focus",
-            (success) => {
-              setGenres(success);
-              setLoading(false);
-            },
-            (error) => {
-              console.log(error);
-              setGenres(["None"]);
-            }
-        );
-      } else {
-        setLoading(false);
+        fetch("/api/artists/artist/focus", {
+          method: "GET",
+          success: (data) => {
+            setFocus(data);
+          },
+          error: (error) => {
+            // console.log(error)
+            // setError(true);
+          }
+        });
+
+        // new Facade().get(
+        //     "/api/focus",
+        //     (success) => {
+        //       setGenres(success);
+        //       setLoading(false);
+        //     },
+        //     (error) => {
+        //       console.log(error);
+        //       setGenres(["None"]);
+        //     }
+        // );
+
+        fetch("/api/focus", {
+          method: "GET",
+          success: (data) => {
+            setGenres(data);
+            setLoading(false);
+          },
+          error: (error) => {
+            // console.log(error)
+            setError(true);
+            // setGenres(["None"]);
+          }
+        });
       }
+      
+      setLoading(false);
     }
 
     return () => {
@@ -166,9 +202,16 @@ export default function EditProfile() {
             <p style={{fontWeight: 500 }}>Provide a Profile Image link:</p>
           <div className="initial-photo" style={{flex: "2"}}>
             <img
-              ref={photoRef}
               id="profile"
               src={src}
+              alt="profile"
+              onError={() => setSrc(profileData.source)}
+              style={{ maxWidth: "50vw", maxHeight: "25vh" }}
+            />
+            <img
+              ref={photoRef}
+              id="profile"
+              src={file}
               alt="profile"
               onError={() => setSrc(profileData.source)}
               style={{ maxWidth: "50vw", maxHeight: "25vh" }}
@@ -183,6 +226,12 @@ export default function EditProfile() {
                 setLink(e.target.value);
                 checkImageValidity(e, e.target.value);
               }}
+              style={{fontFamily: "Montserrat, sans-serif", width: "70%", alignSelf: "center"}}
+            />
+            <input
+              type="file"
+              id="img"
+              name="img"
               style={{fontFamily: "Montserrat, sans-serif", width: "70%", alignSelf: "center"}}
             />
         </div>
