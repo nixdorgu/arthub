@@ -1,12 +1,13 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const shallowEquality = require('../../src/shallowEquality');
 
 const profileRoutes = (client) => {
   const router = express.Router();
   const DEFAULT_SOURCE = 'https://i.ibb.co/XV9b3h2/Untitled-1.png';
 
   router.get('/:id', (req, res) => client.query(
-    'SELECT user_id, first_name, last_name, email, member_since, user_classification, link FROM users LEFT JOIN profile_images USING(user_id) WHERE user_id = $1', [req.params.id],
+    'SELECT user_id, first_name, last_name, email, member_since, user_classification, type, image FROM users LEFT JOIN profile_images USING(user_id) WHERE user_id = $1', [req.params.id],
     (error, result) => {
       if (error) {
         return res
@@ -22,7 +23,9 @@ const profileRoutes = (client) => {
 
       const initialData = result.rows[0];
 
-      const source = typeof initialData.link !== 'undefined' && initialData.link !== null ? initialData.link : DEFAULT_SOURCE;
+      const source = initialData.image !== null ? (
+        `data:${initialData.type};base64,${Buffer.from(initialData.image).toString('base64')}`
+      ) : DEFAULT_SOURCE;
 
       const data = {
         user_id: initialData.user_id,
@@ -42,15 +45,15 @@ const profileRoutes = (client) => {
     const token = req.headers.authorization.slice(7);
     const { user_id: id } = jwt.decode(token);
     const {
-      link, firstName, lastName, biography, focus,
+      result, firstName, lastName, biography, focus,
     } = req.body;
 
     return client.query('SELECT * FROM users WHERE user_id = $1', [id], (userError, userResult) => {
       if (userError) return res.status(500).json({ success: false, message: 'Something went wrong.' });
       const user = userResult.rows[0];
 
-      if (link.trim().length > 0 && link !== DEFAULT_SOURCE) {
-        client.query('INSERT INTO profile_images VALUES($1, $2) ON CONFLICT(user_id) DO UPDATE SET link = $2', [id, link], (error, result) => {
+      if (typeof result !== 'undefined' && !shallowEquality(result, {})) {
+        client.query('INSERT INTO profile_images VALUES($1, $2, $3) ON CONFLICT(user_id) DO UPDATE SET type = $2, image = $3', [id, result.type, Buffer.from(result.buffer, 'utf-8')], (error, result) => {
           if (error) return res.status(500).json({ success: false, message: 'Something went wrong.' });
         });
       }
@@ -68,7 +71,7 @@ const profileRoutes = (client) => {
       }
 
       if (user.user_classification === 'artist') {
-        return client.query('SELECT * FROM users INNER JOIN artists AS a ON user_id = a.artist_id  WHERE user_id = $1', [id], (error, artistResult) => {
+        client.query('SELECT * FROM users INNER JOIN artists AS a ON user_id = a.artist_id  WHERE user_id = $1', [id], (error, artistResult) => {
           if (error) return res.status(500).json({ success: false, message: 'Something went wrong.' });
 
           const artistData = artistResult.rows[0];
