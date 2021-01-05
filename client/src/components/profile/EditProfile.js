@@ -2,14 +2,13 @@ import { TextField, CircularProgress } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
-import Facade, {fetch} from "../../utils/Facade";
+import {fetch} from "../../utils/Facade";
 import UserFlow from "../../utils/UserFlow";
 import SimpleSnackbar from "../Snackbar";
 import Snackbar from '../Snackbar';
 
 export default function EditProfile() {
   const { user } = useAuth();
-  const photoRef = useRef();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -21,7 +20,6 @@ export default function EditProfile() {
   const [biographyError, setBiographyError] = useState(false);
   const [biographyHelperText, setBiographyHelperText] = useState('');
 
-  const [link, setLink] = useState('');
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [biography, setBiography] = useState("");
@@ -29,8 +27,6 @@ export default function EditProfile() {
 
   const [profileData, setProfileData] = useState({});
   const [src, setSrc] = useState('#');
-
-  const [file, setFile] = useState('');
   const [genres, setGenres] = useState([]);
 
   function handleSubmit(e) {
@@ -153,7 +149,6 @@ export default function EditProfile() {
       setFirstName(profileData.first_name);
       setLastName(profileData.last_name);
       setSrc(profileData.source);
-      setLink(profileData.source);
 
       if (profileData.user_classification === "artist") {
         fetch("/api/artists/artist/focus", {
