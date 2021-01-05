@@ -42,17 +42,49 @@ export default function EditProfile() {
     const data = {link: src, firstName, lastName, biography, focus}
 
 
-    if (!firstNameError && !lastNameError && !biographyError) {
-      fetch('/api/profile/edit', {
-        method: 'POST',
-        data: data,
-        success: (data) => {
-          console.log(data)
-        },
-        error: (error) => {
-          console.log(error)
-        }
-      });
+    if (typeof file === 'undefined' ||  !ACCEPTABLE_FILES.includes(file.type) || file.size <= MAX_SIZE) {
+      if (!firstNameError && !lastNameError && !biographyError) {
+        setLoading(true);
+        fetch('/api/profile/edit', {
+          method: 'POST',
+          data: data,
+          success: (data) => {
+            console.log(data)
+            setError(false);
+          },
+          error: (error) => {
+            console.log(error)
+            setError(true);
+          }
+        });
+
+        setLoading(false);
+      }
+    } else {
+      const readFile = new FileReader();
+      readFile.readAsArrayBuffer(file);
+      readFile.onerror = () => {};
+      readFile.onload = (event) => {
+        const result = {result: {type: file.type, buffer: Buffer.from(event.target.result)}};
+
+        setLoading(true);
+
+        fetch('/api/profile/edit', {
+          method: 'POST',
+          image: result,
+          data: data,
+          success: (data) => {
+            setError(false);
+            console.log(data)
+          },
+          error: (error) => {
+            console.log(error)
+            setError(true);
+          }
+        });
+
+        setLoading(false);
+      }
     }
   }
 
