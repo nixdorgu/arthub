@@ -1,5 +1,5 @@
 import React, {useState, useRef} from "react";
-import Facade from "../../utils/Facade";
+import {fetch} from "../../utils/Facade";
 import PendingTransactionModal from "../modals/PendingTransactionModal";
 import isArtist from "../../tests/isArtist";
 import Snackbar from "../Snackbar";
@@ -19,7 +19,7 @@ export default function TransactionCard(props) {
 
   const changeStatus = (classificationArtist, classificationUser, onSuccess, onError) => {
     const classification = isArtistOfTransaction? classificationArtist : classificationUser; // use command pattern here
-    new Facade().patch(`/api/transactions/${transaction.transaction_id}`, {classification}, onSuccess, onError);
+    fetch(`/api/transactions/${transaction.transaction_id}`, {method: "PATCH", data: {classification}, success: onSuccess, error: onError });
   }
 
   const close = (e) => {

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import {Redirect, useParams} from 'react-router-dom';
 import { useAuth } from "../../context/AuthContext";
 import { useSocket } from "../../context/SocketContext";
-import Facade from "../../utils/Facade";
+import { fetch } from "../../utils/Facade";
 import UserFlow from "../../utils/UserFlow";
 import MessageRoomComponent from "./MessageRoomComponent";
 
@@ -36,37 +36,46 @@ export default function MessageRoom() {
       timestamp: new Date()
     }
 
-    new Facade().post('/api/messages', newMessage, (response) => {
-      setMessage(response.message);
-      setShowSnackbar(true);
-      setError(false);
-      setEmpty(false);
-      socket.emit('send-message', newMessage);
-      setData(data => [...data, newMessage]);
-      setInput('');
-    }, (error) => {
-      setMessage(error.message);
-      setShowSnackbar(true);
-    })
+    fetch('/api/messages', {
+      method: "POST",
+      data: newMessage,
+      success: (response) => {
+        setMessage(response.message);
+        setShowSnackbar(true);
+        setError(false);
+        setEmpty(false);
+        socket.emit('send-message', newMessage);
+        setData(data => [...data, newMessage]);
+        setInput('');
+      },
+      error: (error) => {
+        setMessage(error.message);
+        setShowSnackbar(true);
+      }
+    });
   }
 
   useEffect(() => {
     socket.emit('join', room);
 
-    new Facade().get(`/api/messages/room/${room}`, (response) => {
-      const isEmpty = response.data.length === 0;
+    fetch(`/api/messages/room/${room}`, {
+      method: "GET",
+      success: (response) => {
+        const isEmpty = response.data.length === 0;
 
-      setRecipient(response.name)
-      setData(response.data);
-      setLoading(false);
-      setEmpty(isEmpty);
-      setError(isEmpty);
+        setRecipient(response.name)
+        setData(response.data);
+        setLoading(false);
+        setEmpty(isEmpty);
+        setError(isEmpty);
 
-      scrollLastMessageIntoView(inputRef)
-    }, (error) => {
-      setLoading(false);
-      setError(error);
-      setEmpty(false);
+        scrollLastMessageIntoView(inputRef)
+      },
+      error: (error) => {
+        setLoading(false);
+        setError(error);
+        setEmpty(false);
+      }
     });
 
     socket.on('new-message', (message) => {

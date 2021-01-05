@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../../context/AuthContext";
-import Facade from "../../utils/Facade";
+import { fetch } from "../../utils/Facade";
 import NoMessages from "../states/NoMessages";
 import MessageCard from "./MessageCard";
 import UserFlow from "../../utils/UserFlow";
@@ -14,19 +14,20 @@ export default function Messages() {
   const {user} = useAuth();
 
   const getRooms = useCallback(() => {
-    new Facade().get(
-      `/api/messages/${user.id}`,
-      (response) => {
+    fetch(`/api/messages/${user.id}`, {
+      method: 'GET',
+      success: (response) => {
         const isEmpty = response.length === 0;
 
         setRooms(response);
         setError(isEmpty);
         setEmpty(isEmpty);
       },
-      (error) => {
+      error: (error) => {
         // show error page
         setEmpty(false);
         setError(true);
+      }
       }
     );
 

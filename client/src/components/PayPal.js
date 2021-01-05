@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import Facade from '../utils/Facade';
+import { fetch } from '../utils/Facade';
 
 export default function PayPal(props) {
     const {transaction} = props.props;
@@ -28,12 +28,16 @@ export default function PayPal(props) {
                     const order = await actions.order.capture();
                     console.log(`Successful order: ${order}`)
 
-                    new Facade().patch(`api/transactions/${transaction.transaction_id}`, {classification: "ongoing"}, (success) => {
-                        alert(JSON.stringify(data))
-                    },
-                    (error) => {
-                        alert(JSON.stringify(error.message))
-                    })
+                    fetch(`api/transactions/${transaction.transaction_id}`, {
+                        method: "PATCH",
+                        data: {classification: "ongoing"},
+                        success: (success) => {
+                            alert(JSON.stringify(data))
+                        },
+                        error: (error) => {
+                            alert(JSON.stringify(error.message))
+                        }   
+                    });
                 },
                 onError: (error) => {
                     console.log(error)

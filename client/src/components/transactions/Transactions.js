@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Tabs, Tab } from "@material-ui/core";
-import Facade from "../../utils/Facade";
+import {fetch} from "../../utils/Facade";
 import LoadingIndicator from "../LoadingIndicator";
 import NoTransactions from "../states/NoTransactions";
 
@@ -32,17 +32,17 @@ export default function Transactions() {
 
   let timeout;
   const updateData = useCallback(() => {
-    new Facade().get(
-      `/api/transactions/${user.id}`,
-      (success) => {
+    fetch(`/api/transactions/${user.id}`, {
+      method: "GET",
+      success: (success) => {
         setData(success.data);
         timeout = setTimeout(updateData, 10000);
       },
-      (error) => {
+      error: (error) => {
         setError(error.message);
         setLoading(false);
       }
-    );
+    });
   }, [user]);
 
   const handleChange = (event, newValue) => {
@@ -52,21 +52,19 @@ export default function Transactions() {
   const fetchTransactions = useCallback(() => {
     setLoading(true);
 
-    new Facade().get(
-      `/api/transactions/${user.id}`,
-      (success) => {
+    fetch( `/api/transactions/${user.id}`, {
+      method: "GET",
+      success: (success) => {
         setError(null);
-
-        console.log(success.data);
         setData(success.data);
         setLoading(false);
         updateData();
       },
-      (error) => {
+      error: (error) => {
         setError(error.message);
         setLoading(false);
       }
-    );
+    });
   }, [user, updateData]);
 
   useEffect(() => {

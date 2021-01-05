@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from 'react';
-import Facade from '../../utils/Facade';
+import Facade, { fetch } from '../../utils/Facade';
 import ArtistCard from './ArtistCard';
 import UserFlow from '../../utils/UserFlow';
 import NoSearch from '../states/NoSearch';
@@ -14,15 +14,19 @@ function Home() {
   const [input, setInput] = useState('');
 
   function searchArtists(input) {
-    new Facade().get(`/api/artists/${input}`, (success) => {
-      const isEmpty = success.length > 0;
+    fetch(`/api/artists/${input}`, {
+      method: 'GET',
+      success: (data) => {
+        const isEmpty = data.length > 0;
 
-      setData(success);
-      setError(!isEmpty);
-      setEmpty(!isEmpty);
-    }, (error) => {
-      setError(true);
-      setEmpty(false);
+        setData(data);
+        setError(!isEmpty);
+        setEmpty(!isEmpty);
+      },
+      error: (data) => {
+        setError(true);
+        setEmpty(false);
+      }
     });
   }
 
@@ -38,13 +42,13 @@ function Home() {
   }, [input]); 
 
   return (
-    <div style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flexWrap: "wrap"}}>
+    <div className="home-container">
       {/* don't forget genres */}
       <HomeSearchBar onSubmit={onSubmit} input={input} setInput={setInput}/>
       <UserFlow isLoading={loading} isError={error} error={
         empty ? <NoSearch/> : <Error500/>
       } success={
-        <div id="artists" style={{width: "calc(100vw - 8rem)", margin: "2rem", display: "grid", justifyContent: "center", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gridTemplateRows: "auto", gap: ".5rem"}}>
+        <div id="artists" className="home-body-container">
         {data.map(artist => <ArtistCard key={artist.user_id} props={{artist}}/>)}
         </div>
       }/>

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Redirect, Link } from "react-router-dom";
-import Facade from '../../utils/Facade'
+import { fetch } from '../../utils/Facade'
 import SocialMediaButton from "./SocialMediaButton";
 
 function Signup() {
@@ -49,12 +49,16 @@ function Signup() {
 
     const data = {firstName, lastName, email, password, isArtist}
 
-    new Facade().post('/auth/register', data, (success) => {
-      setRegistered(true);
-    },
-    (error) => {
-      errorRef.current.innerHTML = error.message;
-    });
+    fetch('/auth/register', {
+      method: "POST",
+      data,
+      success: (data) => {
+        setRegistered(true);
+      },
+      error: (data) => {
+        errorRef.current.innerHTML = data.message;
+      }
+    })
   };
 
 
