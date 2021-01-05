@@ -87,17 +87,10 @@ export default function EditProfile() {
     }
   }
 
-  function preview(e, input) {
+  function preview(e) {
     e.preventDefault();
-    setSrc(input);
-  }
-
-  function checkImageValidity(e, input) {
-    let url = input.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g);
-
-    if (url !== null) {
-      preview(e, input);
-    }
+    const blob = URL.createObjectURL(e.target.files[0])
+    setSrc(blob);
   }
 
   function hasChanges(e) {
@@ -217,30 +210,12 @@ export default function EditProfile() {
               onError={() => setSrc(profileData.source)}
               style={{ maxWidth: "50vw", maxHeight: "25vh" }}
             />
-            <img
-              ref={photoRef}
-              id="profile"
-              src={file}
-              alt="profile"
-              onError={() => setSrc(profileData.source)}
-              style={{ maxWidth: "50vw", maxHeight: "25vh" }}
-            />
           </div>
-            <input
-              type="text"
-              id="link"
-              name="link"
-              value={link}
-              onChange={(e) => {
-                setLink(e.target.value);
-                checkImageValidity(e, e.target.value);
-              }}
-              style={{fontFamily: "Montserrat, sans-serif", width: "70%", alignSelf: "center"}}
-            />
             <input
               type="file"
               id="img"
               name="img"
+              onChange={(e) => preview}
               style={{fontFamily: "Montserrat, sans-serif", width: "70%", alignSelf: "center"}}
             />
         </div>
