@@ -215,7 +215,7 @@ export default function EditProfile() {
               type="file"
               id="img"
               name="img"
-              onChange={(e) => preview}
+              onChange={(e) => preview(e)}
               style={{fontFamily: "Montserrat, sans-serif", width: "70%", alignSelf: "center"}}
             />
         </div>
