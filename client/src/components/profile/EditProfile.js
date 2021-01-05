@@ -41,7 +41,6 @@ export default function EditProfile() {
 
     const data = {link: src, firstName, lastName, biography, focus}
 
-
     if (typeof file === 'undefined' ||  !ACCEPTABLE_FILES.includes(file.type) || file.size <= MAX_SIZE) {
       if (!firstNameError && !lastNameError && !biographyError) {
         setLoading(true);
@@ -160,16 +159,6 @@ export default function EditProfile() {
       setLink(profileData.source);
 
       if (profileData.user_classification === "artist") {
-        // new Facade().get(
-        //   "/api/artists/artist/focus",
-        //   (success) => {
-        //     setFocus(success);
-        //   },
-        //   (error) => {
-        //     console.log(error);
-        //   }
-        // );
-
         fetch("/api/artists/artist/focus", {
           method: "GET",
           success: (data) => {
@@ -177,21 +166,9 @@ export default function EditProfile() {
           },
           error: (error) => {
             // console.log(error)
-            // setError(true);
+            setError(true);
           }
         });
-
-        // new Facade().get(
-        //     "/api/focus",
-        //     (success) => {
-        //       setGenres(success);
-        //       setLoading(false);
-        //     },
-        //     (error) => {
-        //       console.log(error);
-        //       setGenres(["None"]);
-        //     }
-        // );
 
         fetch("/api/focus", {
           method: "GET",
