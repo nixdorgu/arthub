@@ -37,7 +37,16 @@ const profileRoutes = (client) => {
         source,
       };
 
-      return res.status(200).json(data);
+      if (initialData.user_classification === 'artist') {
+        client.query('SELECT biography from artists WHERE artist_id = $1', [req.params.id], (artistError, artistResult) => {
+          if (artistError) return res.status(503).json({ message: 'Something went wrong.' });
+
+          const artistData = { ...data, biography: artistResult.rows[0].biography };
+          return res.status(200).json(artistData);
+        });
+      } else {
+        return res.status(200).json(data);
+      }
     },
   ));
 
