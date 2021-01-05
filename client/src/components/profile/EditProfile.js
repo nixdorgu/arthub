@@ -194,42 +194,28 @@ export default function EditProfile() {
     success={
       <form onSubmit={handleSubmit}>
         {/* <SimpleSnackbar/> */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
-            marginBottom: "2rem",
-            width: "100vw"
-          }}
+        <div className="profile-container"
         >
-            <p style={{fontWeight: 500 }}>Provide a Profile Image link:</p>
-          <div className="initial-photo" style={{flex: "2"}}>
+            <p className="text-500">Provide a Profile Image link:</p>
+          <div className="initial-photo flex-2">
             <img
+              className="profile-image"
               id="profile"
               src={src}
               alt="profile"
               onError={() => setSrc(profileData.source)}
-              style={{ maxWidth: "50vw", maxHeight: "25vh" }}
             />
           </div>
             <input
               type="file"
               id="img"
+              className="profile-image-input"
               name="img"
               accept="image/jpeg, image/png"
               onChange={(e) => preview(e)}
-              style={{fontFamily: "Montserrat, sans-serif", width: "70%", alignSelf: "center"}}
             />
         </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-evenly",
-            marginBottom: "1rem",
-          }}
-        >
+        <div className="profile-text-field-container">
           <TextField
             id="firstName"
             error={firstNameError}
@@ -238,7 +224,7 @@ export default function EditProfile() {
             label="First Name"
             placeholder={firstName}
             value={firstName}
-            style={{ flex: "1", marginBottom: "1rem" }}
+            className="profile-text-field"
             onChange={(e) => {
               setFirstName(e.target.value);
               hasChanges(e)
@@ -253,7 +239,7 @@ export default function EditProfile() {
             label="Last Name"
             placeholder={lastName}
             value={lastName}
-            style={{ flex: "1", marginBottom: "1rem" }}
+            className="profile-text-field"
             onChange={(e) => {
               setLastName(e.target.value);
               hasChanges(e)
@@ -267,10 +253,9 @@ export default function EditProfile() {
             helperText={biographyHelperText}
             variant="outlined"
             label="Biography"
-            
+            className="profile-text-field"
             placeholder={biography}
             value={biography}
-            style={{ flex: "1", marginBottom: "1rem" }}
             onChange={(e) => {
               setBiography(e.target.value);
               hasChanges(e)
