@@ -32,6 +32,9 @@ export default function EditProfile() {
 
   function handleSubmit(e) {
     e.preventDefault();
+
+    setLoading(true);
+
     const file = document.querySelector('#img').files[0];
     const ACCEPTABLE_FILES = ['image/jpeg', 'image/png'];
     const MAX_SIZE = 1024 * 1024 * 3;
@@ -40,7 +43,6 @@ export default function EditProfile() {
 
     if (typeof file === 'undefined' ||  !ACCEPTABLE_FILES.includes(file.type) || file.size > MAX_SIZE) {
       if (!firstNameError && !lastNameError && !biographyError) {
-        setLoading(true);
         fetch('/api/profile/edit', {
           method: 'POST',
           data: data,
@@ -54,7 +56,6 @@ export default function EditProfile() {
           }
         });
 
-        setLoading(false);
       }
     } else {
       const readFile = new FileReader();
@@ -62,8 +63,6 @@ export default function EditProfile() {
       readFile.onerror = () => {};
       readFile.onload = (event) => {
         const result = {result: {type: file.type, buffer: Buffer.from(event.target.result)}};
-
-        setLoading(true);
 
         fetch('/api/profile/edit', {
           method: 'POST',
@@ -79,9 +78,10 @@ export default function EditProfile() {
           }
         });
 
-        setLoading(false);
       }
     }
+
+    setLoading(false);
   }
 
   function preview(e) {
@@ -90,6 +90,7 @@ export default function EditProfile() {
     if (src !== profileData.source) {
       URL.revokeObjectURL(src)
     }
+
     const blob = URL.createObjectURL(e.target.files[0])
     setSrc(blob);
   }
@@ -134,6 +135,7 @@ export default function EditProfile() {
         method: "GET",
         success: (data) => {
           setProfileData(data);
+          console.log(data)
         },
         error: (error) => {
           console.log(error)
@@ -150,6 +152,7 @@ export default function EditProfile() {
       setFirstName(profileData.first_name);
       setLastName(profileData.last_name);
       setSrc(profileData.source);
+      setBiography(profileData.biography || "");
 
       if (profileData.user_classification === "artist") {
         fetch("/api/artists/artist/focus", {
