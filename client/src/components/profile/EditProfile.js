@@ -1,4 +1,4 @@
-import { TextField } from "@material-ui/core";
+import { TextField, CircularProgress } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
@@ -192,6 +192,9 @@ export default function EditProfile() {
   return (
     <UserFlow
     isLoading={loading}
+    loading={
+      <CircularProgress color="secondary" className="loading-indicator"/>
+    }
     isError={error}
     success={
       <form onSubmit={handleSubmit}>
