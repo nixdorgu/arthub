@@ -1,11 +1,9 @@
 import { TextField, CircularProgress } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import {fetch} from "../../utils/Facade";
 import UserFlow from "../../utils/UserFlow";
-import SimpleSnackbar from "../Snackbar";
-import Snackbar from '../Snackbar';
 import EditProfileTextField from "./EditProfileTextField";
 
 export default function EditProfile() {
@@ -190,78 +188,77 @@ export default function EditProfile() {
 
   return (
     <UserFlow
-    isLoading={loading}
-    loading={
-      <CircularProgress color="secondary" className="loading-indicator"/>
-    }
-    isError={error}
-    success={
-      <form onSubmit={handleSubmit}>
-        {/* <SimpleSnackbar/> */}
-        <div className="profile-container">
-          <p className="text-500">Provide a Profile Image link:</p>
-          <div className="initial-photo flex-2">
-            <img
-              className="profile-image"
-              id="profile"
-              src={src}
-              alt="profile"
-              onError={() => setSrc(profileData.source)}
-            />
-          </div>
-          <input
-            type="file"
-            id="img"
-            className="profile-image-input"
-            name="img"
-            accept="image/jpeg, image/png"
-            onChange={(e) => preview(e)}
-          />
-          <EditProfileTextField id="firstName" label="First Name" error={firstNameError} helperText={firstNameHelperText} value={firstName} onChange={(e) => {
-            setFirstName(e.target.value);
-            hasChanges(e)
-          }} />
-          <EditProfileTextField id="lastName" label="Last Name" error={lastNameError} helperText={lastNameHelperText} value={lastName} onChange={(e) => {
-            setLastName(e.target.value);
-            hasChanges(e)
-          }} />
-          {user.user_classification === "artist" ? (
-            <>
-              <EditProfileTextField id="biography" label="Biography" error={biographyError} helperText={biographyHelperText} value={biography}
-              onChange={(e) => {
-                setBiography(e.target.value);
-                hasChanges(e)
-              }} />
-
-              <Autocomplete
-                multiple
-                style={{width: "90%", marginTop: "1.4rem"}}
-                limitTags={3}
-                id="multiple-limit-tags"
-                options={genres}
-                value={focus}
-                onChange={(e, value, reason) => {
-                  if (['select-option', 'remove-option'].includes(reason)) {
-                    setFocus(value);
-                  }
-                }}
-                getOptionLabel={(option) => option.focus_description}
-                getOptionSelected={(option, value) => option.id === value.id}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    label="Focus"
-                    placeholder="Select artist focus"
-                  />
-                )}
+      isLoading={loading}
+      loading={
+        <CircularProgress color="secondary" className="loading-indicator"/>
+      }
+      isError={error}
+      success={
+        <form onSubmit={handleSubmit}>
+          <div className="profile-container">
+            <p className="text-500">Provide a Profile Image link:</p>
+            <div className="initial-photo flex-2">
+              <img
+                className="profile-image"
+                id="profile"
+                src={src}
+                alt="profile"
+                onError={() => setSrc(profileData.source)}
               />
-            </>
-          ) : null}
-          <button className="send" type="submit">Save Changes</button>
-        </div>
-      </form>
-    }
+            </div>
+            <input
+              type="file"
+              id="img"
+              className="profile-image-input"
+              name="img"
+              accept="image/jpeg, image/png"
+              onChange={(e) => preview(e)}
+            />
+            <EditProfileTextField id="firstName" label="First Name" error={firstNameError} helperText={firstNameHelperText} value={firstName} onChange={(e) => {
+              setFirstName(e.target.value);
+              hasChanges(e)
+            }} />
+            <EditProfileTextField id="lastName" label="Last Name" error={lastNameError} helperText={lastNameHelperText} value={lastName} onChange={(e) => {
+              setLastName(e.target.value);
+              hasChanges(e)
+            }} />
+            {user.user_classification === "artist" ? (
+              <>
+                <EditProfileTextField id="biography" label="Biography" error={biographyError} helperText={biographyHelperText} value={biography}
+                onChange={(e) => {
+                  setBiography(e.target.value);
+                  hasChanges(e)
+                }} />
+
+                <Autocomplete
+                  multiple
+                  style={{width: "90%", marginTop: "1.4rem"}}
+                  limitTags={3}
+                  id="multiple-limit-tags"
+                  options={genres}
+                  value={focus}
+                  onChange={(e, value, reason) => {
+                    if (['select-option', 'remove-option'].includes(reason)) {
+                      setFocus(value);
+                    }
+                  }}
+                  getOptionLabel={(option) => option.focus_description}
+                  getOptionSelected={(option, value) => option.id === value.id}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      label="Focus"
+                      placeholder="Select artist focus"
+                    />
+                  )}
+                />
+              </>
+            ) : null}
+            <button className="send" type="submit">Save Changes</button>
+          </div>
+        </form>
+      }
     />
   );
 }
