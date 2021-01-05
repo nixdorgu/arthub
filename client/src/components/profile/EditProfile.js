@@ -89,6 +89,10 @@ export default function EditProfile() {
 
   function preview(e) {
     e.preventDefault();
+
+    if (src !== profileData.source) {
+      URL.revokeObjectURL(src)
+    }
     const blob = URL.createObjectURL(e.target.files[0])
     setSrc(blob);
   }
@@ -215,6 +219,7 @@ export default function EditProfile() {
               type="file"
               id="img"
               name="img"
+              accept="image/jpeg, image/png"
               onChange={(e) => preview(e)}
               style={{fontFamily: "Montserrat, sans-serif", width: "70%", alignSelf: "center"}}
             />
