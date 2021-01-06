@@ -1,16 +1,21 @@
 import React from 'react';
-import Facade from '../../utils/fetch';
+import { fetch } from '../../utils/fetch';
 
 function ProfileInteractions(props) {
     const { isMe, setShowHireModal, setShowSnackbar, setSnackbarMessage, profileData, user } = props.props;
 
     const chatArtist = () => {
-        new Facade().post("/api/messages/room", {user_id: user.id, user_classification: user['user_classification'], id: profileData['user_id'], classification: profileData['user_classification'] }, (success) => {
-            window.location.href = `/messages/${success.room.room_id}`
-        }, (error) => {
-            setShowSnackbar(true);
-            setSnackbarMessage(error.message);
-        })
+        fetch("/api/messages/room", {
+            method: "POST",
+            data: {user_id: user.id, user_classification: user['user_classification'], id: profileData['user_id'], classification: profileData['user_classification'] },
+            success: (success) => {
+                window.location.href = `/messages/${success.room.room_id}`
+            },
+            error: (error) => {
+                setShowSnackbar(true);
+                setSnackbarMessage(error.message);
+            }
+        });
     }
 
     const viewMessages = () => window.location = '/messages';
