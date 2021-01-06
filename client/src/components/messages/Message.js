@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import React from "react";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Message({props}) {
-  const user = useContext(AuthContext).user;
+  const {user} = useAuth();
   const {sender_id, content, timestamp } = props;
 
   return (
