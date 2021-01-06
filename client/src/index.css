@@ -224,26 +224,6 @@ button {
     margin: auto;
 }
 
-.app-logo {
-    height: 40vmin;
-    pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .app-logo {
-      animation: app-logo-spin infinite 20s linear;
-    }
-}
-
-@keyframes app-logo-spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-}
-
 /* Message Component */
 
 .messages {
@@ -349,7 +329,6 @@ button {
     display: flex;
 }
 
-/* make like mssngr */
 .message-input {
     padding: .2em;
     width: 100%;
