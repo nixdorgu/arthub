@@ -189,9 +189,6 @@ export default function EditProfile() {
   return (
     <UserFlow
       isLoading={loading}
-      loading={
-        <CircularProgress color="secondary" className="loading-indicator"/>
-      }
       isError={error}
       success={
         <form onSubmit={handleSubmit}>
