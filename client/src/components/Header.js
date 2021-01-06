@@ -13,25 +13,21 @@ function Header() {
 
   function showLinks() {
     const navlinks = document.querySelector('.hide-mobile');
-    navlinks.classList.toggle('show', !hamburgerOpen);
+    navlinks.classList.toggle('show');
 
     const children = navlinks.firstChild.childNodes;
     children.forEach(child => child.classList.toggle('active'))
   }
 
-  // add artists specific navlinks [transactions?]
+  function handleClick(boolean) {
+    showLinks();
+    setHamburgerOpen(boolean);
+  }
+
   return (
     <header className="row">
-      <div onClick={() => {
-        if (hamburgerOpen) {
-          showLinks();
-          setHamburgerOpen(false);
-        }
-            
-          }}>
-        <Link to="/" className="logo">
-          arthub
-        </Link>
+      <div onClick={() => hamburgerOpen? handleClick(false) : null}>
+        <Link to="/" className="logo">arthub</Link>
       </div>
 
       <div className="hide-mobile">
@@ -41,10 +37,7 @@ function Header() {
             <Link to="/login">Login</Link>
           </div>
         ) : (
-          <div onClick={() => {
-            showLinks();
-            setHamburgerOpen(false);
-          }}>
+          <div onClick={() => handleClick(false)}>
             <Link to="/profile">Profile</Link>
             <Link to="/messages">Messages</Link>
             <Link to="/transactions">Transactions</Link>
@@ -56,18 +49,12 @@ function Header() {
         {hamburgerOpen ? (
           <FontAwesomeIcon
             icon={faTimes}
-            onClick={(e) => {
-              showLinks()
-              setHamburgerOpen(!hamburgerOpen)}
-            }
+            onClick={(e) => handleClick(!hamburgerOpen)}
           />
         ) : (
           <FontAwesomeIcon
             icon={faBars}
-            onClick={(e) => {
-              showLinks()
-              setHamburgerOpen(!hamburgerOpen)}
-            }
+            onClick={(e) => handleClick(!hamburgerOpen)}
           />
         )}
       </div>
