@@ -23,40 +23,6 @@ function Profile({match}) {
     const [profileData, setProfileData] = useState({});
     const [src, setSrc] = useState('#');
 
-    const checkProfileUser = useCallback(() => isEmptyObject(match.params) ? setIsMe(true) : setIsMe(false), [match.params]);
-    const fetchProfileData = useCallback(() => {
-        const id = match.params.id || user.id;
-
-        if (isEmptyObject(profileData)) {
-            fetch(`/api/profile/${id}`, {
-                method : "GET",
-                success: (success) => {
-                    const ownProfile = success.user_id === user.id;
-
-                    setError(false);
-                    setProfileData(() => success);
-                    setIsMe(ownProfile);
-
-                    console.log(profileData)
-                    // if (success.hasOwnProperty('source')) {
-                    //     const source = success.source;
-
-                    //     if (success.source.hasOwnProperty('type')) {
-                    //         const buffer = Buffer.from(source.image)
-                    //         const image = `data:${source.type};base64,${buffer.toString('base64')}`;
-                    //         setSrc(image);
-                    //     } else {
-                    //         setSrc(source);
-                    //     }
-                    // }
-                },
-                error: (error) => {
-                    setError(true);
-                }
-            });
-            }       
-    }, [match, user, profileData]);
-
     const processTransaction = (e) => {
         e.preventDefault();
 
@@ -77,6 +43,51 @@ function Profile({match}) {
         });
     }
 
+    useEffect(() => {
+        setLoading(true);
+
+        if (user.hasOwnProperty("id")) {
+            const id = match.params.id || user.id;
+
+            fetch(`/api/profile/${id}`, {
+                method : "GET",
+                success: (success) => {
+                    const ownProfile = success.user_id === user.id;
+                    setError(false);
+                    setProfileData(success);
+                    setIsMe(ownProfile);
+                },
+                error: (error) => {
+                    setError(true);
+                }
+            });
+        }
+    }, [user, match.params]);
+    
+    useEffect(() => {
+        setLoading(true);
+
+        if (profileData.hasOwnProperty("user_id")) {
+            setSrc(profileData.source);
+
+            if (profileData.user_classification === "artist") {    
+            // fetch("URL HERE", {
+            //   method: "GET",
+            //   success: (data) => {
+            //     setLoading(false);
+            //   },
+            //   error: (error) => {
+            //     // console.log(error)
+            //     setError(true);
+            //     // setGenres(["None"]);
+            //   }
+            // });
+            }
+            
+            setLoading(false);
+        }
+    }, [profileData]);
+    
     const imgStyle = {
         borderRadius: "10px",
         width: "100px",
@@ -84,17 +95,6 @@ function Profile({match}) {
         objectFit: "cover",
         boxShadow: "1px 1px 3px 1px #ccc"
     }
-
-    useEffect(() => {
-        setLoading(true);
-
-        if (user.hasOwnProperty('id')) {
-            checkProfileUser();
-            fetchProfileData();   
-            setLoading(false);
-        }
-        
-    }, [match, user, fetchProfileData, checkProfileUser]);
 
     // LOGIC
     return (
