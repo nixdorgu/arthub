@@ -19,7 +19,6 @@ export function AuthProvider({ children }) {
         data: { token },
         success: (response) => {
           setAuthenticated(true);
-          // add check for response token -> if response.refreshToken != undefined then setToken to refresh token else proceed
           let user = response.user;
           user = {
             id: user["user_id"],
