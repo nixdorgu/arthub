@@ -1,12 +1,14 @@
 import React, { useState, useRef } from "react";
-import { Redirect, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { fetch } from '../../utils/fetch'
+import { setToken } from "../../utils/Tokens";
+import { useAuth } from "../../context/AuthContext";
 import SocialMediaButton from "./SocialMediaButton";
 
 function Signup() {
+  const { setAuthenticated } = useAuth();
   const errorRef = useRef();
   const [artist, setArtist] = useState(null);
-  const [registered, setRegistered] = useState(false);
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -53,7 +55,8 @@ function Signup() {
       method: "POST",
       data,
       success: (data) => {
-        setRegistered(true);
+        setToken(data.token);
+        setAuthenticated(true);
       },
       error: (data) => {
         errorRef.current.innerHTML = data.message;
@@ -98,7 +101,6 @@ function Signup() {
   
   return (
     <div className="form">
-      {registered ? <Redirect to="/login"/> : null}
       <form className="signup-form" onSubmit={(e) => validateAll(e)}>
         <div className="form-element" ref={errorRef} style={{color: "red", fontSize: ".5rem"}}></div>
         <div className="form-element">
