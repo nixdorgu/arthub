@@ -18,8 +18,7 @@ const isAuthenticated = (req, res, next) => {
     }
 
     if (authentic.exp < Date.now()) {
-      // return res.status(403).json({success: false, message: 'Expired token.'})
-      // refresh token here
+      return res.status(403).json({ success: false, message: 'Expired token.' });
     }
 
     return next();
