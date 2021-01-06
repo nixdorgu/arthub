@@ -1,5 +1,5 @@
 import React, {useState, useRef} from "react";
-import {fetch} from "../../utils/Facade";
+import {fetch} from "../../utils/fetch";
 import PendingTransactionModal from "../modals/PendingTransactionModal";
 import isArtist from "../../tests/isArtist";
 import Snackbar from "../Snackbar";

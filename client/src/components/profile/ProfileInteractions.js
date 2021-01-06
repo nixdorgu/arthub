@@ -1,5 +1,5 @@
 import React from 'react';
-import Facade from '../../utils/Facade';
+import Facade from '../../utils/fetch';
 
 function ProfileInteractions(props) {
     const { isMe, setShowHireModal, setShowSnackbar, setSnackbarMessage, profileData, user } = props.props;

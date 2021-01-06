@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import {Redirect, useParams} from 'react-router-dom';
 import { useAuth } from "../../context/AuthContext";
 import { useSocket } from "../../context/SocketContext";
-import { fetch } from "../../utils/Facade";
+import { fetch } from "../../utils/fetch";
 import UserFlow from "../../utils/UserFlow";
 import MessageRoomComponent from "./MessageRoomComponent";
 

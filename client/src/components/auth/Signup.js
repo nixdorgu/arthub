@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Redirect, Link } from "react-router-dom";
-import { fetch } from '../../utils/Facade'
+import { fetch } from '../../utils/fetch'
 import SocialMediaButton from "./SocialMediaButton";
 
 function Signup() {

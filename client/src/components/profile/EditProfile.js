@@ -2,7 +2,7 @@ import { TextField, CircularProgress } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import {fetch} from "../../utils/Facade";
+import {fetch} from "../../utils/fetch";
 import UserFlow from "../../utils/UserFlow";
 import EditProfileTextField from "./EditProfileTextField";
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { fetch } from "../../utils/Facade";
+import { fetch } from "../../utils/fetch";
 import NoMessages from "../states/NoMessages";
 import MessageCard from "./MessageCard";
 import UserFlow from "../../utils/UserFlow";

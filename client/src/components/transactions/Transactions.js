@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Tabs, Tab } from "@material-ui/core";
-import {fetch} from "../../utils/Facade";
+import {fetch} from "../../utils/fetch";
 import LoadingIndicator from "../LoadingIndicator";
 import NoTransactions from "../states/NoTransactions";
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from 'react';
-import Facade, { fetch } from '../../utils/Facade';
+import { fetch } from '../../utils/fetch';
 import ArtistCard from './ArtistCard';
 import UserFlow from '../../utils/UserFlow';
 import NoSearch from '../states/NoSearch';

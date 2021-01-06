@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { fetch } from "../../utils/Facade";
+import { fetch } from "../../utils/fetch";
 import { setToken } from "../../utils/Tokens";
 import SocialMediaButton from "./SocialMediaButton";
 

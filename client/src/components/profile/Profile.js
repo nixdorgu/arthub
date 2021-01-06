@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState, useRef } from 'react';
 import Snackbar from '../Snackbar';
 import {useAuth} from "../../context/AuthContext";
 
-import { fetch } from '../../utils/Facade';
+import { fetch } from '../../utils/fetch';
 import CommissionModal from '../modals/CommissionModal';
 import UserFlow from '../../utils/UserFlow';
 import ProfileHeader from './ProfileHeader';

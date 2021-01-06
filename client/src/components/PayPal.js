@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { fetch } from '../utils/Facade';
+import { fetch } from '../utils/fetch';
 
 export default function PayPal(props) {
     const {transaction} = props.props;
