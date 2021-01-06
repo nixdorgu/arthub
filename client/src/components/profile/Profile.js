@@ -87,14 +87,6 @@ function Profile({match}) {
         }
     }, [profileData]);
     
-    const imgStyle = {
-        borderRadius: "10px",
-        width: "100px",
-        height: "100px",
-        objectFit: "cover",
-        boxShadow: "1px 1px 3px 1px #ccc"
-    }
-
     // LOGIC
     return (
         <div style={{flexDirection: "column", display: "flex", alignItems:"center", width: "100%"}}>
@@ -106,11 +98,11 @@ function Profile({match}) {
         error={<Redirect to="/404"/>}
         success={
             <div className="profile-proper" style={{width: "80%"}}>
-                <ProfileHeader isMe={isMe} user={user} setShowHireModal={setShowHireModal} setShowSnackbar={setShowSnackbar} setSnackbarMessage={setSnackbarMessage} profileData={profileData} src={src} imgStyle={imgStyle}/>
+                <ProfileHeader isMe={isMe} user={user} setShowHireModal={setShowHireModal} setShowSnackbar={setShowSnackbar} setSnackbarMessage={setSnackbarMessage} profileData={profileData} src={src} />
                 {/* modal should close when clicked anywhere else same with hamburger */}
                 {!isMe && profileData['user_classification'] === 'artist' && (<CommissionModal show={showHireModal} handleClose={(e) => setShowHireModal(false)} handleSubmit={processTransaction}/>)}
                 <div style={{lineBreak: "normal", wordBreak: "break-word"}}>
-                {JSON.stringify(profileData)}
+                {/* {JSON.stringify(profileData)} */}
                 </div>
             </div>
         }/>
