@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Snackbar from '../Snackbar';
 import {useAuth} from "../../context/AuthContext";
 
@@ -6,7 +6,6 @@ import { fetch } from '../../utils/fetch';
 import CommissionModal from '../modals/CommissionModal';
 import UserFlow from '../../utils/UserFlow';
 import ProfileHeader from './ProfileHeader';
-import isEmptyObject from '../../tests/isEmptyObject';
 import { Redirect } from 'react-router-dom';
 
 function Profile({match}) { 
