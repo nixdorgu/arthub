@@ -13,7 +13,6 @@ const artistsRoutes = (client) => {
           .json({ success: false, message: 'Something went wrong.' });
       }
 
-      console.log('prof')
       return res.status(200).json(result.rows);
     },
   ));
@@ -35,7 +34,7 @@ const artistsRoutes = (client) => {
     },
   ));
 
-  router.get('/artist/focus', (req, res) => {
+  router.get('/:id/focus', (req, res) => {
     const token = req.headers.authorization.slice(7);
     const { user_id: id } = jwt.decode(token);
 
