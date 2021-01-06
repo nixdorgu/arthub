@@ -2,11 +2,12 @@ import React, { useEffect, useCallback, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Tabs, Tab } from "@material-ui/core";
 import {fetch} from "../../utils/fetch";
-import LoadingIndicator from "../LoadingIndicator";
 import NoTransactions from "../states/NoTransactions";
+import Error500 from "../states/Error500";
 
 import TabPanel from "./TabPanel";
 import TransactionCard from "./TransactionCard";
+import UserFlow from "../../utils/UserFlow";
 
 function a11yProps(index) {
   return {
@@ -19,7 +20,8 @@ export default function Transactions() {
   const { user } = useAuth();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(false);
+  const [empty, setEmpty] = useState(false);
   const [value, setValue] = useState(0);
 
   const OPTIONS = [
@@ -35,11 +37,17 @@ export default function Transactions() {
     fetch(`/api/transactions/${user.id}`, {
       method: "GET",
       success: (success) => {
+        const isEmpty = success.data.length === 0;
+
+        console.log('ups', success)
         setData(success.data);
+        setError(isEmpty);
+        setEmpty(isEmpty);
+
         timeout = setTimeout(updateData, 10000);
       },
       error: (error) => {
-        setError(error.message);
+        setError(true);
         setLoading(false);
       }
     });
@@ -55,13 +63,18 @@ export default function Transactions() {
     fetch( `/api/transactions/${user.id}`, {
       method: "GET",
       success: (success) => {
-        setError(null);
-        setData(success.data);
+        const isEmpty = success.data.length === 0;
+
         setLoading(false);
-        updateData();
+        setData(success.data);
+        setError(isEmpty);
+        setEmpty(isEmpty);
+
+        timeout = setTimeout(updateData, 10000);
       },
       error: (error) => {
-        setError(error.message);
+        setEmpty(false);
+        setError(true);
         setLoading(false);
       }
     });
@@ -76,14 +89,13 @@ export default function Transactions() {
   }, [fetchTransactions, updateData, error, timeout]);
 
   return (
-    <div>
-      {loading ? (
-        <LoadingIndicator />
-      ) : error ? (
-        error
-      ) : data.length === 0 ? (
-        <NoTransactions />
-      ) : (
+    <UserFlow
+      isLoading={loading}
+      isError={error}
+      error={
+        empty ? <NoTransactions /> : <Error500/>
+      }
+      success={
         <div>
           <Tabs
             value={value}
@@ -112,7 +124,7 @@ export default function Transactions() {
             </TabPanel>
           ))}
         </div>
-      )}
-    </div>
+      }
+    />
   );
 }
