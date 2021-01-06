@@ -153,7 +153,7 @@ export default function EditProfile() {
       setBiography(profileData.biography || "");
 
       if (profileData.user_classification === "artist") {
-        fetch("/api/artists/artist/focus", {
+        fetch(`/api/artists/${profileData.user_id}/focus`, {
           method: "GET",
           success: (data) => {
             setFocus(data);
