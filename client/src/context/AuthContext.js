@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import Facade from "../utils/Facade";
+import { fetch } from "../utils/fetch";
 import { getToken, removeToken } from "../utils/Tokens";
 
 export const AuthContext = createContext();
@@ -14,10 +14,10 @@ export function AuthProvider({ children }) {
     const token = getToken();
 
     if (token) {
-      new Facade().post(
-        "/api/verify",
-        { token },
-        (response) => {
+      fetch("/api/verify", {
+        method: "POST",
+        data: { token },
+        success: (response) => {
           setAuthenticated(true);
           // add check for response token -> if response.refreshToken != undefined then setToken to refresh token else proceed
           let user = response.user;
@@ -32,11 +32,11 @@ export function AuthProvider({ children }) {
 
           setUser(user);
         },
-        (error) => {
+        error: (error) => {
           setAuthenticated(false);
           removeToken();
         }
-      );
+      });
     } else {
       setAuthenticated(false);
       setUser({});
