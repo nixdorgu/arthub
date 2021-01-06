@@ -1,13 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types';
-import LoadingIndicator from '../components/LoadingIndicator';
+import { CircularProgress } from "@material-ui/core";
 
 export default function UserFlow(props) {
     const {isLoading, isError, loading, error, success} = props;
 
     return (
         isLoading ? (
-            loading ? loading : <LoadingIndicator/>
+            loading ? loading : <CircularProgress className="loading-indicator" color="secondary"/>
         ) : (isError ?
             error : success
         )
