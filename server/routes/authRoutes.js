@@ -29,7 +29,9 @@ const authRoute = (client) => {
             .json({ success: false, message: 'Something went wrong' });
         }
 
-        return signJwt(res, user, '5d');
+        const FIVE_DAYS = 432000000;
+
+        return signJwt(res, user, FIVE_DAYS);
       });
     },
   );
