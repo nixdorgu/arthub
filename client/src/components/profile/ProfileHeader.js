@@ -11,24 +11,14 @@ export default function ProfileHeader({
   src,
   setShowSnackbar,
   setSnackbarMessage,
-  imgStyle,
 }) {
 
   const locale = navigator.language;
 
   return (
-    <div
-      className="profile header"
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "max-content",
-        width: "100%",
-      }}
-    >
+    <div className="profile-header">
       <div className="image" style={{ marginRight: "3vw" }}>
-        <img src={src} style={imgStyle} alt="profile" />
+        <img className="profile-header-image" src={src}  alt="profile" />
       </div>
       <div
         className="bio"
@@ -40,7 +30,7 @@ export default function ProfileHeader({
           width: "100%",
         }}
       >
-        <p>{showFullName(profileData)}</p>
+        <p style={{fontSize: '1.7vh'}}>{showFullName(profileData)}</p>
         <i
           style={{ padding: ".5rem 0", fontSize: "1.5vh" }}
         >{formatAsDate(profileData, locale)}</i>
