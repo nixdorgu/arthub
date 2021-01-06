@@ -80,7 +80,8 @@ const authRoute = (client) => {
                 .json({ success: false, message: 'Something went wrong.' });
             }
 
-            const user = result.rows[0];
+            const user = formatPayload(result.rows[0]);
+
             return user.user_classification !== 'artist'
               ? onSuccessfulRegistration(res, user)
               : createReferenceToArtist(res, user);
