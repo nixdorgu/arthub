@@ -3,6 +3,7 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const formatPayload = require('../src/formatPayload');
+const signJwt = require('../utils/signJwt');
 
 const authRoute = (client) => {
   const router = express.Router();
@@ -27,19 +28,8 @@ const authRoute = (client) => {
             .status(500)
             .json({ success: false, message: 'Something went wrong' });
         }
-        return jwt.sign(
-          user,
-          process.env.JWT_SECRET,
-          { expiresIn: '1d' },
-          (err, token) => {
-            if (err) {
-              return res
-                .status(500)
-                .json({ success: false, message: 'Something went wrong' });
-            }
-            return res.status(200).json({ token });
-          },
-        );
+
+        return signJwt(res, user, '5d');
       });
     },
   );
@@ -68,7 +58,7 @@ const authRoute = (client) => {
 
           const userClassification = isArtist ? 'artist' : 'customer';
 
-          const onSuccessfulRegistration = (response) => response.status(200).json({ success: true, message: 'Account created successfully.' });
+          const onSuccessfulRegistration = (response, user) => signJwt(response, user);
 
           const createReferenceToArtist = (response, user) => {
             const id = user.user_id;
@@ -78,7 +68,7 @@ const authRoute = (client) => {
               // eslint-disable-next-line no-unused-vars
               (artistError, artistResult) => {
                 if (artistError) return response.status(500).json({ success: false });
-                return onSuccessfulRegistration(response);
+                return onSuccessfulRegistration(response, user);
               },
             );
           };
@@ -92,7 +82,7 @@ const authRoute = (client) => {
 
             const user = result.rows[0];
             return user.user_classification !== 'artist'
-              ? onSuccessfulRegistration(res)
+              ? onSuccessfulRegistration(res, user)
               : createReferenceToArtist(res, user);
           };
 
