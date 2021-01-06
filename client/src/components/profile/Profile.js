@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState, useRef } from 'react';
 import Snackbar from '../Snackbar';
 import {useAuth} from "../../context/AuthContext";
 
-import Facade from '../../utils/Facade';
+import { fetch } from '../../utils/Facade';
 import CommissionModal from '../modals/CommissionModal';
 import UserFlow from '../../utils/UserFlow';
 import ProfileHeader from './ProfileHeader';
@@ -28,29 +28,32 @@ function Profile({match}) {
         const id = match.params.id || user.id;
 
         if (isEmptyObject(profileData)) {
-            new Facade().get(`/api/profile/${id}`,
-                (success) => {
+            fetch(`/api/profile/${id}`, {
+                method : "GET",
+                success: (success) => {
                     const ownProfile = success.user_id === user.id;
 
                     setError(false);
                     setProfileData(() => success);
                     setIsMe(ownProfile);
 
-                    if (success.hasOwnProperty('source')) {
-                        const source = success.source;
+                    console.log(profileData)
+                    // if (success.hasOwnProperty('source')) {
+                    //     const source = success.source;
 
-                        if (success.source.hasOwnProperty('type')) {
-                            const buffer = Buffer.from(source.image)
-                            const image = `data:${source.type};base64,${buffer.toString('base64')}`;
-                            setSrc(image);
-                        } else {
-                            setSrc(source);
-                        }
-                    }
+                    //     if (success.source.hasOwnProperty('type')) {
+                    //         const buffer = Buffer.from(source.image)
+                    //         const image = `data:${source.type};base64,${buffer.toString('base64')}`;
+                    //         setSrc(image);
+                    //     } else {
+                    //         setSrc(source);
+                    //     }
+                    // }
                 },
-                (error) => {
+                error: (error) => {
                     setError(true);
-                });
+                }
+            });
             }       
     }, [match, user, profileData]);
 
@@ -60,13 +63,18 @@ function Profile({match}) {
         const [title, shortDescription, description, price] = e.target.childNodes;
         const data = {title: title.value, shortDescription: shortDescription.value, description: description.value, userId: user.id, artistId: profileData['user_id'], price: price.value };
 
-        new Facade().post('/api/transactions', data, (success) => {
-            setShowSnackbar(true);
-            setSnackbarMessage(success.message);
-        }, (error) => {
-            setShowSnackbar(true);
-            setSnackbarMessage(error.message);
-        })
+        fetch('/api/transactions', {
+            method: "POST",
+            data,
+            success: (success) => {
+                setShowSnackbar(true);
+                setSnackbarMessage(success.message);
+            },
+            error: (error) => {
+                setShowSnackbar(true);
+                setSnackbarMessage(error.message);
+            }
+        });
     }
 
     const imgStyle = {
@@ -95,6 +103,7 @@ function Profile({match}) {
 
         <UserFlow isLoading={loading} 
         isError={error}
+        // empty to either redirect OR show error500
         error={<Redirect to="/404"/>}
         success={
             <div className="profile-proper" style={{width: "80%"}}>
