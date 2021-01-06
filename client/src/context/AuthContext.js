@@ -2,7 +2,7 @@ import { createContext, useState, useEffect, useContext } from "react";
 import { fetch } from "../utils/fetch";
 import { getToken, removeToken } from "../utils/Tokens";
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
