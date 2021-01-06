@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-function signToken(res, user, expiresIn = '1d') {
+function signToken(res, user, expire = '15m') {
   return jwt.sign(
     user,
     process.env.JWT_SECRET,
-    { expiresIn },
+    { expiresIn: expire },
     (err, token) => {
       if (err) {
         return res
