@@ -1,4 +1,4 @@
-import { TextField, CircularProgress } from "@material-ui/core";
+import { TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
