@@ -28,9 +28,15 @@ export default function TransactionCard(props) {
 
   const submit = (e, transaction) => {
     e.preventDefault();
+
+    const artistCancelPendingTransaction = e.target.className.includes('cancel') && isArtistOfTransaction;
+    const artistStatus = artistCancelPendingTransaction ? "cancelled" : "payment pending";
+    const artistMessage = artistCancelPendingTransaction ? "The transaction has successfully been cancelled" : "The transaction is now awaiting payment"
+
     close(e);
-    changeStatus('payment pending', 'cancelled', () => {
-      setMessage(isArtistOfTransaction ? "The transaction is now awaiting payment": "The transaction has successfully been cancelled");
+
+    changeStatus(artistStatus, 'cancelled', () => {
+      setMessage(isArtistOfTransaction ? artistMessage: "The transaction has successfully been cancelled");
 
       setUndo(() => () => changeStatus('pending', 'pending', () => {
         setMessage("Undo successful.")
@@ -53,66 +59,29 @@ export default function TransactionCard(props) {
 
   return (
     <>
-    {status === "pending" && showModal && <PendingTransactionModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={(e) => close(e)} handleSubmit={(e) => submit(e, transaction)} />}
-    {status === "payment pending" && !isArtistOfTransaction && showModal && <PaymentPendingModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={close} />}
-    {/* {status === "ongoing" && isArtistOfTransaction && showModal && <PaymentPendingModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={close} handleSubmit={(e) => submit(e, transaction)} />} */}
-    {<Snackbar hidden={showSnackbar} props={{message, undo, snackbarRef, error, showSnackbar, setShowSnackbar}}/>}
-    <div
-      key={transaction.transaction_id}
-      style={{
-        boxShadow: "1px 0px 5px 2px #ccc",
-        padding: "1rem",
-        marginBottom: "1rem"
-      }}
-      onClick={(e) => {
-        if (!e.target.classList?.contains("transaction-link")) {
-          setShowModal(true)
-        }
-      }}
-    >
-      <h4>{transaction.title}</h4>
-      <p
-        style={{
-          lineBreak: "anywhere",
-          wordBreak: "break-word",
-          fontSize: ".8rem",
-          padding: ".5rem 0",
+      <PendingTransactionModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal && status === "pending"} handleClose={(e) => isArtistOfTransaction ? submit(e, transaction) : close(e)} handleSubmit={(e) => submit(e, transaction)} />
+      {status === "payment pending" && !isArtistOfTransaction && showModal && <PaymentPendingModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal && status === "payment pending" && !isArtistOfTransaction} handleClose={close} />}
+      {/* {status === "ongoing" && isArtistOfTransaction && showModal && <PaymentPendingModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={close} handleSubmit={(e) => submit(e, transaction)} />} */}
+      <Snackbar hidden={showSnackbar} props={{message, undo, snackbarRef, error, showSnackbar, setShowSnackbar}}/>
+      <div className="transaction-container" key={transaction.transaction_id} 
+        onClick={(e) => {
+          if (!e.target.classList?.contains("transaction-link")) {
+            setShowModal(true)
+          }
         }}
       >
-        {!isArtistOfTransaction ? (
-          <a className="transaction-link" href={`profile/${transaction.artist_id}`}>
-            Commissioned to {transaction.artist_name}
+        <h4>{transaction.title}</h4>
+        <p className="transaction-subtitle">
+          <a className="transaction-link" href={`profile/${!isArtistOfTransaction ? transaction.artist_id : transaction.user_id}`}>
+            Commissioned {!isArtistOfTransaction ? 'to' : 'by'} {!isArtistOfTransaction ? transaction.artist_name : transaction.customer_name}
           </a>
-        ) : (
-          <a className="transaction-link" href={`profile/${transaction.user_id}`}>
-            Commissioned by {transaction.customer_name}
-          </a>
-        )}
-      </p>
-      <p
-        style={{
-          wordBreak: "break-all",
-          hyphens: "auto",
-          overflowWrap: "break-word",
-          wordWrap: "break-word",
-          fontSize: ".8rem",
-          padding: ".5rem 0",
-        }}
-      >
-        {transaction.short_description}
-      </p>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "baseline",
-          paddingTop: ".3rem",
-        }}
-      >
-        <h5>${transaction.price}</h5>
-        <p style={{ fontSize: ".7rem" }}>{transaction.status}</p>
+        </p>
+        <p className="transaction-short-description">{transaction.short_description}</p>
+        <div className="transaction-metadata">
+          <h5>${transaction.price}</h5>
+          <p style={{ fontSize: ".7rem" }}>{transaction.status}</p>
+        </div>
       </div>
-    </div>
     </>
   );
 }
