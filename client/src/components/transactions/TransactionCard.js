@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef } from "react";
 import {fetch} from "../../utils/fetch";
 import PendingTransactionModal from "../modals/PendingTransactionModal";
 import isArtist from "../../tests/isArtist";
@@ -22,45 +22,83 @@ export default function TransactionCard(props) {
     fetch(`/api/transactions/${transaction.transaction_id}`, {method: "PATCH", data: {classification}, success: onSuccess, error: onError });
   }
 
-  const close = (e) => {
-    setShowModal(false);
-  }
+  const close = () => setShowModal(false);
 
   const submit = (e, transaction) => {
     e.preventDefault();
-
     const artistCancelPendingTransaction = e.target.className.includes('cancel') && isArtistOfTransaction;
     const artistStatus = artistCancelPendingTransaction ? "cancelled" : "payment pending";
     const artistMessage = artistCancelPendingTransaction ? "The transaction has successfully been cancelled" : "The transaction is now awaiting payment"
 
-    close(e);
+    close();
+
+    console.log('hhh')
 
     changeStatus(artistStatus, 'cancelled', () => {
       setMessage(isArtistOfTransaction ? artistMessage: "The transaction has successfully been cancelled");
 
       setUndo(() => () => changeStatus('pending', 'pending', () => {
         setMessage("Undo successful.")
-        setShowSnackbar(true);
         setError(true);
+        setShowSnackbar(true);
       }, () => {
         setMessage("Undo unsuccessful.")
-        setShowSnackbar(true);
         setError(true);
+        setShowSnackbar(true);
       }));
 
-      setShowSnackbar(true);
       setError(false);
+      setShowSnackbar(true);
     }, () => {
+      setError(true);
       setMessage(error.message);
       setShowSnackbar(true);
-      setError(!error.success);
     });
+  }
+
+  const handlePaymentCancellation = (e) => {
+    e.preventDefault();
+
+    setUndo(null);
+    setMessage("");
+    setShowSnackbar(false);
+
+    changeStatus('cancelled', 'cancelled', () => {}, () => {});
+  }
+
+  const handlePaymentSuccess = (success = true) => {
+    close();
+
+    if (success) {
+      return fetch(`api/transactions/${transaction.transaction_id}`, {
+        method: "PATCH",
+        data: {classification: "ongoing"},
+        success: (success) => {
+          localStorage.removeItem('__paypal_storage__');
+          setMessage('Payment successful');
+          setError(() => true);
+          setShowSnackbar(true);
+        },
+        error: (error) => {
+          localStorage.removeItem('__paypal_storage__');
+          setMessage('Payment unsuccessful');
+          setError(() => true);
+          setShowSnackbar(true);
+        }   
+      });
+    }
+
+    return () => {
+      setMessage('Payment unsuccessful');
+      setError(() => true)
+      setShowSnackbar(true);
+    }
   }
 
   return (
     <>
       <PendingTransactionModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal && status === "pending"} handleClose={(e) => isArtistOfTransaction ? submit(e, transaction) : close(e)} handleSubmit={(e) => submit(e, transaction)} />
-      {status === "payment pending" && !isArtistOfTransaction && showModal && <PaymentPendingModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal && status === "payment pending" && !isArtistOfTransaction} handleClose={close} />}
+      <PaymentPendingModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal && status === "payment pending" && !isArtistOfTransaction} handleClose={close} handleCancellation={handlePaymentCancellation} handleSubmit={handlePaymentSuccess} />
       {/* {status === "ongoing" && isArtistOfTransaction && showModal && <PaymentPendingModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={close} handleSubmit={(e) => submit(e, transaction)} />} */}
       <Snackbar hidden={showSnackbar} props={{message, undo, snackbarRef, error, showSnackbar, setShowSnackbar}}/>
       <div className="transaction-container" key={transaction.transaction_id} 
