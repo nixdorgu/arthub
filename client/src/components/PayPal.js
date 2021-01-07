@@ -30,7 +30,7 @@ export default function PayPal(props) {
             catchError={(error) => handleSubmit(false)}
             shippingPreference="NO_SHIPPING"
             options={{
-                disableCard: true,
+                disableFunding: 'credit,card',
                 commit: false,
                 component: "",
                 clientId: "AcBjUncHHpCLd0grJRL4x80S6boGXGPfhz1R4j_Skg02u66MPRuA8BDFBIEWaCDLdD-7VbkanuTh7SK3"
