@@ -64,7 +64,7 @@ const profileRoutes = (client) => {
   }));
 
   router.get('/favorite/artists/:id', (req, res) => client.query('SELECT u.user_id, COUNT(u.user_id), CONCAT(u.first_name, \' \', u.last_name) AS name, type, image FROM users AS u INNER JOIN transactions ON u.user_id = artist_id LEFT JOIN profile_images AS p ON u.user_id = p.user_id WHERE transactions.user_id = $1 GROUP BY u.user_id, p.image, p.type ORDER BY count DESC LIMIT 5', [req.params.id], (error, result) => {
-    if (error) return res.status(500).json({ success: false });
+    if (error) return res.status(500).json({ success: false, message: 'Something went wrong' });
 
     const data = result.rows.map((item) => ({
       ...item,
