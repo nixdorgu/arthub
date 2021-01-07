@@ -34,7 +34,7 @@ const transactionsRoutes = (client) => {
         return res.status(500).json({ success: false, message: 'Something went wrong.' });
       }
 
-      return res.status(200).json({ success: true, message: 'Transaction completed successfully', data: result.rows });
+      return res.status(200).json({ success: true, data: result.rows });
     });
   });
 
