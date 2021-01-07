@@ -39,7 +39,6 @@ export default function Transactions() {
       success: (success) => {
         const isEmpty = success.data.length === 0;
 
-        console.log('ups', success)
         setData(success.data);
         setError(isEmpty);
         setEmpty(isEmpty);
