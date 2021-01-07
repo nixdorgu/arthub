@@ -105,10 +105,14 @@ export default function TransactionCard(props) {
       method: 'POST',
       data: { link, transaction },
       success: (success) => {
-        console.log(success.message)
+        setShowSnackbar(true);
+        setMessage(success.message);
+        setError(true);
       },
       error: (error) => {
-        console.log(error.message)
+        setShowSnackbar(true);
+        setMessage(error.message)
+        setError(true);
       }
     });
   }
