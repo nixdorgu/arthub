@@ -7,12 +7,17 @@ import CommissionModal from '../modals/CommissionModal';
 import UserFlow from '../../utils/UserFlow';
 import ProfileHeader from './ProfileHeader';
 import { Redirect } from 'react-router-dom';
+import Rating from './Rating';
+import FavoriteArtists from './FavoriteArtists';
 
 function Profile({match}) { 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [isMe, setIsMe] = useState(null);
     const [showHireModal, setShowHireModal] = useState(false);
+
+    const [rating, setRating] = useState({});
+    const [favorites, setFavorites] = useState([]);
 
     const snackbarRef = useRef();
     const [showSnackbar, setShowSnackbar] = useState(false);
@@ -69,6 +74,20 @@ function Profile({match}) {
         if (profileData.hasOwnProperty("user_id")) {
             setSrc(profileData.source);
 
+            fetch(`/api/profile/rating/${profileData.user_id}`, {
+                method: 'GET',
+                success: (success) => setRating(success.data),
+                error: (error) => console.log(error.message)
+            });
+
+            fetch(`api/profile/favorite/artists/${profileData.user_id}`, {
+                method: 'GET',
+                success: (success) => {
+                    setFavorites(success.data)
+                },
+                error: (error) => console.log(error.message)
+            });
+
             if (profileData.user_classification === "artist") {    
             // fetch("URL HERE", {
             //   method: "GET",
@@ -87,7 +106,6 @@ function Profile({match}) {
         }
     }, [profileData]);
     
-    // LOGIC
     return (
         <div style={{flexDirection: "column", display: "flex", alignItems:"center", width: "100%"}}>
         <Snackbar hidden={showSnackbar} props={{ message: snackbarMessage, snackbarRef, error: true, showSnackbar, setShowSnackbar}}/>
@@ -100,22 +118,11 @@ function Profile({match}) {
                 <ProfileHeader isMe={isMe} user={user} setShowHireModal={setShowHireModal} setShowSnackbar={setShowSnackbar} setSnackbarMessage={setSnackbarMessage} profileData={profileData} src={src} />
                 <CommissionModal show={showHireModal && !isMe && profileData['user_classification'] === 'artist'} handleClose={(e) => setShowHireModal(false)} handleSubmit={processTransaction}/>
                 <div style={{lineBreak: "normal", wordBreak: "break-word"}}>
-                {/* {JSON.stringify(profileData)} */}
+                    <FavoriteArtists data={favorites}/>
+                    <Rating rating={rating}/>
                 </div>
             </div>
         }/>
-            {/* <div className="bottom-portion" style={{width:"100%", marginTop:"3vh"}}>
-                <div id="options" className="row" style={{background: "blue", padding: "1rem", marginBottom: "1vh"}}>
-                    <span>Reviews</span>
-                    <span>Works</span>
-                    <span>About the Artist</span>
-                </div>
-                <div style={{background: "red", height: "100%", width:"100%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
-                    <div className="card">
-                        
-                    </div>
-                </div>
-            </div> */}
         </div>
     );
 }
