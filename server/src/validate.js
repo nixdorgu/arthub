@@ -17,5 +17,4 @@ function validate(item, constraint = { type: '', max: 0 }) {
   return false;
 }
 
-validate('Lorem ipsum lorem ipsum lorem ipsum', { type: 'TEXT', max: 35 });
 module.exports = validate;
