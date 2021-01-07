@@ -1,5 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const isDefined = require('../../src/isDefined');
 const shallowEquality = require('../../src/shallowEquality');
 const validate = require('../../src/validate');
 
@@ -62,10 +63,14 @@ const profileRoutes = (client) => {
     return res.status(200).json({ success: true, data });
   }));
 
-  router.get('/favorite/artists/:id', (req, res) => client.query('SELECT u.user_id, COUNT(u.user_id), first_name FROM users AS u INNER JOIN transactions ON u.user_id = artist_id WHERE transactions.user_id = $1 GROUP BY u.user_id ORDER BY count DESC LIMIT 5', [req.params.id], (error, result) => {
+  router.get('/favorite/artists/:id', (req, res) => client.query('SELECT u.user_id, COUNT(u.user_id), CONCAT(u.first_name, \' \', u.last_name) AS name, type, image FROM users AS u INNER JOIN transactions ON u.user_id = artist_id LEFT JOIN profile_images AS p ON u.user_id = p.user_id WHERE transactions.user_id = $1 GROUP BY u.user_id, p.image, p.type ORDER BY count DESC LIMIT 5', [req.params.id], (error, result) => {
     if (error) return res.status(500).json({ success: false });
 
-    const data = result.rows;
+    const data = result.rows.map((item) => ({
+      ...item,
+      image: isDefined(item.image) ? `data:${item.type};base64,${Buffer.from(item.image).toString('base64')}` : DEFAULT_SOURCE
+    }));
+
     return res.status(200).json({ success: true, data });
   }));
 
