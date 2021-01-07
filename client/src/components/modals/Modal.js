@@ -32,7 +32,7 @@ export default function Modal({ handleClose, handleSubmit, header, show, childre
         <section>
             <div className="modal main">
                 <h1 className="modal header">{header}</h1>
-                <form onSubmit={handleSubmit} id="modal-form">
+                <form onSubmit={handleSubmit} id="modal-form" aria-hidden={!show}>
                     {children}
                 </form>
                 <div className="modal button-group">
