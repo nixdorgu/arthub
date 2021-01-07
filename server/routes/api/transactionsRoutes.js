@@ -1,4 +1,3 @@
-/* eslint-disable no-shadow */
 const express = require('express');
 
 const transactionsRoutes = (client) => {
@@ -46,9 +45,9 @@ const transactionsRoutes = (client) => {
       if (result.rows.length === 0) {
         return res.status(404).json({ success: false, message: 'No corresponding transaction found' });
       }
-      // eslint-disable-next-line no-unused-vars
-      return client.query('UPDATE transactions SET status = $1 WHERE transaction_id = $2', [classification, id], (error, result) => {
-        if (error) {
+
+      return client.query('UPDATE transactions SET status = $1 WHERE transaction_id = $2', [classification, id], (transactionError, transactionsResult) => {
+        if (transactionError) {
           return res.status(500).json({ success: false, message: 'Something went wrong' });
         }
 
