@@ -1,15 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { fetch } from '../utils/fetch';
 
 export default function PayPal(props) {
-    const {transaction} = props.props;
+    const { transaction, handleSubmit } = props.props;
     const paypal = useRef();
     const [count, setCount] = useState(0);
 
 
     useEffect(() => {
         const order = {
-            description: transaction.title,
+            description: transaction.transaction_id,
             amount: {
                 currency_code: "USD",
                 value: transaction.price
@@ -26,32 +25,16 @@ export default function PayPal(props) {
                 },
                 onApprove: async(data, actions) => {
                     const order = await actions.order.capture();
-                    console.log(`Successful order: ${order}`)
-
-                    fetch(`api/transactions/${transaction.transaction_id}`, {
-                        method: "PATCH",
-                        data: {classification: "ongoing"},
-                        success: (success) => {
-                            alert(JSON.stringify(data))
-                        },
-                        error: (error) => {
-                            alert(JSON.stringify(error.message))
-                        }   
-                    });
+                    return handleSubmit(true);
                 },
                 onError: (error) => {
-                    console.log(error)
-                    // display snackbar
+                    return handleSubmit(false);
                 }
             }).render(paypal.current);
 
             setCount(prev => prev + 1);
         }
-    }, [count, transaction]);
+    }, [count, transaction, handleSubmit]);
 
-    return (
-        <div>
-            <div ref={paypal}></div>
-        </div>
-    )
+    return <div ref={paypal}></div>;
 }
