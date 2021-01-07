@@ -90,8 +90,7 @@ function Profile({match}) {
     // LOGIC
     return (
         <div style={{flexDirection: "column", display: "flex", alignItems:"center", width: "100%"}}>
-        {<Snackbar hidden={showSnackbar} props={{ message: snackbarMessage, snackbarRef, error: true, showSnackbar, setShowSnackbar}}/> }
-
+        <Snackbar hidden={showSnackbar} props={{ message: snackbarMessage, snackbarRef, error: true, showSnackbar, setShowSnackbar}}/>
         <UserFlow isLoading={loading} 
         isError={error}
         // empty to either redirect OR show error500
@@ -99,8 +98,7 @@ function Profile({match}) {
         success={
             <div className="profile-proper" style={{width: "80%"}}>
                 <ProfileHeader isMe={isMe} user={user} setShowHireModal={setShowHireModal} setShowSnackbar={setShowSnackbar} setSnackbarMessage={setSnackbarMessage} profileData={profileData} src={src} />
-                {/* modal should close when clicked anywhere else same with hamburger */}
-                {!isMe && profileData['user_classification'] === 'artist' && (<CommissionModal show={showHireModal} handleClose={(e) => setShowHireModal(false)} handleSubmit={processTransaction}/>)}
+                <CommissionModal show={showHireModal && !isMe && profileData['user_classification'] === 'artist'} handleClose={(e) => setShowHireModal(false)} handleSubmit={processTransaction}/>
                 <div style={{lineBreak: "normal", wordBreak: "break-word"}}>
                 {/* {JSON.stringify(profileData)} */}
                 </div>
