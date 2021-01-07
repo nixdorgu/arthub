@@ -7,7 +7,7 @@ export default function FavoriteArtists({ data = [] }) {
       <h1 className="favorite-header">Favorite Artists: </h1>
       <div className="profile-favorite-container">
         {data.map((item, index) => (
-          <Favorite key={index} src={item.source} name={item.name} />
+          <Favorite key={index} src={item.image} name={item.name} />
         ))}
       </div>
     </div>
