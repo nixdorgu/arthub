@@ -2,12 +2,12 @@ import React from 'react'
 import PayPal from '../PayPal';
 import Modal from './Modal';
 
-export default function PaymentPendingModal({transaction, show, handleClose}) {
+export default function PaymentPendingModal({transaction, show, handleClose, handleCancellation, handleSubmit}) {
     const buttonGroup = 
             <>
-            <div style={{display: "flex", flexDirection: "column", width: "100%"}}>
-                <button style={{width: "100%", padding: ".7rem"}} form="modal-form" className="modal button-group cancel" onClick={handleClose}>Cancel Transaction</button>
-                <PayPal props={{transaction}} onClick={handleClose}/>
+                <div style={{display: "flex", flexDirection: "column", width: "100%"}}>
+                    <button style={{width: "100%", padding: ".7rem"}} form="modal-form" className="modal button-group cancel" onClick={handleCancellation}>Cancel Transaction</button>
+                    <PayPal props={{transaction, handleSubmit}} onClick={handleClose}/>
                 </div>
             </>
         
