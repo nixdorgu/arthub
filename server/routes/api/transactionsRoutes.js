@@ -1,4 +1,5 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 
 const transactionsRoutes = (client) => {
   const router = express.Router();
@@ -36,6 +37,8 @@ const transactionsRoutes = (client) => {
   router.patch('/:id', (req, res) => {
     const { id } = req.params;
     const { classification } = req.body;
+    const { user_id: userId } = jwt.decode(req.headers.authorization.slice(7));
+    const cancelledBy = classification === 'cancelled' ? userId : null;
 
     return client.query('SELECT * FROM transactions WHERE transaction_id = $1', [id], (error, result) => {
       if (error) {
@@ -46,7 +49,7 @@ const transactionsRoutes = (client) => {
         return res.status(404).json({ success: false, message: 'No corresponding transaction found' });
       }
 
-      return client.query('UPDATE transactions SET status = $1 WHERE transaction_id = $2', [classification, id], (transactionError, transactionsResult) => {
+      return client.query('UPDATE transactions SET status = $1, cancelled_by = $2 WHERE transaction_id = $3', [classification, cancelledBy, id], (transactionError, transactionsResult) => {
         if (transactionError) {
           return res.status(500).json({ success: false, message: 'Something went wrong' });
         }
