@@ -1,5 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const validate = require('../../src/validate');
 
 const transactionsRoutes = (client) => {
   const router = express.Router();
@@ -8,6 +9,9 @@ const transactionsRoutes = (client) => {
     const {
       title, shortDescription, description, price, artistId, userId,
     } = req.body;
+
+    const checkValidity = [[title, { type: 'TEXT', max: 30 }], [shortDescription, { type: 'TEXT', max: 80 }], [description, { type: 'TEXT', max: 300 }], [price, { type: 'NUMBER' }]].map((item) => validate(item[0], item[1])).every((item) => item);
+    if (!checkValidity) return res.status(503).json({ message: 'Invalid input found in form. Please recheck.' });
 
     client.query('INSERT INTO transactions VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, DEFAULT) RETURNING *', [artistId, userId, title, shortDescription, description, price], (error, result) => {
       if (error) {
