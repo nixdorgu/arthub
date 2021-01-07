@@ -413,3 +413,34 @@ button {
     grid-template-rows: auto;
     gap: .5rem;
 }
+
+/* Transactions */
+
+.transaction-container {
+    box-shadow: 1px 0px 5px 2px #ccc;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.transaction-subtitle {
+    line-break: anywhere;
+    word-break: break-word;
+    font-size: .8rem;
+    padding: .5rem 0;
+}
+
+.transaction-short-description {
+    word-break: break-all;
+    hyphens: auto;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    font-size: .8rem;
+    padding: .5rem 0;
+}
+
+.transaction-metadata {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-top: .3rem;
+}
