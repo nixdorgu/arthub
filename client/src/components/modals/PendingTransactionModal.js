@@ -4,7 +4,7 @@ import Modal from './Modal';
 export default function PendingTransactionModal({isArtist, transaction, show, handleClose, handleSubmit}) {
     const buttonGroup = isArtist ? (
             <>
-                <button className="modal button-group cancel" onClick={handleClose}>Decline</button>
+                <button className="modal button-group cancel" onClick={(e) => handleSubmit(e, transaction)}>Decline</button>
                 <button form="modal-form" type="submit" className="modal button-group submit" onClick={handleSubmit}>Accept</button>
             </>
         ) : (
