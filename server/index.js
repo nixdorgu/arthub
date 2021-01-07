@@ -5,12 +5,14 @@ const dotenv = require('dotenv');
 const passport = require('passport');
 const socketio = require('socket.io');
 const http = require('http');
+const jwt = require('jsonwebtoken');
 
 const middleware = require('./utils/middleware');
 const initPassport = require('./config/passport.config');
 const checkConfig = require('./config/envError');
 const apiRoutes = require('./routes/apiRoutes');
 const authRoute = require('./routes/authRoutes');
+const sendEmail = require('./utils/sendEmail');
 
 dotenv.config();
 
@@ -48,10 +50,52 @@ pool.connect((connectionError, client) => {
   app.use('/auth', middleware.isNotAuthenticated, authRoute(client));
   app.use('/api', middleware.isAuthenticated, apiRoutes(client));
 
+  app.post('/email', middleware.isAuthenticated, (req, res) => {
+    const { user_id: id } = jwt.decode(req.headers.authorization.slice(7));
+    const {
+      link, transaction: {
+        transaction_id, artist_name, user_id, artist_id,
+      },
+    } = req.body;
+
+    if (id !== artist_id) {
+      return res.status(403).json({ success: false, message: 'Insufficient permissions.' });
+    }
+
+    return client.query('SELECT email FROM users WHERE user_id = $1', [user_id], (error, result) => {
+      if (error) return res.status(500).json({ success: false, message: 'Something went wrong.' });
+      if (result.rows.length === 0) return res.status(400).json({ success: false, message: 'Could not find customer email.' });
+
+      const recipient = result.rows[0].email;
+
+      return client.query('SELECT email FROM users WHERE user_id = $1', [artist_id], (artistError, artistResult) => {
+        if (artistError) return res.status(500).json({ success: false, message: 'Something went wrong.' });
+        if (artistResult.rows.length === 0) return res.status(400).json({ success: false, message: 'Could not find customer email.' });
+
+        const sender = artistResult.rows[0].email;
+
+        const onSuccess = () => client.query('UPDATE transactions SET status = $1 WHERE transaction_id = $2', ['completed', transaction_id], (patchError, patchResult) => {
+          if (patchError) return res.status(500).json({ success: false, message: 'Something went wrong' });
+          return res.status(200).json({ success: false, message: 'Congratulations! Everything went smoothly!' })
+        });
+
+        const onError = () => res.status(500).json({ success: false, message: 'Something went wrong' });
+
+        sendEmail({
+          sender,
+          recipient,
+          transactionId: transaction_id,
+          artist: artist_name,
+          link,
+          onSuccess,
+          onError,
+        });
+      });
+    });
+  });
+
   // SocketIO ops
   io.on('connection', (socket) => {
-    console.log('Connection!!!');
-
     socket.on('join', (room) => {
       socket.join(room);
     });
@@ -63,10 +107,6 @@ pool.connect((connectionError, client) => {
 
     socket.on('leave', (room) => {
       socket.leave(room);
-    });
-
-    socket.on('disconnect', () => {
-      console.log('User left!');
     });
   });
 
