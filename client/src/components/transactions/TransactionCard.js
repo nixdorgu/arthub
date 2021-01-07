@@ -4,6 +4,7 @@ import PendingTransactionModal from "../modals/PendingTransactionModal";
 import isArtist from "../../tests/isArtist";
 import Snackbar from "../Snackbar";
 import PaymentPendingModal from "../modals/PaymentPendingModal";
+import OngoingTransactionModal from "../modals/OngoingTransactionModal";
 
 export default function TransactionCard(props) {
   const { transaction, user } = props.props;
@@ -17,22 +18,23 @@ export default function TransactionCard(props) {
   const [error, setError] = useState(false);
   const [message, setMessage] = useState('');
 
+  const [link, setLink] = useState('');
+
   const changeStatus = (classificationArtist, classificationUser, onSuccess, onError) => {
     const classification = isArtistOfTransaction? classificationArtist : classificationUser; // use command pattern here
     fetch(`/api/transactions/${transaction.transaction_id}`, {method: "PATCH", data: {classification}, success: onSuccess, error: onError });
   }
 
-  const close = () => setShowModal(false);
+  const close = (e) => setShowModal(false);
 
   const submit = (e, transaction) => {
     e.preventDefault();
+
     const artistCancelPendingTransaction = e.target.className.includes('cancel') && isArtistOfTransaction;
     const artistStatus = artistCancelPendingTransaction ? "cancelled" : "payment pending";
     const artistMessage = artistCancelPendingTransaction ? "The transaction has successfully been cancelled" : "The transaction is now awaiting payment"
 
     close();
-
-    console.log('hhh')
 
     changeStatus(artistStatus, 'cancelled', () => {
       setMessage(isArtistOfTransaction ? artistMessage: "The transaction has successfully been cancelled");
@@ -56,6 +58,7 @@ export default function TransactionCard(props) {
     });
   }
 
+  // Payment Pending
   const handlePaymentCancellation = (e) => {
     e.preventDefault();
 
@@ -95,11 +98,26 @@ export default function TransactionCard(props) {
     }
   }
 
+  // Ongoing
+  const handleLinkSubmit = (e, transaction) => {
+    close();
+    fetch('/email', {
+      method: 'POST',
+      data: { link, transaction },
+      success: (success) => {
+        console.log(success.message)
+      },
+      error: (error) => {
+        console.log(error.message)
+      }
+    });
+  }
+
   return (
     <>
-      <PendingTransactionModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal && status === "pending"} handleClose={(e) => isArtistOfTransaction ? submit(e, transaction) : close(e)} handleSubmit={(e) => submit(e, transaction)} />
+      <PendingTransactionModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal && status === "pending"} handleClose={close} handleSubmit={(e) => submit(e, transaction)} />
       <PaymentPendingModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal && status === "payment pending" && !isArtistOfTransaction} handleClose={close} handleCancellation={handlePaymentCancellation} handleSubmit={handlePaymentSuccess} />
-      {/* {status === "ongoing" && isArtistOfTransaction && showModal && <PaymentPendingModal isArtist={isArtistOfTransaction} transaction={transaction} show={showModal} handleClose={close} handleSubmit={(e) => submit(e, transaction)} />} */}
+      <OngoingTransactionModal show={showModal && status === "ongoing" && isArtistOfTransaction} transaction={transaction} link={link} setLink={setLink} handleClose={close} handleSubmit={(e) => handleLinkSubmit(e, transaction)} />
       <Snackbar hidden={showSnackbar} props={{message, undo, snackbarRef, error, showSnackbar, setShowSnackbar}}/>
       <div className="transaction-container" key={transaction.transaction_id} 
         onClick={(e) => {
