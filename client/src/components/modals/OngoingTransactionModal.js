@@ -3,7 +3,7 @@ import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentT
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 
-export default function OngoingTransactionModal({transaction, show, handleClose, handleSubmit}) {
+export default function OngoingTransactionModal({transaction, link, setLink, show, handleClose, handleSubmit}) {
     const theme = createMuiTheme({
         typography: {
           fontFamily: [
@@ -28,6 +28,8 @@ export default function OngoingTransactionModal({transaction, show, handleClose,
                 label="Submission link"
                 type="text"
                 color="secondary"
+                value={link}
+                onChange={(e) => setLink(e.target.value)}
                 fullWidth
             />
         </DialogContent>
