@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const shallowEquality = require('../../src/shallowEquality');
+const validate = require('../../src/validate');
 
 const profileRoutes = (client) => {
   const router = express.Router();
@@ -49,6 +50,17 @@ const profileRoutes = (client) => {
       }
     },
   ));
+
+  router.get('/rating/:id', (req, res) => client.query('SELECT COUNT(*), (SELECT COUNT(*) FROM transactions WHERE cancelled_by = $1) AS cancellations FROM transactions WHERE $1 in (user_id, artist_id)', [req.params.id], (error, result) => {
+    if (error) return res.status(500).json({ success: false });
+
+    const { cancellations, count } = result.rows[0];
+    const compute = (all, cancelled) => Number(((count - cancellations) / count) * 100).toFixed(2);
+
+    const data = validate(count, { type: 'NUMBER' }) ? compute(count, cancellations) : 100;
+
+    return res.status(200).json({ success: true, data });
+  }));
 
   router.post('/edit', (req, res) => {
     const token = req.headers.authorization.slice(7);
