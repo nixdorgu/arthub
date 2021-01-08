@@ -80,7 +80,7 @@ function Profile({match}) {
                 error: (error) => console.log(error.message)
             });
 
-            fetch(`api/profile/favorite/artists/${profileData.user_id}`, {
+            fetch(`/api/profile/favorite/artists/${profileData.user_id}`, {
                 method: 'GET',
                 success: (success) => {
                     setFavorites(success.data)
@@ -117,7 +117,7 @@ function Profile({match}) {
             <div className="profile-proper" style={{width: "80%"}}>
                 <ProfileHeader isMe={isMe} user={user} setShowHireModal={setShowHireModal} setShowSnackbar={setShowSnackbar} setSnackbarMessage={setSnackbarMessage} profileData={profileData} src={src} />
                 <CommissionModal show={showHireModal && !isMe && profileData['user_classification'] === 'artist'} handleClose={(e) => setShowHireModal(false)} handleSubmit={processTransaction}/>
-                <div style={{lineBreak: "normal", wordBreak: "break-word"}}>
+                <div>
                     <FavoriteArtists data={favorites}/>
                     <Rating rating={rating}/>
                 </div>
