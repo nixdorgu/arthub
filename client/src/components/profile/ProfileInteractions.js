@@ -25,7 +25,6 @@ function ProfileInteractions(props) {
         profile: isMe ? 'Edit Profile' : 'Hire'
     }
 
-    // artist or profile or artist to customer
     if (profileData['user_classification'] === 'artist' || isMe || (profileData['user_classification'] !== 'artist' && user['user_classification'] === 'artist')) {
         return (
             <div style={{justifyContent: "center", background: "#ddd", display: "flex", width: "100%"}}>
