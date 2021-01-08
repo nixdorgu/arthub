@@ -76,12 +76,12 @@ pool.connect((connectionError, client) => {
 
         const onSuccess = () => client.query('UPDATE transactions SET status = $1 WHERE transaction_id = $2', ['completed', transaction_id], (patchError, patchResult) => {
           if (patchError) return res.status(500).json({ success: false, message: 'Something went wrong' });
-          return res.status(200).json({ success: false, message: 'Congratulations! Everything went smoothly!' })
+          return res.status(200).json({ success: false, message: 'Congratulations! Everything went smoothly!' });
         });
 
         const onError = () => res.status(500).json({ success: false, message: 'Something went wrong' });
 
-        sendEmail({
+        return sendEmail({
           sender,
           recipient,
           transactionId: transaction_id,
